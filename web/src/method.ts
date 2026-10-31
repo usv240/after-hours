@@ -1,5 +1,5 @@
 import "./styles/doc.css";
-import { el, fmt } from "./common.ts";
+import { el, fmt, revealOnScroll } from "./common.ts";
 
 interface Changes {
   refreshedAt: string;
@@ -9,7 +9,6 @@ interface Changes {
   locations: number;
   added: number;
   removed: number;
-  addedExamples: string[];
 }
 
 async function watch() {
@@ -31,7 +30,7 @@ async function watch() {
       el(
         "p",
         { class: "fine" },
-        `Last run ${when} New York time${c.previousSnapshot ? `, compared with ${c.previousSnapshot}` : ", the first snapshot, so there is nothing to compare yet"}.${c.addedExamples.length ? ` New: ${c.addedExamples.slice(0, 3).join("; ")}.` : ""}`,
+        `Last run ${when} New York time${c.previousSnapshot ? `, compared with ${c.previousSnapshot}` : ", the first snapshot, so there is nothing to compare yet"}.`,
       ),
     );
   } catch {
@@ -40,3 +39,4 @@ async function watch() {
 }
 
 watch();
+revealOnScroll();

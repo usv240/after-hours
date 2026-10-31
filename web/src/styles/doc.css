@@ -357,3 +357,39 @@
     position: static;
   }
 }
+
+/* Long code and tables scroll inside their box on small screens, never the page. */
+.doc-two > *,
+.console__req,
+.console__res,
+.keybox {
+  min-width: 0;
+}
+.doc-two > div {
+  overflow-wrap: anywhere;
+}
+.ref {
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 761px) {
+  .ref {
+    display: table;
+  }
+}
+.doc-page pre {
+  max-width: 100%;
+}
+.doc-fig {
+  margin: 8px 0 8px;
+}
+.doc-fig img {
+  width: 100%;
+  height: auto;
+}
+.doc-fig figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: var(--step-small);
+  max-width: 70ch;
+}

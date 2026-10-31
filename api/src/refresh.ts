@@ -56,7 +56,7 @@ export async function handler() {
   const [[prevDate = "", snapshots = "0"]] = await sql(
     `SELECT CAST(max(CASE WHEN snapshot_date < DATE '${today}' THEN snapshot_date END) AS varchar), CAST(count(DISTINCT snapshot_date) AS varchar) FROM aed_snapshots`,
   );
-  let added = 0, removed = 0, prevCount = 0, addedNames: string[] = [];
+  let added = 0, removed = 0, prevCount = 0;
   if (prevDate) {
     const diff = await sql(`
       WITH t AS (SELECT site_id, name FROM aed_snapshots WHERE snapshot_date = DATE '${today}'),
@@ -65,10 +65,8 @@ export async function handler() {
       UNION ALL SELECT 'removed', name FROM p WHERE site_id NOT IN (SELECT site_id FROM t)
       UNION ALL SELECT 'prev', CAST(count(*) AS varchar) FROM p`);
     for (const [kind, v] of diff) {
-      if (kind === "added") {
-        added++;
-        if (addedNames.length < 10) addedNames.push(v);
-      } else if (kind === "removed") removed++;
+      if (kind === "added") added++;
+      else if (kind === "removed") removed++;
       else prevCount = Number(v);
     }
   }
@@ -82,7 +80,6 @@ export async function handler() {
     previousLocations: prevDate ? prevCount : null,
     added,
     removed,
-    addedExamples: addedNames,
     how: "NYC Open Data → Amazon S3 → Apache Iceberg table (Amazon Athena INSERT) → diff against the previous Iceberg snapshot.",
   };
   await s3.send(

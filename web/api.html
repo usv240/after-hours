@@ -20,7 +20,7 @@
         <div class="wrap doc-hero__grid">
           <div>
             <h1>The engine, as an API.</h1>
-            <p class="doc-lead">Everything the map does, from your own code: which defibrillators are open at a given hour, the nearest one you can actually reach, and the analysis of any list you bring. One click for a key. Nothing to install.</p>
+            <p class="doc-lead rise">Everything the map does, from your own code: which defibrillators are open at a given hour, the nearest one you can actually reach, and the analysis of any list you bring. One click for a key. Nothing to install.</p>
           </div>
           <div class="keybox" id="keybox" data-ui>
             <h2>Get a free key</h2>
@@ -37,7 +37,7 @@
 
       <section class="console-sec" aria-labelledby="console-title">
         <div class="wrap">
-          <h2 id="console-title">Try it live</h2>
+          <h2 id="console-title" class="rise">Try it live</h2>
           <p class="doc-sub">Pick a call, change anything, send it. With your key it goes to <code>/api/v1</code>, exactly as your code would; without one it uses the site's own route so you can look first.</p>
           <div class="console" data-ui>
             <div class="console__req">
@@ -63,7 +63,7 @@
 
       <section class="doc-sec" aria-labelledby="ref-title">
         <div class="wrap doc-two">
-          <h2 id="ref-title">Endpoints</h2>
+          <h2 id="ref-title" class="rise">Endpoints</h2>
           <div>
             <p>Base URL <code id="base-url">/api/v1</code>. Send your key in the <code>x-api-key</code> header. Responses are JSON. Times are local to the city: send <code>at=2026-11-01T03:00</code>, or leave it out for right now.</p>
             <table class="ref">
@@ -86,7 +86,7 @@
 
       <section class="doc-sec doc-sec--alt" id="mcp" aria-labelledby="mcp-title">
         <div class="wrap doc-two">
-          <h2 id="mcp-title">Use it from Claude</h2>
+          <h2 id="mcp-title" class="rise">Use it from Claude</h2>
           <div>
             <p>After Hours is also a remote MCP server, so an AI assistant can call it as a tool: "Which Bronx ZIPs have no defibrillator open after 9 PM?" or "Rank the schools in Harlem to make 24/7."</p>
             <p class="doc-step">Claude Code</p>
@@ -100,7 +100,7 @@
 
       <section class="doc-sec" aria-labelledby="rules-title">
         <div class="wrap doc-two">
-          <h2 id="rules-title">Fair use</h2>
+          <h2 id="rules-title" class="rise">Fair use</h2>
           <ul class="doc-list">
             <li>Each key: 5 requests a second, 1,000 a day, set by an Amazon API Gateway usage plan.</li>
             <li>Data is open: NYC Open Data terms, Licence Ouverte 2.0 for Géo'DAE. Credit the sources when you publish.</li>

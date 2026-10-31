@@ -701,3 +701,20 @@
   color: var(--faint);
   font-size: var(--step-small);
 }
+
+.product-shot {
+  margin-top: 64px !important;
+}
+.landing .product-shot img {
+  aspect-ratio: auto;
+  object-fit: contain;
+  transition: transform 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .product-shot a:hover img {
+    transform: scale(1.01);
+  }
+}
+.product-shot figcaption {
+  max-width: 70ch;
+}

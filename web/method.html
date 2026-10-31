@@ -19,7 +19,7 @@
       <section class="doc-hero">
         <div class="wrap">
           <h1>How it works.</h1>
-          <p class="doc-lead">In plain words, with every number traceable to a public source. If you only read one part, read the limits.</p>
+          <p class="doc-lead rise">In plain words, with every number traceable to a public source. If you only read one part, read the limits.</p>
           <nav class="toc" aria-label="On this page">
             <a href="#short">The short version</a>
             <a href="#data">The data</a>
@@ -38,7 +38,7 @@
 
       <section class="doc-sec" id="short" aria-labelledby="short-title">
         <div class="wrap doc-two">
-          <h2 id="short-title">The short version</h2>
+          <h2 id="short-title" class="rise">The short version</h2>
           <div class="doc-body">
             <p>When someone's heart stops, a bystander with an automated external defibrillator (AED) can restart it before the ambulance arrives. Cities publish where their AEDs are. They do not publish when you can actually get to one: most sit inside buildings that lock at night, at weekends and over the summer.</p>
             <p>After Hours gives each of New York's {{nyc:findings.locations|int}} registered AED locations a weekly timetable, draws the area within a two-minute walk of it on real streets, and replays {{nyc:findings.calls|int}} cardiac-arrest 911 calls from 2025 against those timetables. The result: {{nyc:findings.coverageLost.lostConservative|pct}} of the coverage a normal AED map shows was behind a locked door at the hour the calls came in.</p>
@@ -49,7 +49,7 @@
 
       <section class="doc-sec doc-sec--alt" id="data" aria-labelledby="data-title">
         <div class="wrap doc-two">
-          <h2 id="data-title">The data</h2>
+          <h2 id="data-title" class="rise">The data</h2>
           <div class="doc-body">
             <table class="ref">
               <thead><tr><th scope="col">Dataset</th><th scope="col">What we used</th></tr></thead>
@@ -67,7 +67,7 @@
 
       <section class="doc-sec" id="hours" aria-labelledby="hours-title">
         <div class="wrap doc-two">
-          <h2 id="hours-title">Opening hours</h2>
+          <h2 id="hours-title" class="rise">Opening hours</h2>
           <div class="doc-body">
             <p>Because New York's registry has no hours, we built a timetable for every location and kept a label saying where it came from. The map shows the label on every dot.</p>
             <table class="ref">
@@ -85,9 +85,13 @@
 
       <section class="doc-sec doc-sec--alt" id="walk" aria-labelledby="walk-title">
         <div class="wrap doc-two">
-          <h2 id="walk-title">Walking areas</h2>
+          <h2 id="walk-title" class="rise">Walking areas</h2>
           <div class="doc-body">
             <p>Research on AED coverage usually draws a 100 m circle. A circle walks through buildings and across rivers. Amazon Location Service (Routes, CalculateIsolines, travel mode Pedestrian) drew the area a person can walk in two minutes from each of the {{nyc:findings.locations|int}} locations, along real streets.</p>
+            <figure class="doc-fig">
+              <img src="/photos/map-east-new-york.jpg" width="1238" height="606" alt="The After Hours map at 9 PM on a Sunday in East New York, Brooklyn: red locked defibrillators with their small walking areas, and a yellow dashed walking route from a dropped pin to the one open defibrillator, far to the east." loading="lazy" />
+              <figcaption>Sunday, 9 PM, Atlantic and Pennsylvania Avenues, East New York. Every AED nearby is locked or of unknown hours; Amazon Location Service routes the walk to the nearest open one, an hour away. Basemap © AWS, © HERE.</figcaption>
+            </figure>
             <p>Two minutes there and two minutes back means the first shock comes about four minutes after the collapse, plus the time the AED takes to check the rhythm. Each minute without CPR and defibrillation costs roughly 7 to 10% of the chance of survival.</p>
           </div>
         </div>
@@ -95,7 +99,7 @@
 
       <section class="doc-sec" id="coverage" aria-labelledby="cov-title">
         <div class="wrap doc-two">
-          <h2 id="cov-title">Coverage</h2>
+          <h2 id="cov-title" class="rise">Coverage</h2>
           <div class="doc-body">
             <p>We laid a 50 m grid over the city ({{nyc:cells|int}} squares) and, for every hour of a school-year week and a summer week, asked of each square: is it inside the walking area of an AED that is open now?</p>
             <p>Calls are only published by ZIP code, so each ZIP's calls at a given hour are spread evenly over its squares. That gives two numbers we can compare:</p>
@@ -111,7 +115,7 @@
 
       <section class="doc-sec doc-sec--alt" id="ai" aria-labelledby="ai-title">
         <div class="wrap doc-two">
-          <h2 id="ai-title">The AI parts</h2>
+          <h2 id="ai-title" class="rise">The AI parts</h2>
           <div class="doc-body">
             <p><b>Estimating hours.</b> Before using Amazon Bedrock (Claude Haiku) on venues with no published hours, we tested it blind on {{nyc:aiGrade.venuesWithKnownHours|int}} venues whose hours Amazon Location Service does publish.</p>
             <table class="ref ref--nums">
@@ -131,7 +135,7 @@
 
       <section class="doc-sec" id="watch" aria-labelledby="watch-title">
         <div class="wrap doc-two">
-          <h2 id="watch-title">Registry watch</h2>
+          <h2 id="watch-title" class="rise">Registry watch</h2>
           <div class="doc-body">
             <p>Every night Amazon EventBridge Scheduler starts a job that copies New York's AED registry into an Apache Iceberg table on Amazon S3, using Amazon Athena. Iceberg keeps every version, so the job can compare tonight with the last night and publish what changed.</p>
             <div class="watch" id="watch-box" data-ui>
@@ -143,7 +147,7 @@
 
       <section class="doc-sec doc-sec--alt" id="pipeline" aria-labelledby="pipe-title">
         <div class="wrap">
-          <h2 id="pipe-title">The pipeline</h2>
+          <h2 id="pipe-title" class="rise">The pipeline</h2>
           <ol class="pipe">
             <li><b>Open data</b><span>NYC Open Data, Géo'DAE, Overture Maps on the Registry of Open Data on AWS</span></li>
             <li><b>Hours</b><span>School calendar, Amazon Location Places, Amazon Bedrock</span></li>
@@ -158,7 +162,7 @@
 
       <section class="doc-sec" id="limits" aria-labelledby="limits-title">
         <div class="wrap doc-two">
-          <h2 id="limits-title">Limits, measured</h2>
+          <h2 id="limits-title" class="rise">Limits, measured</h2>
           <div class="doc-body">
             <ul class="doc-list">
               <li><b>Calls are by ZIP code, not address.</b> We spread each ZIP's calls evenly over its streets. The ranking is a pointer for a site visit, not a verdict.</li>
@@ -175,7 +179,7 @@
 
       <section class="doc-sec doc-sec--alt" id="research" aria-labelledby="research-title">
         <div class="wrap doc-two">
-          <h2 id="research-title">Research</h2>
+          <h2 id="research-title" class="rise">Research</h2>
           <ol class="refs">
             <li>Sun CLF, Demirtas D, Brooks SC, Morrison LJ, Chan TCY. Overcoming spatial and temporal barriers to public access defibrillators via optimization. <i>J Am Coll Cardiol</i> 2016;68(8):836–845. In Toronto, 1 in 5 cardiac arrests near an AED happened while it was locked. <a href="https://www.jacc.org/doi/10.1016/j.jacc.2016.03.609" rel="noopener">Paper</a></li>
             <li>Hansen CM, Wissenberg M, Weeke P, et al. Automated external defibrillators inaccessible to more than half of nearby cardiac arrests in public locations during evening, nighttime, and weekends. <i>Circulation</i> 2013;128(20):2224–2231. In Copenhagen, coverage fell 53% outside office hours.</li>
@@ -187,7 +191,7 @@
 
       <section class="doc-sec" id="downloads" aria-labelledby="dl-title">
         <div class="wrap doc-two">
-          <h2 id="dl-title">Downloads</h2>
+          <h2 id="dl-title" class="rise">Downloads</h2>
           <ul class="dl-list">
             <li><a href="/data/nyc/sites.csv" download>NYC AED locations with hours and their source</a><span>CSV, {{nyc:findings.locations|int}} rows</span></li>
             <li><a href="/data/nyc/coverage.csv" download>Coverage by ZIP code at four moments of the week</a><span>CSV, 177 rows</span></li>

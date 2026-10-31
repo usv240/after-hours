@@ -23,6 +23,28 @@ export interface AiGuess {
 
 type Row = Record<string, string | undefined>;
 
+/**
+ * Some registrants are private people, and the challenge rules exclude personal data.
+ * A business entry that is only a common first name plus a surname is shown without its name.
+ */
+const FIRST_NAMES = new Set(
+  ("james john robert michael william david richard joseph thomas charles christopher daniel matthew anthony mark donald steven paul andrew joshua " +
+    "kenneth kevin brian george timothy ronald edward jason jeffrey ryan jacob gary nicholas eric erik jonathan stephen larry justin scott brandon " +
+    "benjamin samuel gregory alexander frank patrick raymond jack dennis jerry tyler aaron jose adam nathan henry douglas zachary peter kyle " +
+    "walter ethan jeremy harold keith christian roger noah gerald carl terry sean austin arthur lawrence jesse dylan bryan joe jordan billy bruce " +
+    "albert willie gabriel logan alan juan wayne roy ralph randy eugene vincent russell elijah louis bobby philip johnny mary patricia jennifer " +
+    "linda elizabeth barbara susan jessica sarah karen lisa nancy betty margaret sandra ashley kimberly emily donna michelle carol amanda dorothy " +
+    "melissa deborah stephanie rebecca sharon laura cynthia kathleen amy angela shirley anna brenda pamela emma nicole helen samantha katherine " +
+    "christine debra rachel carolyn janet catherine maria heather diane ruth julie olivia joyce virginia victoria kelly lauren christina joan evelyn " +
+    "judith megan andrea cheryl hannah jacqueline martha gloria teresa ann sara madison frances kathryn janice jean abigail alice judy sophia grace " +
+    "denise amber doris marilyn danielle beverly isabella theresa diana natalie brittany charlotte marie kayla alexis lori").split(" "),
+);
+export function looksLikePerson(name: string, group: string): boolean {
+  if (group !== "Business") return false;
+  const m = /^([A-Za-z]+)\s+(?:[A-Z]\.?\s+)?[A-Z][a-zA-Z'-]+$/.exec(name.trim());
+  return !!m && FIRST_NAMES.has(m[1].toLowerCase());
+}
+
 function main() {
   const rows = readJson<Row[]>(resolve(RAW, "nyc_aed.json"));
   const places = readJsonOr<Record<string, PlacesHit | null>>(resolve(CACHE, "nyc_places.json"), {});
@@ -52,9 +74,10 @@ function main() {
       if (floor && !existing.where.includes(floor) && existing.where.length < 160) existing.where = existing.where ? `${existing.where}; ${floor}` : floor;
       continue;
     }
+    const withheld = looksLikePerson(name, group);
     const site: PipelineSite = {
       id,
-      name,
+      name: withheld ? "Private business (name withheld)" : name,
       group,
       rawCategory: r.location_type ?? "",
       lat,
@@ -76,11 +99,15 @@ function main() {
     } else if (hit?.hours) {
       site.hours = hit.hours;
       site.hoursSource = "places";
-      site.hoursNote = `Opening hours of "${hit.title}" from Amazon Location Service, ${Math.round(hit.meters)} m from the registered position.`;
+      site.hoursNote = withheld
+        ? "Opening hours of the registered venue from Amazon Location Service."
+        : `Opening hours of "${hit.title}" from Amazon Location Service, ${Math.round(hit.meters)} m from the registered position.`;
     } else if (ai[id] && ai[id].confidence !== "abstain" && ai[id].hours) {
       site.hours = ai[id].hours;
       site.hoursSource = "ai";
-      site.hoursNote = `Estimated by Amazon Bedrock (${ai[id].confidence} confidence): ${ai[id].reason}`;
+      site.hoursNote = withheld
+        ? `Estimated by Amazon Bedrock (${ai[id].confidence} confidence) from the venue type.`
+        : `Estimated by Amazon Bedrock (${ai[id].confidence} confidence): ${ai[id].reason}`;
     }
     counts[site.hoursSource] = (counts[site.hoursSource] ?? 0) + 1;
     sites.push(site);

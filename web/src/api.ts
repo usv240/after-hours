@@ -1,6 +1,6 @@
 import "./styles/doc.css";
 import "./styles/app.css";
-import { el } from "./common.ts";
+import { el, revealOnScroll } from "./common.ts";
 
 interface Endpoint {
   id: string;
@@ -168,3 +168,4 @@ function init() {
 }
 
 init();
+revealOnScroll();

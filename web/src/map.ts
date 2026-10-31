@@ -532,7 +532,13 @@ function renderPin(r: { timeBlindNearest: Cand | null; nearestOpen: Cand | null;
     verdict,
     list,
     roundTrip
-      ? el("p", { class: "hint" }, `A bystander has to fetch it and come back: about ${minutes(roundTrip)}, before the first shock. Each minute without CPR and defibrillation costs roughly 7 to 10% of the chance of survival.`)
+      ? el(
+          "p",
+          { class: "hint" },
+          roundTrip > 20 * 60
+            ? `That is too far for anyone to fetch in time: a round trip of about ${minutes(roundTrip)}. Each minute without CPR and defibrillation costs roughly 7 to 10% of the chance of survival.`
+            : `A bystander has to fetch it and come back: about ${minutes(roundTrip)} before the first shock. Each minute without CPR and defibrillation costs roughly 7 to 10% of the chance of survival.`,
+        )
       : "",
     el("p", { class: "fine" }, `Walking times: ${r.routedBy}.`),
   );
