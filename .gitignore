@@ -1,0 +1,18 @@
+node_modules/
+dist/
+cdk.out/
+data/raw/
+data/cache/
+.taste-skill/
+.impeccable/
+.env
+*.log
+# private planning notes, not part of the project
+.serena/
+.vscode/
+.taste-sheet.txt
+IDEA.md
+Rules.md
+Rules.original.md
+submitted_projects.md
+winner_patterns.md

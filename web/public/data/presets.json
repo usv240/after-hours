@@ -1,0 +1,26 @@
+[
+  {
+    "id": "nyc",
+    "name": "New York City",
+    "city": "New York",
+    "sites": 4032,
+    "center": [
+      -73.94,
+      40.7
+    ],
+    "zoom": 10.2,
+    "regionLabel": "ZIP"
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "city": "Paris",
+    "sites": 2253,
+    "center": [
+      2.345,
+      48.858
+    ],
+    "zoom": 11.3,
+    "regionLabel": "Arrondissement"
+  }
+]

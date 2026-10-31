@@ -1,0 +1,4 @@
+name,latitude,longitude,address,opening_hours
+Example gym,40.7128,-74.0060,,Mo-Fr 06:00-22:00; Sa,Su 08:00-20:00
+Example office,,,"350 5th Ave, New York, NY 10118",Mo-Fr 09:00-17:00
+Example hospital,40.7900,-73.9530,,24/7

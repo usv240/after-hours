@@ -1,0 +1,23 @@
+<section class="stack" aria-labelledby="stack-title">
+  <div class="wrap stack__grid">
+    <div>
+      <h2 id="stack-title">Built on AWS, end to end</h2>
+      <p class="stack__intro">Every number on this site comes from this pipeline. The code is open, so any city can run it on its own data.</p>
+    </div>
+    <ul class="stack__list">
+      <li><b>Amazon Location Service · Maps</b><span>The dark basemap under every view.</span></li>
+      <li><b>Amazon Location Service · Places</b><span>Found the published opening hours of {{nyc:hoursSources.places|int}} venues that host an AED, and turns addresses into points for your own data.</span></li>
+      <li><b>Amazon Location Service · Routes</b><span>A two-minute walking area for every one of {{nyc:findings.locations|int}} AED locations, plus walking times and routes when you drop a pin.</span></li>
+      <li><b>Registry of Open Data on AWS</b><span>Overture Maps places: {{nyc:relocation.staffedBuildings|int}} fire stations, police stations and hospitals that could host a 24/7 cabinet.</span></li>
+      <li><b>Apache Iceberg tables on Amazon S3</b><span>A nightly snapshot of New York's AED registry. Iceberg keeps every version, so the site can show what changed.</span></li>
+      <li><b>Amazon Athena + AWS Glue Data Catalog</b><span>Writes the Iceberg snapshots, and queries Overture Maps where it sits on the Registry of Open Data.</span></li>
+      <li><b>Amazon Bedrock</b><span>Estimates hours where nothing is published, graded blind against known hours, and runs the two-sided debate.</span></li>
+      <li><b>Amazon API Gateway</b><span>The public API, with self-serve keys, usage plans and throttling.</span></li>
+      <li><b>AWS Lambda</b><span>The API, the MCP server for AI assistants, and the nightly refresh.</span></li>
+      <li><b>Amazon EventBridge Scheduler</b><span>Starts the refresh every night.</span></li>
+      <li><b>Amazon DynamoDB</b><span>Caps how many keys and AI debates can be created each day.</span></li>
+      <li><b>Amazon CloudFront + Amazon S3</b><span>Serves this site and its open data downloads.</span></li>
+      <li><b>AWS CDK</b><span>The whole stack in one deployable app.</span></li>
+    </ul>
+  </div>
+</section>

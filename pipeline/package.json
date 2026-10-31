@@ -1,0 +1,25 @@
+{
+  "name": "@after-hours/pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "fetch": "tsx src/fetch-nyc.ts",
+    "paris": "tsx src/fetch-paris.ts",
+    "hours": "tsx src/assign-hours.ts",
+    "places": "tsx src/enrich-places.ts",
+    "isolines": "tsx src/isolines.ts",
+    "infer": "tsx src/infer-hours.ts",
+    "build": "tsx src/build-presets.ts",
+    "all": "npm run fetch && npm run paris && npm run hours && npm run build",
+    "verify": "tsx src/verify.ts"
+  },
+  "dependencies": {
+    "@after-hours/engine": "*",
+    "@aws-sdk/client-athena": "^3.1161.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.1161.0",
+    "@aws-sdk/client-geo-places": "^3.1161.0",
+    "@aws-sdk/client-geo-routes": "^3.1161.0"
+  }
+}

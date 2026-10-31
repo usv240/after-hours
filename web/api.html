@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>After Hours API: get a key, call it live, use it from Claude</title>
+    <meta name="description" content="The After Hours engine as a public API on Amazon API Gateway. Create a free key in one click, try every endpoint live, or connect Claude and other AI assistants through MCP." />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.classList.add("js")</script>
+  </head>
+  <body class="doc-page">
+    <!--partial:header-->
+
+    <main>
+      <section class="doc-hero">
+        <div class="wrap doc-hero__grid">
+          <div>
+            <h1>The engine, as an API.</h1>
+            <p class="doc-lead">Everything the map does, from your own code: which defibrillators are open at a given hour, the nearest one you can actually reach, and the analysis of any list you bring. One click for a key. Nothing to install.</p>
+          </div>
+          <div class="keybox" id="keybox" data-ui>
+            <h2>Get a free key</h2>
+            <p>5 requests a second, 1,000 a day. No sign-up, no email. Shown once, so copy it.</p>
+            <form id="key-form" class="keybox__form">
+              <label class="visually-hidden" for="key-label">What will you build? (optional)</label>
+              <input class="input" id="key-label" maxlength="40" placeholder="What will you build? (optional)" />
+              <button class="button" type="submit" id="key-btn">Create my key</button>
+            </form>
+            <div id="key-out" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="console-sec" aria-labelledby="console-title">
+        <div class="wrap">
+          <h2 id="console-title">Try it live</h2>
+          <p class="doc-sub">Pick a call, change anything, send it. With your key it goes to <code>/api/v1</code>, exactly as your code would; without one it uses the site's own route so you can look first.</p>
+          <div class="console" data-ui>
+            <div class="console__req">
+              <label class="field__label" for="ep">Endpoint</label>
+              <select class="input" id="ep"></select>
+              <p class="console__desc" id="ep-desc"></p>
+              <label class="field__label" for="ep-params" id="ep-params-label">Query</label>
+              <textarea class="input console__params" id="ep-params" spellcheck="false" rows="7"></textarea>
+              <label class="field__label" for="ep-key">API key</label>
+              <input class="input" id="ep-key" placeholder="Paste a key, or create one above" autocomplete="off" />
+              <div class="actions">
+                <button class="button" type="button" id="send">Send request</button>
+                <button class="chip" type="button" id="copy-curl">Copy as curl</button>
+              </div>
+            </div>
+            <div class="console__res">
+              <p class="console__status" id="res-status">The response appears here.</p>
+              <pre><code id="res-body"></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-sec" aria-labelledby="ref-title">
+        <div class="wrap doc-two">
+          <h2 id="ref-title">Endpoints</h2>
+          <div>
+            <p>Base URL <code id="base-url">/api/v1</code>. Send your key in the <code>x-api-key</code> header. Responses are JSON. Times are local to the city: send <code>at=2026-11-01T03:00</code>, or leave it out for right now.</p>
+            <table class="ref">
+              <thead><tr><th scope="col">Call</th><th scope="col">What it answers</th></tr></thead>
+              <tbody>
+                <tr><td><code>GET /availability</code></td><td>How many AED locations are open, locked or unknown at a time. <code>preset</code>, <code>at</code>, <code>schoolClose</code> (15, 18, 21), <code>includeAi</code>, <code>list=1</code> for every site.</td></tr>
+                <tr><td><code>GET /nearest</code></td><td>From <code>lat</code>, <code>lon</code>: the nearest AED by walking time, the nearest one that is open, and how much longer it takes. Walking times from Amazon Location Service. <code>route=1</code> adds the walking line.</td></tr>
+                <tr><td><code>GET /relocation</code></td><td>NYC schools ranked by after-hours cardiac-arrest calls within a two-minute walk. <code>limit</code> up to 100.</td></tr>
+                <tr><td><code>GET /summary</code></td><td>Every headline number for a preset, with sources.</td></tr>
+                <tr><td><code>GET /presets</code></td><td>The cities available and how their hours were built.</td></tr>
+                <tr><td><code>POST /analyze</code></td><td>Bring your own list: <code>{"timeZone", "sites":[{"name","lat","lon","hours"}]}</code>. Returns open counts for every hour of a week, peak, trough, unreadable rows, and each site's 336-hour pattern.</td></tr>
+                <tr><td><code>POST /geocode</code></td><td>Up to 25 addresses to points, with Amazon Location Service.</td></tr>
+                <tr><td><code>POST /isolines</code></td><td>Up to 25 points to walking areas: <code>{"points":[[lon,lat]], "seconds":120}</code>.</td></tr>
+              </tbody>
+            </table>
+            <p class="fine">Opening hours use <a href="https://wiki.openstreetmap.org/wiki/Key:opening_hours" rel="noopener">OpenStreetMap syntax</a>. Anything unreadable is treated as unknown, never as open.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-sec doc-sec--alt" id="mcp" aria-labelledby="mcp-title">
+        <div class="wrap doc-two">
+          <h2 id="mcp-title">Use it from Claude</h2>
+          <div>
+            <p>After Hours is also a remote MCP server, so an AI assistant can call it as a tool: "Which Bronx ZIPs have no defibrillator open after 9 PM?" or "Rank the schools in Harlem to make 24/7."</p>
+            <p class="doc-step">Claude Code</p>
+            <pre><code id="mcp-cmd">claude mcp add --transport http after-hours https://YOUR-SITE/api/mcp</code></pre>
+            <p class="doc-step">Claude Desktop, Cursor or any MCP client that reads JSON config</p>
+            <pre><code id="mcp-json"></code></pre>
+            <p>Tools: <code>aed_availability</code>, <code>nearest_open_aed</code>, <code>relocation_candidates</code>, <code>city_findings</code>, <code>analyze_sites</code>. Read-only, throttled, no key needed.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-sec" aria-labelledby="rules-title">
+        <div class="wrap doc-two">
+          <h2 id="rules-title">Fair use</h2>
+          <ul class="doc-list">
+            <li>Each key: 5 requests a second, 1,000 a day, set by an Amazon API Gateway usage plan.</li>
+            <li>Data is open: NYC Open Data terms, Licence Ouverte 2.0 for Géo'DAE. Credit the sources when you publish.</li>
+            <li>It is a planning tool. Never put it between someone and 911.</li>
+            <li>The code is Apache-2.0. Run your own copy with one <code>cdk deploy</code>.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!--partial:stack-->
+    <!--partial:footer-->
+    <script type="module" src="/src/api.ts"></script>
+  </body>
+</html>

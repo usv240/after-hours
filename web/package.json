@@ -1,0 +1,19 @@
+{
+  "name": "@after-hours/web",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@after-hours/engine": "*",
+    "maplibre-gl": "5.24.0"
+  },
+  "devDependencies": {
+    "vite": "7.3.7"
+  }
+}

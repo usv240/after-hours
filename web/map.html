@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>After Hours map: New York's defibrillators, hour by hour</title>
+    <meta name="description" content="Scrub through a week and watch each of New York City's {{nyc:findings.locations|int}} public defibrillator locations go dark when its building locks. Drop a pin to find the nearest one that is actually open." />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.classList.add("js")</script>
+  </head>
+  <body class="app-page">
+    <!--partial:header-->
+
+    <main class="app" id="app">
+      <aside class="panel" aria-label="Map controls">
+        <div class="panel__scroll">
+          <div class="panel__top">
+            <h1 class="panel__title"><span id="city-name">New York</span>, hour by hour</h1>
+            <div class="seg seg--sm" role="radiogroup" aria-label="City">
+              <button role="radio" aria-checked="true" data-preset="nyc">New York</button>
+              <button role="radio" aria-checked="false" data-preset="paris">Paris</button>
+            </div>
+          </div>
+          <p class="panel__intro" id="city-intro">Each dot is a building with a public defibrillator. Its glow is the area within a two-minute walk. Move the clock and watch which ones lock.</p>
+
+          <section class="block" aria-labelledby="clock-title">
+            <h2 class="block__title" id="clock-title">When</h2>
+            <p class="when" aria-live="polite"><span id="when-day">Tuesday</span>, <span id="when-hour">2 PM</span></p>
+            <div class="seg" role="radiogroup" aria-label="Day of the week" id="days"></div>
+            <div class="hour">
+              <input type="range" id="hour" min="0" max="23" step="1" value="14" aria-label="Hour of the day" />
+              <div class="hour__ticks" aria-hidden="true"><span>12a</span><span>6a</span><span>noon</span><span>6p</span><span>11p</span></div>
+            </div>
+            <div class="clock-row">
+              <div class="seg seg--sm" role="radiogroup" aria-label="Time of year" id="season">
+                <button role="radio" aria-checked="true" data-season="school">School year</button>
+                <button role="radio" aria-checked="false" data-season="summer">Summer</button>
+              </div>
+              <button class="chip" id="now" type="button">Now</button>
+              <button class="chip" id="play" type="button" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path id="play-icon" d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg><span>Play the week</span></button>
+            </div>
+          </section>
+
+          <section class="block" aria-labelledby="count-title">
+            <h2 class="block__title" id="count-title">Defibrillator locations at this hour</h2>
+            <div class="tally" data-ui>
+              <div class="tally__bar" aria-hidden="true"><span class="t-open" id="bar-open"></span><span class="t-closed" id="bar-closed"></span><span class="t-unknown" id="bar-unknown"></span></div>
+              <dl class="tally__nums">
+                <div><dt><i class="dot dot--open"></i>Open</dt><dd class="num" id="n-open">–</dd></div>
+                <div><dt><i class="dot dot--closed"></i>Locked</dt><dd class="num" id="n-closed">–</dd></div>
+                <div><dt><i class="dot dot--unknown"></i>Hours unknown</dt><dd class="num" id="n-unknown">–</dd></div>
+              </dl>
+            </div>
+            <p class="cover" id="cover-line"></p>
+            <div class="weekstrip" id="weekstrip" role="img" aria-label="Open defibrillator locations for every hour of the week"></div>
+            <div class="weekstrip__days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </section>
+
+          <div class="tabs" role="tablist" aria-label="Tools">
+            <button role="tab" id="tab-explore" aria-controls="pane-explore" aria-selected="true">Explore</button>
+            <button role="tab" id="tab-pin" aria-controls="pane-pin" aria-selected="false">Collapse here</button>
+            <button role="tab" id="tab-relocation" aria-controls="pane-relocation" aria-selected="false">Make it 24/7</button>
+          </div>
+
+          <section class="pane" id="pane-explore" role="tabpanel" aria-labelledby="tab-explore">
+            <h2 class="block__title">Assumptions you can change</h2>
+            <div class="field" id="school-field">
+              <p class="field__label">School buildings lock at</p>
+              <div class="seg seg--sm" role="radiogroup" aria-label="School closing time" id="school-close">
+                <button role="radio" aria-checked="false" data-close="15">3 PM</button>
+                <button role="radio" aria-checked="true" data-close="18">6 PM</button>
+                <button role="radio" aria-checked="false" data-close="21">9 PM</button>
+              </div>
+            </div>
+            <label class="switch" id="ai-field">
+              <input type="checkbox" id="include-ai" />
+              <span class="switch__track" aria-hidden="true"></span>
+              <span>Count AI-estimated hours <small id="ai-note">Amazon Bedrock's estimates for venues with no published hours. Off by default because they call a shut venue open {{nyc:aiGrade.falseOpenShare|pct1}} of the time.</small></span>
+            </label>
+            <h2 class="block__title">Show on the map</h2>
+            <label class="check"><input type="checkbox" id="layer-catch" checked /> Two-minute walking areas</label>
+            <label class="check"><input type="checkbox" id="layer-regions" checked /> <span id="region-layer-label">ZIP codes, shaded by cardiac-arrest calls at this hour</span></label>
+            <label class="check"><input type="checkbox" id="layer-points" checked /> Defibrillator locations</label>
+            <p class="hint">Click any location to see its week and where its hours came from.</p>
+          </section>
+
+          <section class="pane" id="pane-pin" role="tabpanel" aria-labelledby="tab-pin" hidden>
+            <h2 class="block__title">If someone collapsed here</h2>
+            <p class="hint">Click anywhere on the map. Amazon Location Service walks the real streets to the nearest defibrillators and checks which ones are open at the hour you picked.</p>
+            <form class="search" id="search" role="search">
+              <label class="visually-hidden" for="search-input">Address</label>
+              <input id="search-input" type="search" placeholder="Or type an address" autocomplete="off" />
+              <button class="button button--quiet" type="submit">Go</button>
+            </form>
+            <div id="pin-result" aria-live="polite"></div>
+            <p class="emergency"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>In a real emergency call 911 first. Dispatchers know where the AEDs are.</p>
+          </section>
+
+          <section class="pane" id="pane-relocation" role="tabpanel" aria-labelledby="tab-relocation" hidden>
+            <h2 class="block__title">Schools to make 24/7 first</h2>
+            <p class="hint">Ranked by the 2025 cardiac-arrest calls expected inside each school's two-minute walk at hours when every AED in reach was locked. A weatherproof cabinet on the street wall would have put one in reach.</p>
+            <a class="dl" href="/data/nyc/relocation.csv" download>Download all 100 as CSV</a>
+            <ol class="rank" id="rank"></ol>
+            <div id="debate" aria-live="polite"></div>
+          </section>
+        </div>
+      </aside>
+
+      <div class="mapwrap">
+        <div id="map" role="application" aria-label="Map of defibrillator locations"></div>
+        <div class="map-legend" aria-hidden="true">
+          <span><i class="dot dot--open"></i>open</span>
+          <span><i class="dot dot--closed"></i>locked</span>
+          <span><i class="dot dot--unknown"></i>unknown</span>
+        </div>
+        <div class="map-status" id="map-status" role="status">Loading 4,000 locations…</div>
+      </div>
+    </main>
+
+    <!--partial:stack-->
+    <!--partial:footer-->
+    <script type="module" src="/src/map.ts"></script>
+  </body>
+</html>

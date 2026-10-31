@@ -1,0 +1,25 @@
+{
+  "name": "after-hours",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "workspaces": [
+    "packages/engine",
+    "pipeline",
+    "web",
+    "api",
+    "mcp",
+    "infra"
+  ],
+  "scripts": {
+    "test": "npm run test -w packages/engine",
+    "pipeline": "npm run all -w pipeline",
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "verify": "npm run verify -w pipeline"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

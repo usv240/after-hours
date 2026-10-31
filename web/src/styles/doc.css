@@ -1,0 +1,359 @@
+/* Read pages: How it works, API. One measure, generous rhythm, the same tokens. */
+
+.doc-page .site-header {
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.doc-hero {
+  padding-block: clamp(64px, 9vw, 128px) clamp(48px, 6vw, 88px);
+}
+.doc-hero h1 {
+  font-size: var(--step-display);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+.doc-lead {
+  margin-top: 28px;
+  font-size: var(--step-lead);
+  line-height: 1.38;
+  max-width: 40ch;
+}
+.doc-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: end;
+}
+
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 40px;
+}
+.toc a {
+  padding: 8px 14px;
+  background: var(--surface);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: background-color 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toc a:hover {
+    background: var(--surface-3);
+  }
+}
+
+.doc-sec {
+  padding-block: clamp(64px, 8vw, 120px);
+  scroll-margin-top: 16px;
+}
+.doc-sec--alt {
+  background: var(--surface);
+}
+.doc-sec--alt .ref td,
+.doc-sec--alt .ref th {
+  border-color: var(--surface-3);
+}
+.doc-sec h2,
+.console-sec h2 {
+  font-size: var(--step-head);
+  max-width: 9em;
+}
+.doc-two {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: start;
+}
+.doc-two > h2 {
+  position: sticky;
+  top: 24px;
+  font-size: clamp(2.25rem, 1rem + 3vw, 4rem);
+}
+.doc-body > * + * {
+  margin-top: 20px;
+}
+.doc-body p,
+.doc-two > div > p {
+  max-width: 66ch;
+}
+.doc-two > div > * + * {
+  margin-top: 18px;
+}
+.doc-sub {
+  margin-top: 18px;
+  color: var(--muted);
+  max-width: 66ch;
+}
+.doc-step {
+  font-weight: 800;
+  margin-top: 28px !important;
+}
+.doc-list {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 12px;
+  max-width: 70ch;
+}
+.doc-list li::marker {
+  color: var(--school);
+}
+.doc-page pre {
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--surface-2);
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+.doc-sec--alt pre {
+  background: var(--bg);
+}
+.doc-page :not(pre) > code {
+  background: var(--surface-2);
+  padding: 1px 6px;
+  font-size: 0.85em;
+}
+
+/* Tables: real tables keep their lines. */
+.ref {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.ref th,
+.ref td {
+  text-align: left;
+  vertical-align: top;
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--surface-2);
+}
+.ref th {
+  color: var(--muted);
+  font-weight: 500;
+}
+.ref td:first-child {
+  min-width: 150px;
+}
+.ref small {
+  color: var(--faint);
+}
+.ref .num {
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 800;
+}
+.ref--nums td:first-child {
+  width: 70%;
+}
+
+/* Pipeline */
+.pipe {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  counter-reset: none;
+}
+.pipe li {
+  background: var(--bg);
+  padding: 20px 18px 24px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  position: relative;
+}
+.pipe li b {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.pipe li span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.pipe li:nth-child(1) {
+  border-top: 6px solid var(--school);
+}
+.pipe li:nth-child(2) {
+  border-top: 6px solid var(--school);
+}
+.pipe li:nth-child(3),
+.pipe li:nth-child(4) {
+  border-top: 6px solid var(--open);
+}
+.pipe li:nth-child(5),
+.pipe li:nth-child(6) {
+  border-top: 6px solid var(--night);
+}
+@media (max-width: 1000px) {
+  .pipe {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.refs {
+  margin: 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 16px;
+  max-width: 72ch;
+}
+
+.dl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.dl-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  background: var(--surface);
+  padding: 16px 18px;
+}
+.dl-list a {
+  font-weight: 500;
+}
+.dl-list span {
+  color: var(--faint);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.watch {
+  background: var(--surface);
+  padding: 20px 22px;
+}
+.watch dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+.watch dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.watch dd {
+  margin: 4px 0 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* API page */
+.keybox {
+  background: var(--aed);
+  padding: 28px;
+}
+.keybox h2 {
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+.keybox > p {
+  margin-top: 10px;
+}
+.keybox__form {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+.keybox .input {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.keybox .input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+.keybox .button {
+  background: var(--ink);
+  color: var(--bg);
+  justify-content: center;
+}
+.keybox__key {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  background: rgba(0, 0, 0, 0.28);
+  padding: 10px 12px;
+}
+.keybox__key code {
+  flex: 1;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
+}
+.keybox .fine {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.console-sec {
+  padding-block: clamp(56px, 7vw, 104px);
+  background: var(--surface);
+}
+.console {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 6px;
+  margin-top: 36px;
+}
+.console__req,
+.console__res {
+  background: var(--bg);
+  padding: 24px;
+  min-width: 0;
+}
+.console__req .field__label {
+  margin-top: 16px;
+}
+.console__req .field__label:first-child {
+  margin-top: 0;
+}
+.console__desc {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.console__params {
+  width: 100%;
+  font-family: var(--code);
+  font-size: 0.875rem;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.console__status {
+  font-weight: 500;
+  color: var(--muted);
+}
+.console__status.is-ok {
+  color: var(--open);
+}
+.console__status.is-bad {
+  color: #ff8a80;
+}
+.console__res pre {
+  margin-top: 14px;
+  max-height: 560px;
+  overflow: auto;
+  background: var(--surface);
+}
+
+@media (max-width: 900px) {
+  .doc-two,
+  .doc-hero__grid,
+  .console {
+    grid-template-columns: 1fr;
+  }
+  .doc-two > h2 {
+    position: static;
+  }
+}

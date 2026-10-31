@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your data: test any list of places that keep hours</title>
+    <meta name="description" content="Upload a CSV or GeoJSON of defibrillators, naloxone boxes, cooling centres or any places with opening hours, and see when they are actually reachable, hour by hour. Addresses are geocoded with Amazon Location Service." />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.classList.add("js")</script>
+  </head>
+  <body class="app-page">
+    <!--partial:header-->
+
+    <main class="app" id="app">
+      <aside class="panel" aria-label="Your data">
+        <div class="panel__scroll">
+          <h1 class="panel__title">Test your own list</h1>
+          <p class="panel__intro">Any list of places that keep hours: defibrillators in your city, naloxone boxes, cooling centres, late-night pharmacies. Your file never leaves your browser, except addresses that need turning into map points.</p>
+
+          <section class="block" aria-labelledby="in-title">
+            <h2 class="block__title" id="in-title">1. Add a file</h2>
+            <label class="drop" id="drop">
+              <input type="file" id="file" accept=".csv,.txt,.geojson,.json" />
+              <b>Drop a CSV or GeoJSON here</b>
+              <span>or click to choose one. Up to 5,000 rows.</span>
+            </label>
+            <p class="field__label samples__label">Or start from a real sample</p>
+            <div class="samples">
+              <button class="chip" type="button" data-sample="/samples/nyc-sample.csv">40 NYC venues</button>
+              <button class="chip" type="button" data-sample="/samples/nyc-addresses.csv">12 addresses, no coordinates</button>
+              <button class="chip" type="button" data-sample="/samples/paris-sample.geojson">60 Paris AEDs (GeoJSON)</button>
+            </div>
+            <p class="fine">Columns are found by name: <code>name</code>, <code>latitude</code>/<code>longitude</code> or <code>address</code>, and <code>opening_hours</code> in <a href="https://wiki.openstreetmap.org/wiki/Key:opening_hours" rel="noopener">OpenStreetMap format</a> such as <code>Mo-Fr 09:00-17:00</code> or <code>24/7</code>. <a href="/samples/template.csv" download>Download a template</a>.</p>
+          </section>
+
+          <section class="block" aria-labelledby="cols-title" id="cols" hidden>
+            <h2 class="block__title" id="cols-title">2. Check the columns</h2>
+            <div class="cols" id="col-map"></div>
+            <div class="field">
+              <p class="field__label">Time zone of these places</p>
+              <select class="input" id="tz"></select>
+            </div>
+          </section>
+
+          <section class="block" aria-labelledby="out-title" id="out" hidden>
+            <h2 class="block__title" id="out-title">3. When can people reach them?</h2>
+            <p class="when"><span id="when-day">Tuesday</span>, <span id="when-hour">2 PM</span></p>
+            <div class="seg" role="radiogroup" aria-label="Day of the week" id="days"></div>
+            <div class="hour">
+              <input type="range" id="hour" min="0" max="23" value="14" aria-label="Hour of the day" />
+              <div class="hour__ticks" aria-hidden="true"><span>12a</span><span>6a</span><span>noon</span><span>6p</span><span>11p</span></div>
+            </div>
+            <div class="tally" data-ui>
+              <div class="tally__bar" aria-hidden="true"><span class="t-open" id="bar-open"></span><span class="t-closed" id="bar-closed"></span><span class="t-unknown" id="bar-unknown"></span></div>
+              <dl class="tally__nums">
+                <div><dt><i class="dot dot--open"></i>Open</dt><dd class="num" id="n-open">–</dd></div>
+                <div><dt><i class="dot dot--closed"></i>Closed</dt><dd class="num" id="n-closed">–</dd></div>
+                <div><dt><i class="dot dot--unknown"></i>Unknown</dt><dd class="num" id="n-unknown">–</dd></div>
+              </dl>
+            </div>
+            <div class="weekstrip" id="weekstrip" role="img" aria-label="Open places for every hour of the week"></div>
+            <div class="weekstrip__days" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+            <ul class="facts" id="facts"></ul>
+            <div class="actions">
+              <button class="button" type="button" id="download">Download results (CSV)</button>
+              <button class="chip" type="button" id="route-areas">Route walking areas</button>
+            </div>
+            <p class="fine" id="route-note">Walking areas start as 130 m circles. "Route walking areas" asks Amazon Location Service for real two-minute walks, for up to 25 places.</p>
+            <div id="issues"></div>
+            <details class="evidence api-snippet">
+              <summary>The same analysis through the API</summary>
+              <pre><code id="snippet"></code></pre>
+              <p class="fine"><a href="/api.html">Get a free key</a> and send your list from your own code.</p>
+            </details>
+          </section>
+        </div>
+      </aside>
+
+      <div class="mapwrap">
+        <div id="map" role="application" aria-label="Map of your places"></div>
+        <div class="map-legend" aria-hidden="true">
+          <span><i class="dot dot--open"></i>open</span>
+          <span><i class="dot dot--closed"></i>closed</span>
+          <span><i class="dot dot--unknown"></i>unknown</span>
+        </div>
+        <div class="map-status" id="map-status" role="status">Add a file or pick a sample to begin.</div>
+      </div>
+    </main>
+
+    <!--partial:stack-->
+    <!--partial:footer-->
+    <script type="module" src="/src/data.ts"></script>
+  </body>
+</html>

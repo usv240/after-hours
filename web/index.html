@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>After Hours: which defibrillators you can reach, hour by hour</title>
+    <meta name="description" content="A live map of New York City's {{nyc:findings.locations|int}} public defibrillator (AED) locations that shows which ones are behind an unlocked door at any hour, and where a 24/7 cabinet would reach the most cardiac arrests. Built on Amazon Location Service." />
+    <meta property="og:title" content="After Hours: defibrillators keep office hours" />
+    <meta property="og:description" content="Confirmed-open AED locations in New York fall from {{nyc:figures.openTue2pm|int}} on a Tuesday afternoon to {{nyc:figures.openSun3am|int}} at 3 AM on Sunday. Cardiac arrest keeps no hours." />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.classList.add("js")</script>
+  </head>
+  <body class="landing">
+    <!--partial:header-->
+
+    <main>
+      <!-- Hero: a 24-hour dial, cropped by the screen. Outer ring: AED locations confirmed open. Inner ring: 2025 cardiac-arrest calls. -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__copy wrap">
+          <h1 id="hero-title">Defibrillators keep office hours.</h1>
+          <p class="hero__lead">
+            After Hours maps New York City's {{nyc:findings.locations|int}} public defibrillator locations by the hour, showing which ones sit behind an unlocked door, and where a 24/7 cabinet would reach the most cardiac arrests.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="/map.html">Open the live map</a>
+            <a class="hero__link" href="#school">See what we found</a>
+          </div>
+          <div class="readout" aria-live="polite">
+            <p class="readout__when" id="readout-when">On a school-year Tuesday at 2 PM</p>
+            <p class="readout__count"><span class="num" id="readout-open">{{nyc:figures.openTue2pm|int}}</span> of {{nyc:findings.locations|int}} locations confirmed open</p>
+            <p class="readout__calls" id="readout-calls">The outer ring is AEDs you can reach. The inner ring is when 2025's cardiac-arrest calls came.</p>
+          </div>
+        </div>
+        <div class="dial" id="dial" role="slider" tabindex="0" aria-label="Hour of the day" aria-valuemin="0" aria-valuemax="23" aria-valuenow="14" aria-valuetext="2 PM">
+          <svg viewBox="-100 -100 200 200" aria-hidden="true">
+            <g id="dial-outer"></g>
+            <g id="dial-inner"></g>
+            <g id="dial-labels"></g>
+            <line id="dial-hand" x1="0" y1="0" x2="0" y2="-99" />
+            <circle cx="0" cy="0" r="3.2" class="dial__pin" />
+          </svg>
+        </div>
+        <p class="hero__hint">Drag the hand, or use the arrow keys.</p>
+      </section>
+
+      <!-- Chapter: school-bus yellow -->
+      <section class="chapter chapter--school" id="school" aria-labelledby="school-title">
+        <div class="wrap">
+          <h2 id="school-title" class="rise">Half of them are in schools.</h2>
+          <div class="chapter__text rise">
+            <p class="lead">
+              {{nyc:findings.schoolLocations|int}} of the city's {{nyc:findings.locations|int}} registered AED locations are school buildings. Outside Manhattan it is {{nyc:findings.schoolShareOutsideManhattan|pct}}: Brooklyn {{nyc:findings.schoolShareBrooklyn|pct}}, the Bronx {{nyc:findings.schoolShareBronx|pct}}, Queens {{nyc:findings.schoolShareQueens|pct}}, Staten Island {{nyc:findings.schoolShareStatenIsland|pct}}. In Manhattan, where offices and gyms carry the load, it is {{nyc:findings.schoolShareManhattan|pct}}.
+            </p>
+          </div>
+          <div class="week-bar rise" data-ui aria-label="A school AED's week">
+            <div class="week-bar__seg week-bar__seg--open" style="flex-grow: 55">
+              <span class="week-bar__dur">55 hours</span>
+            </div>
+            <div class="week-bar__seg week-bar__seg--night" style="flex-grow: 65">
+              <span class="week-bar__dur">65 hours</span>
+            </div>
+            <div class="week-bar__seg week-bar__seg--weekend" style="flex-grow: 48">
+              <span class="week-bar__dur">48 hours</span>
+            </div>
+          </div>
+          <div class="week-bar__notes rise">
+            <p style="flex-grow: 55">Open: weekdays, roughly 7 AM to 6 PM, while the building is staffed.</p>
+            <p style="flex-grow: 65">Locked: every weeknight.</p>
+            <p style="flex-grow: 48">Locked: all weekend.</p>
+          </div>
+          <p class="chapter__coda rise">That is one school-year week: 168 hours, 55 of them reachable. From late June to early September, all 168 hours are locked. On a Tuesday afternoon in August, {{nyc:figures.openAugTue2pm|int}} locations are confirmed open across the whole city.</p>
+          <div class="school-row">
+            <figure class="rise">
+              <img src="/photos/ps108-brooklyn.jpg" width="1200" height="1500" alt="The red-brick facade of P.S. 108 Sal Abbracciamento in Brooklyn, its arched entrance closed." loading="lazy" />
+              <figcaption>P.S. 108 Sal Abbracciamento, ZIP 11208, Brooklyn. Its registered AED is inside.</figcaption>
+            </figure>
+            <figure class="rise">
+              <img src="/photos/ps91-bronx.jpg" width="1200" height="1500" alt="A tall Victorian public school building on Ogden Avenue in Highbridge, the Bronx." loading="lazy" />
+              <figcaption>Public School 91, Highbridge, the Bronx.</figcaption>
+            </figure>
+            <figure class="rise">
+              <img src="/photos/ps45-brooklyn.jpg" width="1200" height="1500" alt="A modern brick public school building in Brooklyn with a covered entrance." loading="lazy" />
+              <figcaption>Public School 45, Brooklyn.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chapter: night blue -->
+      <section class="chapter chapter--night" id="night" aria-labelledby="night-title">
+        <div class="wrap">
+          <h2 id="night-title" class="rise">Cardiac arrest keeps no hours.</h2>
+        </div>
+        <div class="wrap chapter__split chapter__split--wide">
+          <div>
+            <p class="lead rise">
+              In 2025, the FDNY sent ambulances to {{nyc:findings.calls|int}} calls that its dispatchers closed as cardiac arrest. {{nyc:findings.callsWhenSchoolsShut|int}} of them, {{nyc:findings.callsWhenSchoolsShutShare|pct}}, came while school buildings were shut.
+            </p>
+            <p class="rise chapter__small">
+              Confirmed-open AED locations: {{nyc:figures.openTue5pm|int}} at 5 PM on a school Tuesday, {{nyc:figures.openTue6pm|int}} at 6 PM, {{nyc:figures.openSun3am|int}} at 3 AM on Sunday.
+            </p>
+          </div>
+          <figure class="hours-chart rise" data-ui>
+            <div class="hours-chart__row">
+              <p class="hours-chart__label">Cardiac-arrest calls, 2025, by hour of day</p>
+              <div class="hours-chart__bars" id="chart-calls"></div>
+            </div>
+            <div class="hours-chart__row">
+              <p class="hours-chart__label">AED locations confirmed open, school-year Tuesday</p>
+              <div class="hours-chart__bars hours-chart__bars--aed" id="chart-aeds"></div>
+            </div>
+            <div class="hours-chart__axis" aria-hidden="true"><span>midnight</span><span>6 AM</span><span>noon</span><span>6 PM</span><span>11 PM</span></div>
+            <figcaption>Sources: FDNY EMS Incident Dispatch Data (final call type ARREST); NYC AED Inventory, with hours from the school calendar and Amazon Location Service. Venues with unknown hours are not counted as open.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- Chapter: locked red -->
+      <section class="chapter chapter--locked" id="locked" aria-labelledby="locked-title">
+        <div class="wrap">
+          <h2 id="locked-title" class="rise">Covered on paper, locked at night.</h2>
+          <div class="chapter__split chapter__split--wide">
+            <p class="lead rise">
+              Every AED map counts every defibrillator as available. We weighted each street by where and when 2025's cardiac arrests actually happened, then asked whether the nearest AED within a two-minute walk was open at that hour. {{nyc:findings.coverageLost.lostConservative|pct}} of the coverage a time-blind map shows was behind a locked door.
+            </p>
+            <div class="compare rise" data-ui>
+              <div class="compare__row">
+                <p>What a time-blind map shows</p>
+                <div class="compare__bar" style="--w: 1"><span class="num">{{nyc:calls.byVariant.18.timeBlindCoverage|pct1}}</span></div>
+              </div>
+              <div class="compare__row">
+                <p>What was open when the calls came</p>
+                <div class="compare__bar compare__bar--open" style="--w: {{nyc:calls.byVariant.18.actualCoverage}}; --of: {{nyc:calls.byVariant.18.timeBlindCoverage}}"><span class="num">{{nyc:calls.byVariant.18.actualCoverage|pct1}}</span></div>
+              </div>
+              <p class="compare__note">Share of call-weighted street area within a two-minute walk of an AED, routed on real streets by Amazon Location Service.</p>
+            </div>
+          </div>
+          <p class="chapter__coda rise">
+            This holds up under the kindest assumption: even if every venue whose hours are unknown were open around the clock, {{nyc:findings.coverageLost.lostIfUnknownWereOpen|pct}} of the coverage would still be locked away. Keep schools open until 9 PM and it is {{nyc:findings.coverageLostSchools9pm.lostIfUnknownWereOpen|pct}}.
+          </p>
+        </div>
+      </section>
+
+      <!-- Proof: the schools to change first, running off both edges -->
+      <section class="names" aria-labelledby="names-title">
+        <h2 id="names-title" class="visually-hidden">The ten schools to change first</h2>
+        <div class="names__band" aria-hidden="true">
+          <div class="names__track" id="names-track"></div>
+        </div>
+        <div class="wrap names__after">
+          <p>
+            The ten school defibrillators that would have put the most of 2025's after-hours cardiac arrests within a two-minute walk, if each sat in a 24/7 cabinet on the school's street wall. Top of the list: {{nyc:relocation.top.0.name}} in ZIP {{nyc:relocation.top.0.zip}}.
+          </p>
+          <a class="button button--quiet" href="/map.html#relocation">See the ranked list of 100</a>
+        </div>
+      </section>
+
+      <!-- The remedy, photographed -->
+      <section class="fix" aria-labelledby="fix-title">
+        <div class="wrap fix__grid">
+          <figure class="fix__main rise">
+            <img src="/photos/cabinet-dingle.jpg" width="1400" height="1750" alt="A yellow weatherproof defibrillator cabinet mounted on a stone wall, with pictograms for calling for help, CPR and using the AED." loading="lazy" />
+            <figcaption>A street-wall AED cabinet in Dingle, County Kerry, Ireland.</figcaption>
+          </figure>
+          <div class="fix__copy">
+            <h2 id="fix-title" class="rise">The fix is a box on the wall.</h2>
+            <p class="lead rise">A weatherproof cabinet on the outside of a building keeps a defibrillator reachable at 3 AM, on Sundays and through August. The device is the same one already inside the school. Only the door changes.</p>
+            <p class="rise">For {{nyc:relocation.withStaffedBuildingNearby|int}} of the 100 schools on our list, Overture Maps shows a fire station, police station or hospital within 400 m that is staffed through the night: a second place a cabinet could go.</p>
+            <figure class="fix__side rise">
+              <img src="/photos/cabinet-mundesley.jpg" width="1200" height="1500" alt="Two yellow and green defibrillator cabinets fixed to a white wall beside a shop window on a village street." loading="lazy" />
+              <figcaption>Outdoor cabinets on Station Road, Mundesley, Norfolk, England.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- What you can do -->
+      <section class="abilities" aria-labelledby="abilities-title">
+        <div class="wrap">
+          <ol class="abilities__list">
+            <li class="abilities__row abilities__row--head"><h2 id="abilities-title">What you can do here</h2></li>
+            <li class="abilities__row rise">
+              <a href="/map.html"><span class="abilities__name">Scrub the week</span></a>
+              <p>Drag through any hour of a school-year week or a summer week and watch each two-minute walking area go dark.</p>
+            </li>
+            <li class="abilities__row rise">
+              <a href="/map.html#pin"><span class="abilities__name">Collapse here</span></a>
+              <p>Drop a pin anywhere. Amazon Location Service walks the real streets to the nearest AEDs and tells you which one is open, and how much longer it takes to reach.</p>
+            </li>
+            <li class="abilities__row rise">
+              <a href="/data.html"><span class="abilities__name">Bring your own list</span></a>
+              <p>Upload a CSV or GeoJSON of places with opening hours: AEDs in your city, naloxone boxes, cooling centres. Addresses are turned into map points for you.</p>
+            </li>
+            <li class="abilities__row rise">
+              <a href="/api.html"><span class="abilities__name">Get an API key</span></a>
+              <p>Create a key in one click and call the same engine from your own code, or from Claude and other AI assistants through MCP.</p>
+            </li>
+            <li class="abilities__row rise">
+              <a href="/map.html#relocation"><span class="abilities__name">Hear both sides</span></a>
+              <p>Two AI agents argue whether a school's AED should move outdoors, citing only the data. A third gives the verdict and the next step.</p>
+            </li>
+            <li class="abilities__row rise">
+              <a href="/method.html#downloads"><span class="abilities__name">Take the data</span></a>
+              <p>Every table behind the map, as CSV, under the same open licences as the sources.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Plain answers -->
+      <section class="faq" aria-labelledby="faq-title">
+        <div class="wrap faq__grid">
+          <div class="faq__side">
+            <h2 id="faq-title">Plain answers</h2>
+            <figure>
+              <img src="/photos/aed-wall.jpg" width="1200" height="1500" alt="A green public AED sign above a round wall cabinet holding a defibrillator, on a street in Bielsko-Biała, Poland." loading="lazy" />
+              <figcaption>A public AED: the green heart and lightning sign, and the box you open. Bielsko-Biała, Poland.</figcaption>
+            </figure>
+          </div>
+          <div class="faq__list">
+            <details name="faq" open>
+              <summary>What is an AED?<span class="plus" aria-hidden="true"></span></summary>
+              <p>An automated external defibrillator is a portable box that checks the heart's rhythm and, if it finds one that a shock can fix, delivers that shock. It speaks each step out loud. You do not need training to use one, and it will not shock someone who does not need it.</p>
+            </details>
+            <details name="faq">
+              <summary>Why does the time of day matter?<span class="plus" aria-hidden="true"></span></summary>
+              <p>Because a defibrillator inside a locked building cannot be fetched, and the shock has to come before the ambulance does. In a large US study of witnessed public cardiac arrests with a shockable heart rhythm, 66.5% of people shocked by a bystander with a public AED survived to leave hospital, against 43.0% of those who waited for the ambulance crew (Pollack et al., Circulation, 2018).</p>
+            </details>
+            <details name="faq">
+              <summary>Is this an emergency service?<span class="plus" aria-hidden="true"></span></summary>
+              <p>No. It is a planning tool for cities, schools and residents. In an emergency, call 911 first: dispatchers can talk you through CPR and send help.</p>
+            </details>
+            <details name="faq">
+              <summary>Where do the opening hours come from?<span class="plus" aria-hidden="true"></span></summary>
+              <p>New York's AED registry has no hours, so we built them, and every location says where its hours came from. {{nyc:findings.schoolLocations|int}} schools use the public-school calendar. {{nyc:hoursSources.places|int}} venues use the opening hours Amazon Location Service publishes for them. For {{nyc:hoursSources.ai|int}} more, Amazon Bedrock made an estimate that we show but never count as open in the headline numbers. {{nyc:hoursSources.unknown|int}} remain unknown.</p>
+            </details>
+            <details name="faq">
+              <summary>How good are the AI estimates?<span class="plus" aria-hidden="true"></span></summary>
+              <p>We tested them blind on {{nyc:aiGrade.venuesWithKnownHours|int}} venues whose real hours we know. They agreed on {{nyc:aiGrade.hourAgreement|pct}} of the hours in a week, but called a venue open when it was shut {{nyc:aiGrade.falseOpenShare|pct1}} of the time. That error points the dangerous way, so the headline numbers leave AI estimates out. You can switch them on in the map.</p>
+            </details>
+            <details name="faq">
+              <summary>How is "covered" measured?<span class="plus" aria-hidden="true"></span></summary>
+              <p>Amazon Location Service routed a two-minute walk from each of the {{nyc:findings.locations|int}} locations along real streets. We laid a 50-metre grid over the city, counted which grid squares fall inside an open AED's walking area at each hour of the week, and weighted each ZIP code by the cardiac-arrest calls that came from it at that hour.</p>
+            </details>
+            <details name="faq">
+              <summary>Can I check my own city?<span class="plus" aria-hidden="true"></span></summary>
+              <p>Yes. Upload a list of places with opening hours on the Your data page, or call the API. France already makes every AED owner declare hours: in Paris, confirmed-open AEDs fall from {{paris:figures.openTue2pm|int}} on a Tuesday afternoon to {{paris:figures.openSun3am|int}} at 3 AM on Sunday.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <p class="wrap credits">Photographs from Wikimedia Commons: P.S. 108, Brooklyn, by Smallbones (CC BY-SA 3.0); P.S. 91, Highbridge, by Jim.henderson (public domain); Public School 45, Brooklyn, by Clyde Charles Brown (CC BY-SA 4.0); Dingle cabinet by Mucklagh (CC BY-SA 4.0); Mundesley cabinets by Kolforn (CC BY-SA 4.0); Bielsko-Biała AED by Silar (CC BY-SA 4.0). <a href="/photos/credits.json">Full credits and links</a>.</p>
+    </main>
+
+    <!--partial:stack-->
+    <!--partial:footer-->
+    <script type="module" src="/src/landing.ts"></script>
+  </body>
+</html>
