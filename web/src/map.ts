@@ -605,6 +605,8 @@ function renderPin(r: { timeBlindNearest: Cand | null; nearestOpen: Cand | null;
     r.route.line.forEach((p) => bounds.extend(p));
   }
   drawCandidates(near, open);
+  // When the nearest AED is under the pin (a school's own), show the surrounding block, not a zero-size box.
+  bounds.extend([at[0] - 0.0025, at[1] - 0.0016]).extend([at[0] + 0.0025, at[1] + 0.0016]);
   map.fitBounds(bounds, { padding: { top: 80, bottom: 80, left: 80, right: 80 }, maxZoom: 16.5, duration: 700 });
 }
 
@@ -988,7 +990,7 @@ interface Beat {
   hold: number;
 }
 const story = { i: -1, timer: 0, started: 0, left: 0, paused: false, token: 0, card: null as HTMLElement | null };
-const EAST_NEW_YORK: [number, number] = [-73.8945, 40.6705];
+const PS_151: [number, number] = [-73.94763, 40.77785];
 
 function setClock(day: number, hour: number, season: Season = "school") {
   Object.assign(state, { day, hour, season });
@@ -1052,18 +1054,34 @@ function beats(): Beat[] {
         text: `of the coverage an ordinary AED map shows was locked at the hour the calls came. Even if every venue with unknown hours were open around the clock, ${pct(k.coverageLost.lostIfUnknownWereOpen)} would still be lost.`,
       }),
     },
+    // One sidewalk, two hours: outside P.S. 151, where teachers used the school's AED to save a colleague
+    // after school in 2025 (NY1). The same question, three hours later, gets a different answer.
     {
-      hold: 9500,
+      hold: 8000,
       run: async () => {
-        setClock(6, 21);
+        setClock(0, 16);
         setTab("pin");
-        const r = await dropPin(EAST_NEW_YORK, "a corner in East New York");
+        const r = await dropPin(PS_151, "outside P.S. 151");
+        const near = r?.timeBlindNearest;
+        if (!near) return { tone: "ink", big: "P.S. 151", text: "Monday, 4 PM. Drop your own pin to walk the streets to the nearest open defibrillator." };
+        return {
+          tone: near.state === "open" ? "open" : "closed",
+          big: near.state === "open" ? "Open" : minutes(near.walkSeconds),
+          text: `Monday, 4 PM, outside P.S. 151 on the Upper East Side, where teachers used the school's AED to save a colleague after school in 2025. The nearest defibrillator is ${near.group === "School" ? "the school's own" : near.name}, and ${near.state === "open" ? "the doors are open" : "it is locked"}.`,
+        };
+      },
+    },
+    {
+      hold: 8500,
+      run: async () => {
+        setClock(0, 19);
+        const r = await dropPin(PS_151, "outside P.S. 151");
         const near = r?.timeBlindNearest, open = r?.nearestOpen;
-        if (!near) return { tone: "ink", big: "East New York", text: "Sunday, 9 PM. Drop your own pin to walk the streets to the nearest open defibrillator." };
+        if (!near) return { tone: "ink", big: "P.S. 151", text: "Monday, 7 PM. Drop your own pin to walk the streets to the nearest open defibrillator." };
         return {
           tone: "closed",
           big: open ? minutes(open.walkSeconds) : "None open",
-          text: `Sunday, 9 PM, East New York. The nearest defibrillator is a ${Math.max(1, Math.round(near.walkSeconds / 60))}-minute walk, but it is ${near.state === "closed" ? "locked" : "of unknown hours"}. The nearest open one is ${open ? `${minutes(open.walkSeconds)} away on foot` : "out of reach"}. Routed by Amazon Location Service.`,
+          text: `Same sidewalk, 7 PM. The school's AED is ${near.state === "closed" ? "locked" : "of unknown hours"}. The nearest open one is ${open ? `${open.group === "Gym" ? "a gym" : open.name}, ${minutes(open.walkSeconds)} away on foot` : "out of reach"}. Routed by Amazon Location Service.`,
         };
       },
     },
@@ -1083,11 +1101,11 @@ function beats(): Beat[] {
         setTab("relocation");
         state.fixed = n;
         renderFix();
-        setClock(6, 21);
+        setClock(6, 3);
         cityView();
         return {
           big: `+${Math.round(gain)} a year`,
-          text: `Move the AEDs of the ${n} schools where it matters most into 24/7 cabinets on the street wall, and at least ${Math.round(gain)} more of a year's cardiac arrests have one in reach${v ? `, ${Math.round((100 * gain) / (v.calls * v.actualCoverage))}% more than today` : ""}. First on the list: ${top.name}.${verdict ? ` Two AI agents argued its case; the verdict: ${verdict}.` : ""}`,
+          text: `Sunday, 3 AM again, with the AEDs of the ${n} schools where it matters most in 24/7 cabinets on the street wall. Modelled on 2025, at least ${Math.round(gain)} more cardiac-arrest calls a year would have had one in reach${v ? `, ${Math.round((100 * gain) / (v.calls * v.actualCoverage))}% more than today` : ""}. First on the list: ${top.name}.${verdict ? ` Two AI agents argued its case; the verdict: ${verdict}.` : ""}`,
           extra: el("a", { class: "story__link", href: `/brief.html?id=${top.id}` }, "Open its one-page brief"),
         };
       },
