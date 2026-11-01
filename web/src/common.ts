@@ -28,20 +28,38 @@ export function revealOnScroll(root: ParentNode = document) {
     items.forEach((el) => el.classList.add("is-in"));
     return;
   }
+  const pending = new Set(items);
+  const show = (el: HTMLElement) => {
+    el.classList.add("is-in");
+    pending.delete(el);
+    io.unobserve(el);
+  };
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {
         if (!e.isIntersecting) continue;
         const el = e.target as HTMLElement;
         const siblings = [...(el.parentElement?.querySelectorAll(":scope > .rise") ?? [])];
-        el.style.transitionDelay = `${Math.max(0, siblings.indexOf(el)) * 80}ms`;
-        el.classList.add("is-in");
-        io.unobserve(el);
+        // Stagger the first few siblings only, so a long list never waits half a second.
+        el.style.transitionDelay = `${Math.min(3, Math.max(0, siblings.indexOf(el))) * 80}ms`;
+        show(el);
       }
     },
     { rootMargin: "0px 0px -12% 0px" },
   );
   items.forEach((el) => io.observe(el));
+  // A jump (an anchor link, Page Down, End) can carry a short element past the viewport without it
+  // ever intersecting, which would leave it invisible: after each scroll, show anything already passed.
+  let queued = false;
+  const sweep = () => {
+    queued = false;
+    for (const el of pending) if (el.getBoundingClientRect().top < innerHeight * 0.88) show(el);
+    if (!pending.size) removeEventListener("scroll", onScroll);
+  };
+  const onScroll = () => {
+    if (!queued) (queued = true), requestAnimationFrame(sweep);
+  };
+  addEventListener("scroll", onScroll, { passive: true });
 }
 
 export async function getJson<T>(url: string): Promise<T> {

@@ -619,6 +619,73 @@
   max-width: 40ch;
 }
 
+/* A real collapse at a school in the registry, and what the map says about the same sidewalk later. */
+.case {
+  margin-top: 96px;
+}
+.case__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+  line-height: 1.08;
+  font-weight: 800;
+  max-width: 14em;
+}
+.case__story p {
+  margin: 24px 0 0;
+  max-width: 46ch;
+}
+.case__quote {
+  margin: 40px 0 0;
+}
+.case__quote p {
+  margin: 0;
+  font-size: var(--step-lead);
+  line-height: 1.3;
+  font-weight: 500;
+  max-width: 30ch;
+}
+.case__quote footer {
+  margin-top: 12px;
+}
+.case__quote a {
+  color: inherit;
+}
+.case__label {
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+.case__rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.case__rows li {
+  display: grid;
+  grid-template-columns: 9.5em minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px;
+  background: var(--aed);
+  color: var(--aed-ink);
+}
+.case__rows li.is-locked {
+  background: var(--locked);
+  color: var(--locked-ink);
+}
+.case__when {
+  font-weight: 800;
+}
+.case__ask .button {
+  margin-top: 24px;
+}
+@media (max-width: 520px) {
+  .case__rows li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
 .school-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
