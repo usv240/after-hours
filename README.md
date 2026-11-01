@@ -22,11 +22,12 @@ Built for the AWS Builder Center *Weekend Challenge: Map it* (October–November
 |---|---|
 | NYC AED locations that are school buildings | 1,925 of 4,032 (48%); 69% outside Manhattan |
 | 2025 cardiac-arrest calls while school buildings were shut | 16,285 of 25,448 (64%) |
-| Confirmed-open AED locations, school-year Tuesday 2 PM → Sunday 3 AM | 2,636 → 52 |
+| AED locations open by published hours or the school day, school-year Tuesday 2 PM → Sunday 3 AM | 2,636 → 52 |
 | Coverage a time-blind map shows that was locked at the hour calls came | 69% |
 | …even if every venue with unknown hours were open 24/7 | 39% |
-| Paris (France makes owners declare hours): confirmed open, Tue 2 PM → Sun 3 AM | 838 → 219 |
-| 2025 calls with an open AED within a two-minute walk, today → with 24/7 cabinets at the top 100 schools | about 363 → at least 448 (+23%) |
+| Paris (France makes owners declare hours): open by declared hours, Tue 2 PM → Sun 3 AM | 838 → 219 |
+| 2025 calls with an open AED within a two-minute walk, today → with 24/7 cabinets at the top 100 schools (modelled; calls are known by ZIP code) | about 363 → at least 448 (+23%) |
+| Same 100 cabinets chosen by After Hours vs. ignoring hours vs. at random (calls a year newly in reach) | 85.8 vs. 74.3 vs. 26.2 |
 
 Try the last row on the map: **Make 24/7** → *Put a 24/7 cabinet outside the top 10 / 25 / 50 / 100* relights those schools at every hour ([top 100 at Sunday 3 AM](https://dqcf6x4e7zbds.cloudfront.net/map.html?t=6-3&fix=100#relocation)).
 
@@ -37,7 +38,7 @@ Every number is computed by the pipeline in this repo and written to `web/public
 ```sh
 npm install
 npm test             # 16 tests: the engine, and the API against the published data (offline)
-npm run verify       # 25 claims in this README and the article, recomputed from the downloadable CSVs
+npm run verify       # 29 claims in this README and the article, recomputed from the downloadable data
 npm run verify:live  # …plus 6 questions asked of the live API, as the article quotes them
 npm run eval         # "Ask the map" on 72 fixed questions (calls Amazon Bedrock and Amazon Location)
 ```

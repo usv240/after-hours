@@ -817,7 +817,7 @@ function schoolIntro(r: Relocation) {
     el("h3", { class: "debate__title" }, r.name),
     el("p", {}, `${r.expectedCallsPerYear.toFixed(2)} cardiac-arrest calls a year inside its two-minute walk while every AED in reach was locked.`),
     r.altHost
-      ? el("p", { class: "hint" }, `Another option: ${r.altHost.name}, a ${r.altHost.category} staffed around the clock, is ${r.altHost.meters} m away (Overture Maps, via Amazon Athena).`)
+      ? el("p", { class: "hint" }, `Another option: ${r.altHost.name}, a ${r.altHost.category} normally staffed around the clock (public access unverified), is ${r.altHost.meters} m away (Overture Maps, via Amazon Athena).`)
       : "",
     el("a", { class: "dl", href: `/brief.html?id=${r.id}` }, "Open the one-page brief for this school"),
   ];
@@ -1034,7 +1034,7 @@ function beats(): Beat[] {
       hold: 7500,
       run: () => {
         setClock(6, 3);
-        return { tone: "closed", big: fmt.format(f.openSun3am), text: "are confirmed open at 3 AM on a Sunday, in a city of eight million. The rest are locked, or nobody has published their hours." };
+        return { tone: "closed", big: fmt.format(f.openSun3am), text: "are open by their published hours at 3 AM on a Sunday, in a city of eight million. The rest are shut by their hours, or nobody has published them." };
       },
     },
     {

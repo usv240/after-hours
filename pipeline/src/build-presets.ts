@@ -25,6 +25,7 @@ import {
 import { CACHE, OUT, RAW, readJson, readJsonOr, writeJson } from "./paths.ts";
 import type { PipelineSite } from "./sites.ts";
 import { credibleHosts } from "./hosts.ts";
+import { rankingEval } from "./ranking-eval.ts";
 
 const STATES = HOURS_IN_WEEK * 2;
 const CELL_M = 50;
@@ -354,6 +355,26 @@ function build(preset: Preset) {
     };
     summary.findings = findings(preset, t, cov, headlineKey, cellCount);
     summary.relocation = relocation(preset, cells, cellCount, statesFor(t, { key: headlineKey, close: DEFAULT_CLOSE, ai: false }), t.base, dir);
+    // Does the ranking beat simpler ways of choosing, and does it hold under other assumptions?
+    const regionIndex = new Map(preset.regions.map((r, i) => [r.id, i]));
+    const at = (close: number, ai: boolean) => statesFor(t, { key: `${close}${ai ? "a" : ""}`, close, ai });
+    const evalOut = rankingEval(
+      cells,
+      preset.calls,
+      cellCount,
+      (i) => t.base[i] === -1,
+      (i) => regionIndex.get(preset.sites[i].zip) ?? 0,
+      siteCount,
+      [
+        { key: "base", label: "As published: schools lock at 6 PM, unknown hours count as shut", states: at(DEFAULT_CLOSE, false), unknownOpen: false },
+        { key: "close15", label: "Schools lock at 3 PM", states: at(15, false), unknownOpen: false },
+        { key: "close21", label: "Schools stay open until 9 PM", states: at(21, false), unknownOpen: false },
+        { key: "unknownOpen", label: "Every venue of unknown hours open around the clock", states: at(DEFAULT_CLOSE, false), unknownOpen: true },
+        { key: "ai", label: "Bedrock's estimated hours counted", states: at(DEFAULT_CLOSE, true), unknownOpen: false },
+      ],
+    );
+    writeJson(resolve(dir, "ranking-eval.json"), evalOut);
+    summary.rankingEval = evalOut;
     summary.gapRegions = preset.regions
       .map((r, i) => {
         const calls = preset.calls![i].reduce((a, b) => a + b, 0);

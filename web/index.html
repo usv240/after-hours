@@ -6,7 +6,7 @@
     <title>After Hours: which defibrillators you can reach, hour by hour</title>
     <meta name="description" content="A live map of New York City's {{nyc:findings.locations|int}} public defibrillator (AED) locations that shows which ones are behind an unlocked door at any hour, and where a 24/7 cabinet would reach the most cardiac arrests. Built on Amazon Location Service." />
     <meta property="og:title" content="After Hours: defibrillators keep office hours" />
-    <meta property="og:description" content="Confirmed-open AED locations in New York fall from {{nyc:figures.openTue2pm|int}} on a Tuesday afternoon to {{nyc:figures.openSun3am|int}} at 3 AM on Sunday. Cardiac arrest keeps no hours." />
+    <meta property="og:description" content="AED locations open by their published hours or the school day in New York fall from {{nyc:figures.openTue2pm|int}} on a Tuesday afternoon to {{nyc:figures.openSun3am|int}} at 3 AM on Sunday. Cardiac arrest keeps no hours." />
     <meta name="theme-color" content="#fbfbf9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://api.fontshare.com" />
@@ -18,7 +18,7 @@
     <!--partial:header-->
 
     <main>
-      <!-- Hero: a 24-hour dial, cropped by the screen. Outer ring: AED locations confirmed open. Inner ring: 2025 cardiac-arrest calls. -->
+      <!-- Hero: a 24-hour dial, cropped by the screen. Outer ring: AED locations open by published or school hours. Inner ring: 2025 cardiac-arrest calls. -->
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__copy wrap">
           <h1 id="hero-title">Defibrillators keep office hours.</h1>
@@ -31,7 +31,7 @@
           </div>
           <div class="readout" aria-live="polite">
             <p class="readout__when" id="readout-when">On a school-year Tuesday at 2 PM</p>
-            <p class="readout__count"><span class="num" id="readout-open">{{nyc:figures.openTue2pm|int}}</span> of {{nyc:findings.locations|int}} locations confirmed open</p>
+            <p class="readout__count"><span class="num" id="readout-open">{{nyc:figures.openTue2pm|int}}</span> of {{nyc:findings.locations|int}} locations open, by published or school hours</p>
             <p class="readout__calls" id="readout-calls">The outer ring is AEDs you can reach. The inner ring is when 2025's cardiac-arrest calls came.</p>
           </div>
         </div>
@@ -120,7 +120,7 @@
               In 2025, the FDNY sent ambulances to {{nyc:findings.calls|int}} calls that its dispatchers closed as cardiac arrest. {{nyc:findings.callsWhenSchoolsShut|int}} of them, {{nyc:findings.callsWhenSchoolsShutShare|pct}}, came while school buildings were shut.
             </p>
             <p class="rise chapter__small">
-              Confirmed-open AED locations: {{nyc:figures.openTue5pm|int}} at 5 PM on a school Tuesday, {{nyc:figures.openTue6pm|int}} at 6 PM, {{nyc:figures.openSun3am|int}} at 3 AM on Sunday.
+              AED locations open by published or school hours: {{nyc:figures.openTue5pm|int}} at 5 PM on a school Tuesday, {{nyc:figures.openTue6pm|int}} at 6 PM, {{nyc:figures.openSun3am|int}} at 3 AM on Sunday.
             </p>
           </div>
           <figure class="hours-chart rise" data-ui>
@@ -129,7 +129,7 @@
               <div class="hours-chart__bars" id="chart-calls"></div>
             </div>
             <div class="hours-chart__row">
-              <p class="hours-chart__label">AED locations confirmed open, school-year Tuesday</p>
+              <p class="hours-chart__label">AED locations open by published or school hours, school-year Tuesday</p>
               <div class="hours-chart__bars hours-chart__bars--aed" id="chart-aeds"></div>
             </div>
             <div class="hours-chart__axis" aria-hidden="true"><span>midnight</span><span>6 AM</span><span>noon</span><span>6 PM</span><span>11 PM</span></div>
@@ -163,7 +163,7 @@
           </p>
           <figure class="product-shot rise">
             <a href="/map.html#pin"><img src="/photos/map-east-new-york.jpg" width="1238" height="606" alt="The After Hours map at 9 PM on a Sunday in East New York: locked defibrillators in red, and a yellow walking route from a dropped pin to the one open defibrillator, about an hour away." loading="lazy" /></a>
-            <figcaption>The live map, Sunday at 9 PM, East New York. The nearest AED is a one-minute walk but its hours are unknown; the nearest one confirmed open is an hour away on foot. Drop your own pin on the map.</figcaption>
+            <figcaption>The live map, Sunday at 9 PM, East New York. The nearest AED is a one-minute walk but its hours are unknown; the nearest one open by its published hours is an hour away on foot. Drop your own pin on the map.</figcaption>
           </figure>
         </div>
       </section>
@@ -275,7 +275,7 @@
             </details>
             <details name="faq">
               <summary>Can I check my own city?<span class="plus" aria-hidden="true"></span></summary>
-              <p>Yes. Upload a list of places with opening hours on the Your data page, or call the API. France already makes every AED owner declare hours: in Paris, confirmed-open AEDs fall from {{paris:figures.openTue2pm|int}} on a Tuesday afternoon to {{paris:figures.openSun3am|int}} at 3 AM on Sunday.</p>
+              <p>Yes. Upload a list of places with opening hours on the Your data page, or call the API. France already makes every AED owner declare hours: in Paris, AEDs open by their declared hours fall from {{paris:figures.openTue2pm|int}} on a Tuesday afternoon to {{paris:figures.openSun3am|int}} at 3 AM on Sunday.</p>
             </details>
           </div>
         </div>

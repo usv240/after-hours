@@ -80,7 +80,7 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
           "li",
           {},
           el("b", {}, `A host that never closes. `),
-          `${b.altHost.name}, a ${b.altHost.category}, is ${b.altHost.meters} m away and is normally staffed around the clock. An AED there, reachable from the street, would cover nights, weekends and summer.`,
+          `${b.altHost.name}, a ${b.altHost.category}, is ${b.altHost.meters} m away and is normally staffed around the clock (whether the public could reach an AED there is unverified). An AED there, reachable from the street, would cover nights, weekends and summer.`,
         )
       : el("li", {}, el("b", {}, "No always-staffed building within 400 m. "), "Overture Maps lists no fire station, police station or hospital this close, so the street-wall cabinet is the practical option."),
   );
@@ -130,7 +130,7 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
         el(
           "dl",
           { class: "bfacts" },
-          fact("Other AED locations within 400 m", fmt.format(b.nearby.within400m), `${b.nearby.open247} open around the clock, ${b.nearby.openSunday9pm} confirmed open at 9 PM on a Sunday`),
+          fact("Other AED locations within 400 m", fmt.format(b.nearby.within400m), `${b.nearby.open247} open around the clock, ${b.nearby.openSunday9pm} open by published hours at 9 PM on a Sunday`),
           fact(`Cardiac-arrest calls in ZIP ${b.zip}, 2025`, fmt.format(b.zipCalls2025), "FDNY dispatches, final call type ARREST"),
           fact("Where the AEDs are inside", "", b.where || "Not recorded"),
         ),
@@ -154,7 +154,7 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
         "ol",
         { class: "bnext" },
         el("li", {}, el("b", {}, "See it after dark. "), "Walk past after 6 PM. The map assumes the doors are locked; an evening programme with someone at the door would change that."),
-        el("li", {}, el("b", {}, "Ask the school. "), "The principal and the custodian engineer know where the AED is, whether the street wall can take a heated cabinet, and who would check it."),
+        el("li", {}, el("b", {}, "Ask the school. "), "Before any move: where the AED is now, whether the street wall can take a heated, alarmed cabinet, who inspects it monthly, and approval from the school and the DOE."),
         b.council
           ? el(
               "li",

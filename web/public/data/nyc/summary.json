@@ -25,7 +25,7 @@
       "licence": "NYC Open Data terms of use"
     }
   ],
-  "generatedAt": "2026-11-01T16:59:20.994Z",
+  "generatedAt": "2026-11-01T20:01:04.160Z",
   "catchment": {
     "kind": "isoline",
     "seconds": 120,
@@ -4538,6 +4538,101 @@
         "lat": 40.79273391,
         "expectedCallsPerYear": 1.18,
         "altHost": null
+      }
+    ]
+  },
+  "rankingEval": {
+    "method": "F(S): expected 2025 cardiac-arrest calls a year inside the two-minute walk of at least one chosen school, at hours when no AED in reach was open. Calls are spread evenly over each ZIP's 50 m squares; a square reached by two chosen schools counts once.",
+    "schoolsConsidered": 1843,
+    "before": 363,
+    "methods": [
+      {
+        "cabinets": 10,
+        "afterHours": 13.3,
+        "afterHoursCredited": 13,
+        "greedy": 13.3,
+        "busiestWalk": 10.5,
+        "fewestAeds": 2,
+        "random": 2.7
+      },
+      {
+        "cabinets": 25,
+        "afterHours": 28.6,
+        "afterHoursCredited": 28.1,
+        "greedy": 29,
+        "busiestWalk": 26.4,
+        "fewestAeds": 7.1,
+        "random": 6.7
+      },
+      {
+        "cabinets": 50,
+        "afterHours": 50.6,
+        "afterHoursCredited": 49.6,
+        "greedy": 51.5,
+        "busiestWalk": 46.7,
+        "fewestAeds": 15,
+        "random": 13.2
+      },
+      {
+        "cabinets": 100,
+        "afterHours": 85.8,
+        "afterHoursCredited": 84.3,
+        "greedy": 88,
+        "busiestWalk": 74.3,
+        "fewestAeds": 27.1,
+        "random": 26.2
+      }
+    ],
+    "sensitivity": [
+      {
+        "key": "base",
+        "label": "As published: schools lock at 6 PM, unknown hours count as shut",
+        "before": 363,
+        "gainTop100": 85.8,
+        "gainPct": 24,
+        "top25Kept": 25,
+        "top100Kept": 100,
+        "sameFirst": true
+      },
+      {
+        "key": "close15",
+        "label": "Schools lock at 3 PM",
+        "before": 302,
+        "gainTop100": 98.9,
+        "gainPct": 33,
+        "top25Kept": 22,
+        "top100Kept": 92,
+        "sameFirst": true
+      },
+      {
+        "key": "close21",
+        "label": "Schools stay open until 9 PM",
+        "before": 417,
+        "gainTop100": 74.6,
+        "gainPct": 18,
+        "top25Kept": 21,
+        "top100Kept": 93,
+        "sameFirst": true
+      },
+      {
+        "key": "unknownOpen",
+        "label": "Every venue of unknown hours open around the clock",
+        "before": 713,
+        "gainTop100": 79.5,
+        "gainPct": 11,
+        "top25Kept": 20,
+        "top100Kept": 88,
+        "sameFirst": true
+      },
+      {
+        "key": "ai",
+        "label": "Bedrock's estimated hours counted",
+        "before": 516,
+        "gainTop100": 84.7,
+        "gainPct": 16,
+        "top25Kept": 22,
+        "top100Kept": 98,
+        "sameFirst": true
       }
     ]
   },

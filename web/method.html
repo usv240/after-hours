@@ -58,10 +58,10 @@
             <table class="ref">
               <thead><tr><th scope="col">Dataset</th><th scope="col">What we used</th></tr></thead>
               <tbody>
-                <tr><td><a href="https://data.cityofnewyork.us/d/2er2-jqsx" rel="noopener">NYC AED Inventory</a><br /><small>NYC Open Data</small></td><td>{{nyc:registry.registryRows|int}} rows, one per AED unit. Merged to {{nyc:findings.locations|int}} locations ({{nyc:aeds|int}} AEDs). Names, positions, category, floor. No opening hours.</td></tr>
+                <tr><td><a href="https://data.cityofnewyork.us/d/2er2-jqsx" rel="noopener">NYC AED Inventory</a><br /><small>NYC Open Data</small></td><td>{{nyc:registry.registryRows|int}} rows, usually one per floor of a building, each with a count of AEDs. Exact repeats dropped ({{nyc:registry.uniqueRows|int}} left), then rows with the same name, address and position merged: {{nyc:findings.locations|int}} locations holding {{nyc:aeds|int}} AEDs. Names, positions, category, floor. No opening hours.</td></tr>
                 <tr><td><a href="https://data.cityofnewyork.us/d/76xm-jjuj" rel="noopener">FDNY EMS Incident Dispatch Data</a><br /><small>NYC Open Data</small></td><td>{{nyc:findings.calls|int}} dispatches in 2025 whose final call type was cardiac arrest (<code>ARREST</code>), counted by ZIP code, weekday, hour and month. The city publishes only the ZIP code, so we never see an exact location.</td></tr>
                 <tr><td><a href="https://data.cityofnewyork.us/d/pri4-ifjk" rel="noopener">ZIP code areas (MODZCTA)</a><br /><small>NYC Open Data</small></td><td>The 177 ZIP areas the calls are counted in, with population estimates.</td></tr>
-                <tr><td><a href="https://www.data.gouv.fr/datasets/geodae-base-nationale-des-defibrillateurs" rel="noopener">Géo'DAE</a><br /><small>France, Licence Ouverte 2.0</small></td><td>{{paris:registry.registry|int}} rows in the national registry, of which {{paris:sites|int}} are working AEDs in Paris. French law makes every owner declare when their AED can be reached, so Paris is our check on how much hours matter.</td></tr>
+                <tr><td><a href="https://www.data.gouv.fr/datasets/geodae-base-nationale-des-defibrillateurs" rel="noopener">Géo'DAE</a><br /><small>France, Licence Ouverte 2.0</small></td><td>{{paris:registry.registry|int}} rows in the national registry, of which {{paris:sites|int}} are working AEDs in Paris. French law makes every owner declare when their AED can be reached, so Paris shows the same pattern from declared hours. It is an independent illustration, not a check on New York's estimate: the two registries are built differently.</td></tr>
                 <tr><td><a href="https://registry.opendata.aws/overture/" rel="noopener">Overture Maps places</a><br /><small>Registry of Open Data on AWS</small></td><td>Fire stations, police stations and hospitals near the schools at the top of the list: buildings that are staffed all night and could host a cabinet instead. Amazon Athena reads {{nyc:relocation.overtureRelease}} in place; of 2,002 candidates we keep {{nyc:relocation.staffedBuildings|int}}, dropping clinics, surgeries, doctors' offices, places outside the city and any whose name names another borough.</td></tr>
               </tbody>
             </table>
@@ -128,6 +128,30 @@
             <p>Both numbers are small, because two minutes on foot is a small area and New York is large. The point is the gap between them: {{nyc:findings.coverageLost.lostConservative|pct}} of the coverage disappears once you ask whether the door was open.</p>
             <p class="fine">Recomputed by <code>npm run verify</code>, which checks every number in the article against the published data. Writing that check caught an error of ours: an earlier version of this figure weighted each ZIP by its area instead of spreading its calls, and read 70%, with 45% if every unknown venue were open. Both are now computed as described here.</p>
             <p>The ranked list credits each grid square to its nearest school AED and adds up the 2025 calls that fell there while every AED in reach was locked.</p>
+            <p><b>Does the ranking beat simpler choices?</b> We scored every way of picking schools with one measure: the expected 2025 cardiac-arrest calls a year inside the walk of at least one chosen school at hours when no AED in reach was open, counting a street square once however many chosen schools reach it. Calls are only known by ZIP code, so these are modelled call counts, not people reached or lives saved.</p>
+            <table class="ref ref--nums ref--two">
+              <thead><tr><th scope="col">Cabinets at</th><th scope="col" class="num">10</th><th scope="col" class="num">25</th><th scope="col" class="num">100</th></tr></thead>
+              <tbody>
+                <tr><td><b>After Hours ranking</b></td><td class="num">{{nyc:rankingEval.methods.0.afterHours}}</td><td class="num">{{nyc:rankingEval.methods.1.afterHours}}</td><td class="num">{{nyc:rankingEval.methods.3.afterHours}}</td></tr>
+                <tr><td>Best possible, picked one at a time (greedy)</td><td class="num">{{nyc:rankingEval.methods.0.greedy}}</td><td class="num">{{nyc:rankingEval.methods.1.greedy}}</td><td class="num">{{nyc:rankingEval.methods.3.greedy}}</td></tr>
+                <tr><td>Most calls in the walk, ignoring hours</td><td class="num">{{nyc:rankingEval.methods.0.busiestWalk}}</td><td class="num">{{nyc:rankingEval.methods.1.busiestWalk}}</td><td class="num">{{nyc:rankingEval.methods.3.busiestWalk}}</td></tr>
+                <tr><td>ZIP codes with the most calls per AED</td><td class="num">{{nyc:rankingEval.methods.0.fewestAeds}}</td><td class="num">{{nyc:rankingEval.methods.1.fewestAeds}}</td><td class="num">{{nyc:rankingEval.methods.3.fewestAeds}}</td></tr>
+                <tr><td>Schools picked at random (500 draws)</td><td class="num">{{nyc:rankingEval.methods.0.random}}</td><td class="num">{{nyc:rankingEval.methods.1.random}}</td><td class="num">{{nyc:rankingEval.methods.3.random}}</td></tr>
+              </tbody>
+            </table>
+            <p>Knowing the hours is what earns the gain: a map that ignores them picks schools that are near calls but whose calls mostly come in while the school is open. The greedy method, which re-scores every school after each pick, does slightly better; we keep the simpler ranking because each school's figure is then its own share, which a one-page brief can state. The map shows that sum ({{nyc:rankingEval.methods.3.afterHoursCredited}} for the top 100) as "at least 84".</p>
+            <p><b>Does it hold if the assumptions change?</b> We re-ran the ranking under each alternative and counted how much of the published list survives.</p>
+            <table class="ref ref--nums ref--two">
+              <thead><tr><th scope="col">If…</th><th scope="col" class="num">Top 100 adds, calls a year</th><th scope="col" class="num">Of today's top 25, still in it</th></tr></thead>
+              <tbody>
+                <tr><td>As published (schools lock at 6 PM)</td><td class="num">{{nyc:rankingEval.sensitivity.0.gainTop100}} (+{{nyc:rankingEval.sensitivity.0.gainPct}}%)</td><td class="num">{{nyc:rankingEval.sensitivity.0.top25Kept}}</td></tr>
+                <tr><td>Schools lock at 3 PM</td><td class="num">{{nyc:rankingEval.sensitivity.1.gainTop100}} (+{{nyc:rankingEval.sensitivity.1.gainPct}}%)</td><td class="num">{{nyc:rankingEval.sensitivity.1.top25Kept}}</td></tr>
+                <tr><td>Schools stay open until 9 PM</td><td class="num">{{nyc:rankingEval.sensitivity.2.gainTop100}} (+{{nyc:rankingEval.sensitivity.2.gainPct}}%)</td><td class="num">{{nyc:rankingEval.sensitivity.2.top25Kept}}</td></tr>
+                <tr><td>Every venue of unknown hours open all night</td><td class="num">{{nyc:rankingEval.sensitivity.3.gainTop100}} (+{{nyc:rankingEval.sensitivity.3.gainPct}}%)</td><td class="num">{{nyc:rankingEval.sensitivity.3.top25Kept}}</td></tr>
+                <tr><td>Bedrock's estimated hours counted</td><td class="num">{{nyc:rankingEval.sensitivity.4.gainTop100}} (+{{nyc:rankingEval.sensitivity.4.gainPct}}%)</td><td class="num">{{nyc:rankingEval.sensitivity.4.top25Kept}}</td></tr>
+              </tbody>
+            </table>
+            <p class="fine">P.S. 053 Basheer Quisim stays first in every case. The percentages are against what each case already covers, so they move with it. We could not test other walking times (the walking areas are two minutes; recomputing them is 4,032 more routing calls per threshold) or a population-weighted spread of calls inside each ZIP. Full results: <a href="/data/nyc/ranking-eval.json">ranking-eval.json</a>.</p>
           </div>
         </div>
       </section>
@@ -227,15 +251,20 @@
 
       <section class="doc-sec" id="downloads" aria-labelledby="dl-title">
         <div class="wrap doc-two">
-          <h2 id="dl-title" class="rise">Downloads</h2>
+          <h2 id="dl-title" class="rise">Check it yourself</h2>
+          <div class="doc-body">
+            <p>Every number on this site is computed by the pipeline in the <a href="https://github.com/usv240/after-hours">public repository</a> and written to the files below. <code>npm run verify</code> recounts the headline numbers from these CSVs with the same engine and asks the live API the questions the article quotes; it runs with the tests on every push. One example to try by hand: in <code>relocation.csv</code>, the top 100 rows add up to {{nyc:rankingEval.methods.3.afterHoursCredited}} calls a year, and P.S. 053 Basheer Quisim is first with 1.65.</p>
           <ul class="dl-list">
             <li><a href="/data/nyc/sites.csv" download>NYC AED locations with hours and their source</a><span>CSV, {{nyc:findings.locations|int}} rows</span></li>
             <li><a href="/data/nyc/coverage.csv" download>Coverage by ZIP code at four moments of the week</a><span>CSV, 177 rows</span></li>
             <li><a href="/data/nyc/relocation.csv" download>The 100 schools to make 24/7, ranked</a><span>CSV</span></li>
             <li><a href="/data/paris/sites.csv" download>Paris AEDs with declared hours</a><span>CSV, {{paris:sites|int}} rows</span></li>
             <li><a href="/data/nyc/summary.json" download>Every number on this site</a><span>JSON</span></li>
+            <li><a href="/data/nyc/ranking-eval.json" download>The ranking against four other ways of choosing, and under five assumptions</a><span>JSON</span></li>
+            <li><a href="/data/nyc/evals.json" download>"Ask the map" tested on 72 questions, every answer</a><span>JSON</span></li>
             <li><a href="/samples/template.csv" download>Template for your own list</a><span>CSV</span></li>
           </ul>
+          </div>
         </div>
       </section>
     </main>
