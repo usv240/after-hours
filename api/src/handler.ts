@@ -19,6 +19,7 @@ import { PRESETS, patternOf, preset } from "./data.ts";
 import { ZONES, describe, stateFor, wallTimeIn } from "./time.ts";
 import { geocode, isolines, walkingRoute, walkingSeconds } from "./location.ts";
 import { debate, type Evidence } from "./debate.ts";
+import { readQuestion, type Reading } from "./ask.ts";
 import { mintKey, spend } from "./keys.ts";
 import { mcp, type McpTools } from "./mcp.ts";
 
@@ -250,6 +251,50 @@ export async function runDebate(body: unknown) {
   return debate(`Move the AED at ${site.name} into a 24/7 outdoor cabinet on the building's street wall.`, ev);
 }
 
+// ---------- ask the map ----------
+
+const NYC_BOX = { west: -74.27, east: -73.68, south: 40.49, north: 40.92 };
+
+/** A question in plain words → the place and hour to look at. The answer itself comes from /nearest. */
+async function ask(body: unknown) {
+  const question = String((body as { question?: unknown })?.question ?? "").trim();
+  if (!question) throw fail(400, 'Send {"question":"Sunday 11 PM near Penn Station"}.');
+  if (question.length > 300) throw fail(413, "Keep the question under 300 characters.");
+  await spend("asks", Number(process.env.ASKS_PER_DAY ?? 2000), "Today's question limit is reached. Drop a pin on the map instead.");
+  const now = wallTimeIn(ZONES.nyc);
+  const nowDay = (new Date(Date.UTC(now.year, now.month - 1, now.day)).getUTCDay() + 6) % 7;
+  let reading: Reading;
+  let readBy = "Amazon Bedrock (Claude Haiku 4.5)";
+  try {
+    reading = await readQuestion(question, now, nowDay);
+  } catch (e) {
+    // Bedrock unavailable: treat the whole question as a place, at the hour already on the map.
+    console.error(e);
+    reading = { place: question, day: null, hour: null, summer: false, emergency: false };
+    readBy = "address search only (the language model was unavailable)";
+  }
+  let place = null;
+  if (reading.place) {
+    const [hit] = await geocode([`${reading.place}, New York, NY`], [-73.94, 40.7]);
+    if ("lon" in hit && hit.lon >= NYC_BOX.west && hit.lon <= NYC_BOX.east && hit.lat >= NYC_BOX.south && hit.lat <= NYC_BOX.north) {
+      place = { label: hit.label, lon: hit.lon, lat: hit.lat };
+    }
+  }
+  return {
+    question,
+    reading,
+    place,
+    readBy,
+    geocodedBy: "Amazon Location Service Places (Geocode)",
+    message: !reading.place
+      ? "The question doesn't name a place. Add a street, station or landmark."
+      : !place
+        ? `Couldn't find "${reading.place}" in New York City.`
+        : undefined,
+    note: "Planning tool, not an emergency service. In an emergency call 911 first.",
+  };
+}
+
 // ---------- router ----------
 
 const routes: Record<string, (r: Req) => Promise<unknown> | unknown> = {
@@ -274,6 +319,7 @@ const routes: Record<string, (r: Req) => Promise<unknown> | unknown> = {
     return { seconds, travelMode: "Pedestrian", isolines: await isolines(b.points, seconds) };
   },
   "POST /debate": (r) => runDebate(r.body),
+  "POST /ask": (r) => ask(r.body),
   "POST /keys": (r) => mintKey(String((r.body as { label?: string })?.label ?? "")),
 };
 

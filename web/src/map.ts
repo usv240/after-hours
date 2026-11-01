@@ -227,6 +227,7 @@ async function loadPreset(id: string) {
   $("school-field").hidden = !s.schoolCloseOptions;
   $("ai-field").hidden = !s.variants.some((v) => v.endsWith("a"));
   $("tab-relocation").hidden = id !== "nyc";
+  $("ask").hidden = id !== "nyc";
   if (id !== "nyc" && state.tab === "relocation") setTab("explore");
   $("region-layer-label").textContent =
     id === "nyc" ? "ZIP codes, shaded by cardiac-arrest calls at this hour" : "Arrondissements";
@@ -609,6 +610,79 @@ function drawCandidates(near: Cand, open: Cand | null) {
     paint: { "circle-radius": 11, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 3, "circle-stroke-color": ["match", ["get", "s"], "open", "#3ee08f", "closed", "#e2453b", "#9a9a9a"] },
   });
 }
+
+// ---------- ask the map ----------
+
+interface AskOut {
+  reading: { place: string | null; day: number | null; hour: number | null; summer: boolean; emergency: boolean };
+  place: { label: string; lon: number; lat: number } | null;
+  readBy: string;
+  message?: string;
+}
+
+/** Bedrock reads the question into a place and an hour; the map and the routing engine answer it. */
+async function askMap(question: string) {
+  const out = $("ask-result");
+  out.replaceChildren(el("p", { class: "loading" }, "Reading your question…"));
+  let a: AskOut;
+  try {
+    a = await api<AskOut>("/site/ask", { method: "POST", body: JSON.stringify({ question }) });
+  } catch (err) {
+    out.replaceChildren(el("p", { class: "error" }, (err as Error).message));
+    return;
+  }
+  const sos = a.reading.emergency
+    ? el("p", { class: "ask__sos" }, "If this is happening now, call 911 first. The dispatcher will start CPR instructions and can direct you to an AED.")
+    : null;
+  if (!a.place) {
+    out.replaceChildren(...[sos, el("p", { class: "error" }, a.message ?? "Couldn't find that place.")].filter(Boolean) as Node[]);
+    return;
+  }
+  a.place.label = a.place.label.replace(/(, NY)?(, United States)?$/, "");
+  if (a.reading.day != null) state.day = a.reading.day;
+  if (a.reading.hour != null) state.hour = a.reading.hour;
+  state.season = a.reading.summer ? "summer" : "school";
+  update();
+  const read = el(
+    "p",
+    { class: "ask__read" },
+    "Read as ",
+    el("b", {}, `${DAY_LONG[state.day]}${state.season === "summer" ? " in summer" : ""}, ${hourLabel(state.hour)}, near ${a.place.label}`),
+    a.reading.day == null || a.reading.hour == null ? " (the time you didn't give is the one already on the map)" : "",
+    ".",
+  );
+  out.replaceChildren(...([sos, read, el("p", { class: "loading" }, "Walking the streets…")].filter(Boolean) as Node[]));
+  setTab("pin");
+  const r = await dropPin([a.place.lon, a.place.lat], a.place.label);
+  const near = r?.timeBlindNearest, open = r?.nearestOpen;
+  const walk = (c: Cand) => `${Math.max(1, Math.round((c.walkSeconds ?? 0) / 60))}-minute walk`;
+  const answer = !near
+    ? el("p", {}, r?.message ?? "No registered AED nearby.")
+    : near.state === "open"
+      ? el("p", { class: "ask__answer" }, el("b", { class: "is-open" }, "Open. "), `${near.name}, a ${walk(near)}.`)
+      : el(
+          "p",
+          { class: "ask__answer" },
+          el("b", { class: near.state === "closed" ? "is-closed" : "is-unknown" }, near.state === "closed" ? "Locked. " : "Hours unknown. "),
+          `The nearest AED, ${near.name}, is a ${walk(near)}. `,
+          open ? `The nearest open one is ${open.name}, a ${walk(open)}.` : "None is open within reach.",
+        );
+  out.replaceChildren(
+    ...([sos, read, answer, el("p", { class: "fine" }, `${a.readBy} read the question. Amazon Location Service found the place and walked the streets.`)].filter(Boolean) as Node[]),
+  );
+}
+
+$("ask").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const q = $<HTMLInputElement>("ask-input").value.trim();
+  if (q) askMap(q);
+});
+document.querySelectorAll<HTMLButtonElement>(".ask__eg").forEach((b) =>
+  b.addEventListener("click", () => {
+    $<HTMLInputElement>("ask-input").value = b.textContent!;
+    askMap(b.textContent!);
+  }),
+);
 
 $("search").addEventListener("submit", async (e) => {
   e.preventDefault();

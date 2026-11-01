@@ -33,6 +33,7 @@ const ENDPOINTS: Endpoint[] = [
     ),
   },
   { id: "isolines", method: "POST", path: "/isolines", desc: "A two-minute walk around Times Square, routed by Amazon Location Service.", params: JSON.stringify({ points: [[-73.9855, 40.758]], seconds: 120 }, null, 2) },
+  { id: "ask", method: "POST", path: "/ask", desc: "A question in plain words, read by Amazon Bedrock into a place and an hour.", params: JSON.stringify({ question: "Sunday 11 PM near Penn Station" }, null, 2) },
   { id: "summary", method: "GET", path: "/summary", desc: "Every headline number for Paris.", params: "preset=paris" },
 ];
 

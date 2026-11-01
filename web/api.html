@@ -77,6 +77,7 @@
                 <tr><td><code>POST /analyze</code></td><td>Bring your own list: <code>{"timeZone", "sites":[{"name","lat","lon","hours"}]}</code>. Returns open counts for every hour of a week, peak, trough, unreadable rows, and each site's 336-hour pattern.</td></tr>
                 <tr><td><code>POST /geocode</code></td><td>Up to 25 addresses to points, with Amazon Location Service.</td></tr>
                 <tr><td><code>POST /isolines</code></td><td>Up to 25 points to walking areas: <code>{"points":[[lon,lat]], "seconds":120}</code>.</td></tr>
+                <tr><td><code>POST /ask</code></td><td>A question in plain words, <code>{"question":"Sunday 11 PM near Penn Station"}</code>, read by Amazon Bedrock into a place and an hour, and geocoded by Amazon Location Service. Pass the result to <code>/nearest</code> for the answer. New York only.</td></tr>
               </tbody>
             </table>
             <p class="fine">Opening hours use <a href="https://wiki.openstreetmap.org/wiki/Key:opening_hours" rel="noopener">OpenStreetMap syntax</a>. Anything unreadable is treated as unknown, never as open.</p>

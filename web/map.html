@@ -27,6 +27,15 @@
           </div>
           <p class="panel__intro" id="city-intro">Each dot is a building with a public defibrillator. Its glow is the area within a two-minute walk. Move the clock and watch which ones lock.</p>
           <button class="button story-start" id="story-btn" type="button"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>Play the 60-second story</button>
+          <form class="ask" id="ask" role="search">
+            <label class="field__label" for="ask-input">Or ask the map in your own words</label>
+            <div class="search">
+              <input id="ask-input" type="search" placeholder="Sunday 11 PM near Penn Station" maxlength="300" autocomplete="off" />
+              <button class="button button--quiet" type="submit">Ask</button>
+            </div>
+            <p class="ask__try">Try <button type="button" class="ask__eg">3 AM by Yankee Stadium</button> or <button type="button" class="ask__eg">a Saturday night in July at Coney Island</button></p>
+            <div id="ask-result" aria-live="polite"></div>
+          </form>
 
           <section class="block" aria-labelledby="clock-title">
             <h2 class="block__title" id="clock-title">When</h2>

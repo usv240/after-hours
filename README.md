@@ -6,7 +6,7 @@ After Hours maps New York City's 4,032 public defibrillator (AED) locations by t
 
 - **Live site:** https://dqcf6x4e7zbds.cloudfront.net
 - **60-second guided story:** https://dqcf6x4e7zbds.cloudfront.net/map.html?story
-- **Map:** https://dqcf6x4e7zbds.cloudfront.net/map.html (every view has a shareable link)
+- **Map:** https://dqcf6x4e7zbds.cloudfront.net/map.html (every view has a shareable link; ask it in your own words, e.g. "Sunday 11 PM near Penn Station")
 - **School briefs, one printable page each:** https://dqcf6x4e7zbds.cloudfront.net/brief.html
 - **Bring your own data:** https://dqcf6x4e7zbds.cloudfront.net/data.html
 - **API and live console:** https://dqcf6x4e7zbds.cloudfront.net/api.html

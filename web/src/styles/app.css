@@ -405,6 +405,63 @@
 .search .button {
   min-height: 46px;
 }
+.ask {
+  margin-top: 24px;
+}
+.ask[hidden] {
+  display: none;
+}
+.ask .search {
+  margin-top: 8px;
+}
+.ask__try {
+  margin-top: 10px;
+  color: var(--faint);
+  font-size: 0.875rem;
+}
+.ask__eg {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ask__eg:hover {
+    color: var(--ink);
+  }
+}
+#ask-result > * {
+  margin-top: 12px;
+}
+.ask__sos {
+  background: var(--locked);
+  color: var(--locked-ink);
+  font-weight: 600;
+  padding: 12px 14px;
+}
+.ask__read {
+  color: var(--muted);
+}
+.ask__read b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.ask__answer {
+  font-size: 1.0625rem;
+}
+.ask__answer .is-open {
+  color: var(--open);
+}
+.ask__answer .is-closed {
+  color: var(--closed);
+}
+.ask__answer .is-unknown {
+  color: var(--muted);
+}
 #pin-result {
   margin-top: 8px;
 }
