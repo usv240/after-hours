@@ -101,6 +101,7 @@ npx tsx pipeline/src/overture.ts # Athena over Overture (needs the deployed work
 npm run build -w pipeline        # presets, CSVs
 npx tsx pipeline/src/build-samples.ts
 (cd api && LOCAL_DATA_DIR=../web/public/data npx tsx src/precompute-debates.ts 10)  # saved debates
+npm run council -w pipeline      # City Council districts + members, for each brief
 npm run briefs -w pipeline       # school briefs + Amazon Location static maps
 npm run sample-maps -w pipeline  # sample previews (static maps)
 npm run api-figure -w pipeline -- https://YOUR-SITE  # one /nearest answer, drawn

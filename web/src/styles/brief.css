@@ -291,6 +291,7 @@
 
 .sheet__fix,
 .sheet__ai,
+.sheet__next,
 .sheet__unknown {
   margin-top: 26px;
 }
@@ -307,6 +308,34 @@
   background: var(--paper-soft);
   font-size: 0.9375rem;
   line-height: 1.45;
+}
+/* Three numbered steps for whoever holds the page. */
+.bnext {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.bnext li {
+  counter-increment: step;
+  padding: 14px 16px;
+  border-top: 3px solid var(--paper-ink);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.bnext li::before {
+  content: counter(step);
+  display: block;
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.bnext a {
+  overflow-wrap: anywhere;
 }
 .sheet__ai p,
 .sheet__unknown p {
@@ -334,7 +363,8 @@
 
 @media (max-width: 700px) {
   .sheet__cols,
-  .bopts {
+  .bopts,
+  .bnext {
     grid-template-columns: 1fr;
   }
   .sheet__claim {
@@ -377,9 +407,9 @@
   }
   .sheet {
     max-width: none;
-    padding: 0.5in;
+    padding: 0.42in 0.5in;
     font-size: 10pt;
-    zoom: 0.9;
+    zoom: 0.88;
   }
   .sheet h1 {
     font-size: 21pt;
@@ -423,7 +453,7 @@
     margin-top: 10px;
   }
   .sheet__map img {
-    height: 2.3in;
+    height: 1.95in;
     object-fit: cover;
   }
   .sheet__map figcaption {
@@ -432,8 +462,18 @@
   .sheet__cols,
   .sheet__fix,
   .sheet__ai,
+  .sheet__next,
   .sheet__unknown {
-    margin-top: 12px;
+    margin-top: 9px;
+  }
+  /* On paper the caveats run as one paragraph, so the page keeps its single sheet. */
+  .sheet__unknown h2,
+  .sheet__unknown p {
+    display: inline;
+    font-size: 8pt;
+  }
+  .sheet__unknown h2::after {
+    content: ": ";
   }
   .bweek__cells i,
   .bopts li {
@@ -446,6 +486,19 @@
   .bopts li {
     padding: 8px 10px;
     font-size: 9pt;
+  }
+  .bnext {
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .bnext li {
+    padding: 6px 8px 0 0;
+    font-size: 8.5pt;
+    line-height: 1.35;
+  }
+  .bnext li::before {
+    font-size: 11pt;
+    margin-bottom: 2px;
   }
   .sheet__ai p,
   .sheet__unknown p {

@@ -18,6 +18,7 @@ interface Brief {
   nearby: { within400m: number; open247: number; openSunday9pm: number };
   altHost: { name: string; category: string; meters: number } | null;
   debate: { verdict: string; summary: string; nextStep: string } | null;
+  council: { district: number; member: string | null; url: string } | null;
   map: string;
 }
 
@@ -145,6 +146,26 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
           el("p", { class: "sheet__small" }, `Suggested next step: ${b.debate.nextStep.replace(/\s*\[E\d+\]/g, "")} Amazon Bedrock, citing only the evidence on this page. Planning analysis, not advice.`),
         )
       : null,
+    el(
+      "section",
+      { class: "sheet__next" },
+      el("h2", { id: "nx" }, "What to do with this page"),
+      el(
+        "ol",
+        { class: "bnext" },
+        el("li", {}, el("b", {}, "See it after dark. "), "Walk past after 6 PM. The map assumes the doors are locked; an evening programme with someone at the door would change that."),
+        el("li", {}, el("b", {}, "Ask the school. "), "The principal and the custodian engineer know where the AED is, whether the street wall can take a heated cabinet, and who would check it."),
+        b.council
+          ? el(
+              "li",
+              {},
+              el("b", {}, `Bring it to ${b.council.member ? `Council Member ${b.council.member}` : `District ${b.council.district}`}. `),
+              `City Council District ${b.council.district}. Council members fund school projects and can raise this with the Department of Education: `,
+              el("a", { href: b.council.url }, b.council.url.replace(/^https:\/\//, "").replace(/\/$/, "")),
+            )
+          : el("li", {}, el("b", {}, "Bring it to your council member. "), "Council members fund school projects and can take this to the Department of Education: ", el("a", { href: "https://council.nyc.gov/districts/" }, "council.nyc.gov/districts")),
+      ),
+    ),
     el(
       "section",
       { class: "sheet__unknown" },

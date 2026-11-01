@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "fetch": "tsx src/fetch-nyc.ts",
+    "council": "tsx src/fetch-council.ts",
     "paris": "tsx src/fetch-paris.ts",
     "hours": "tsx src/assign-hours.ts",
     "places": "tsx src/enrich-places.ts",

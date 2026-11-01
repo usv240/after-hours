@@ -9,8 +9,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { GeoMapsClient, GetStaticMapCommand } from "@aws-sdk/client-geo-maps";
-import { HOURS_IN_WEEK, distanceMeters, stateIndex } from "@after-hours/engine";
-import { OUT, readJson, writeJson } from "./paths.ts";
+import { HOURS_IN_WEEK, distanceMeters, inMultiPolygon, stateIndex, type MultiPolygon } from "@after-hours/engine";
+import { OUT, RAW, readJson, readJsonOr, writeJson } from "./paths.ts";
 
 const dir = resolve(OUT, "nyc");
 const imgDir = resolve(OUT, "..", "briefs");
@@ -32,6 +32,20 @@ const zipCalls = new Map(
   regions.regions.map((r) => [r.id, r.calls ? Buffer.from(r.calls, "base64").reduce((a, b) => a + b, 0) : 0]),
 );
 const SUN_9PM = stateIndex("school", 6 * 24 + 21);
+
+// Who to bring each brief to: the City Council district the school sits in, and its member (npm run council).
+const councilShapes = readJsonOr<{ features: { properties: { coundist: string }; geometry: { type: string; coordinates: unknown } }[] }>(
+  resolve(RAW, "nyc_council_districts.geojson"),
+  { features: [] },
+).features.map((f) => ({
+  district: Number(f.properties.coundist),
+  shape: (f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates) as MultiPolygon,
+}));
+const councilMembers = readJsonOr<Record<string, string | null>>(resolve(RAW, "nyc_council_members.json"), {});
+const councilOf = (lon: number, lat: number) => {
+  const d = councilShapes.find((c) => inMultiPolygon([lon, lat], c.shape))?.district;
+  return d ? { district: d, member: councilMembers[d] ?? null, url: `https://council.nyc.gov/district-${d}/` } : null;
+};
 const count = (p: Uint8Array, from: number) => p.slice(from, from + HOURS_IN_WEEK).filter((v) => v === 1).length;
 
 const geo = new GeoMapsClient({ region: process.env.AWS_REGION ?? "us-east-1" });
@@ -118,6 +132,7 @@ for (const r of relocation) {
     openHours: { schoolWeek: count(schoolWeek, 0), summerWeek: count(schoolWeek, HOURS_IN_WEEK) },
     nearby: { within400m: near.length, open247: always.length, openSunday9pm: openSun9.length },
     altHost: r.altHost,
+    council: councilOf(r.lon, r.lat),
     debate,
     map: `/briefs/${r.id}.webp`,
   });
