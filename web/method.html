@@ -126,6 +126,7 @@
               <li><b>What was open when the calls came:</b> {{nyc:calls.byVariant.18.actualCoverage|pct1}}. If every venue of unknown hours were open around the clock, it would still be only {{nyc:calls.byVariant.18.unknownCoverage|pct1}} higher.</li>
             </ul>
             <p>Both numbers are small, because two minutes on foot is a small area and New York is large. The point is the gap between them: {{nyc:findings.coverageLost.lostConservative|pct}} of the coverage disappears once you ask whether the door was open.</p>
+            <p class="fine">Recomputed by <code>npm run verify</code>, which checks every number in the article against the published data. Writing that check caught an error of ours: an earlier version of this figure weighted each ZIP by its area instead of spreading its calls, and read 70%, with 45% if every unknown venue were open. Both are now computed as described here.</p>
             <p>The ranked list credits each grid square to its nearest school AED and adds up the 2025 calls that fell there while every AED in reach was locked.</p>
           </div>
         </div>
@@ -147,6 +148,19 @@
             </table>
             <p>A wrong "open" sends someone to a locked door, so AI estimates stay out of the headline numbers. Switch them on in the map to see how much they would change.</p>
             <p><b>Hearing both sides.</b> For any school on the list, two agents argue whether to move its AED outdoors, and a third gives a verdict. They receive eight numbered lines of evidence from the data and must cite them. Sentences that state a number without a citation are counted and shown under every debate.</p>
+            <p><b>Reading questions.</b> A question typed into the map is read by Amazon Bedrock into a place, a day or date, an hour, and two flags: is the place inside New York City, and is someone collapsing right now. It cannot answer. Code turns the day into the hour of the week, Amazon Location Service finds the place, and the map's own engine gives the answer. A landmark only counts if the result carries the name asked for, so a miss says "couldn't find" instead of showing a different place. We test it with the clock fixed at {{nyc:evals.ask.clock}}.</p>
+            <table class="ref ref--nums ref--two">
+              <thead><tr><th scope="col"></th><th scope="col" class="num">Used while building it</th><th scope="col" class="num">Written after, run once</th></tr></thead>
+              <tbody>
+                <tr><td>Questions read right (place within reach, right day and hour)</td><td class="num">{{nyc:evals.ask.development.ordinary.correct|int}} of {{nyc:evals.ask.development.ordinary.of|int}}</td><td class="num">{{nyc:evals.ask.heldOut.ordinary.correct|int}} of {{nyc:evals.ask.heldOut.ordinary.of|int}}</td></tr>
+                <tr><td>Misses that put a wrong place or hour on the map</td><td class="num">{{nyc:evals.ask.development.ordinary.missesWrong|int}}</td><td class="num">{{nyc:evals.ask.heldOut.ordinary.missesWrong|int}}</td></tr>
+                <tr><td>Emergencies that showed "call 911" first</td><td class="num">{{nyc:evals.ask.development.emergency.flagged|int}} of {{nyc:evals.ask.development.emergency.of|int}}</td><td class="num">{{nyc:evals.ask.heldOut.emergency.flagged|int}} of {{nyc:evals.ask.heldOut.emergency.of|int}}</td></tr>
+                <tr><td>False alarms (incl. "if someone collapsed…")</td><td class="num">{{nyc:evals.ask.development.falseAlarms.n|int}} of {{nyc:evals.ask.development.falseAlarms.of|int}}</td><td class="num">{{nyc:evals.ask.heldOut.falseAlarms.n|int}} of {{nyc:evals.ask.heldOut.falseAlarms.of|int}}</td></tr>
+                <tr><td>Places outside the city declined (Jersey City, Yonkers, Hoboken…)</td><td class="num">{{nyc:evals.ask.development.outside.declined|int}} of {{nyc:evals.ask.development.outside.of|int}}</td><td class="num">{{nyc:evals.ask.heldOut.outside.declined|int}} of {{nyc:evals.ask.heldOut.outside.of|int}}</td></tr>
+                <tr><td>Off-topic or injected text that put nothing on the map</td><td class="num">{{nyc:evals.ask.development.offTopic.nothingOnMap|int}} of {{nyc:evals.ask.development.offTopic.of|int}}</td><td class="num">{{nyc:evals.ask.heldOut.offTopic.nothingOnMap|int}} of {{nyc:evals.ask.heldOut.offTopic.of|int}}</td></tr>
+              </tbody>
+            </table>
+            <p class="fine">Before this test, "Jersey City" became Jersey Street in SoHo and the model put "Tuesday" on a Wednesday; both are fixed, and every question with its answer is in <a href="/data/nyc/evals.json">evals.json</a>. Rerun it with <code>npm run eval -w api</code>.</p>
           </div>
         </div>
       </section>

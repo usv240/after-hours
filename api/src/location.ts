@@ -1,5 +1,5 @@
 import { GeoRoutesClient, CalculateRouteMatrixCommand, CalculateRoutesCommand, CalculateIsolinesCommand } from "@aws-sdk/client-geo-routes";
-import { GeoPlacesClient, GeocodeCommand } from "@aws-sdk/client-geo-places";
+import { GeoPlacesClient, GeocodeCommand, SearchTextCommand } from "@aws-sdk/client-geo-places";
 import type { LonLat } from "@after-hours/engine";
 
 const routes = new GeoRoutesClient({});
@@ -46,13 +46,23 @@ export async function isolines(points: LonLat[], seconds: number): Promise<({ ty
   );
 }
 
+/** Named places (a station, museum, park) inside a box: Places SearchText finds landmarks the address geocoder misses. */
+export async function searchPlace(q: string, box: [number, number, number, number]) {
+  const res = await places.send(new SearchTextCommand({ QueryText: q.slice(0, 200), Filter: { BoundingBox: box }, MaxResults: 5, IntendedUse: "SingleUse" }));
+  return (res.ResultItems ?? [])
+    .filter((it) => it.Position)
+    .map((it) => ({ lon: it.Position![0], lat: it.Position![1], label: it.Title ?? q, type: it.PlaceType, state: it.Address?.Region?.Code, county: it.Address?.SubRegion?.Name }));
+}
+
 export async function geocode(queries: string[], bias?: LonLat) {
   return Promise.all(
     queries.map(async (q) => {
       try {
         const res = await places.send(new GeocodeCommand({ QueryText: q.slice(0, 200), BiasPosition: bias, MaxResults: 1, IntendedUse: "SingleUse" }));
         const it = res.ResultItems?.[0];
-        return it?.Position ? { query: q, lon: it.Position[0], lat: it.Position[1], label: it.Title ?? q } : { query: q, error: "No match" };
+        return it?.Position
+          ? { query: q, lon: it.Position[0], lat: it.Position[1], label: it.Title ?? q, type: it.PlaceType, state: it.Address?.Region?.Code, county: it.Address?.SubRegion?.Name }
+          : { query: q, error: "No match" };
       } catch (e) {
         return { query: q, error: (e as Error).name };
       }

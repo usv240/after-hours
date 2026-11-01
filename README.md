@@ -1,5 +1,7 @@
 # After Hours
 
+[![check](https://github.com/usv240/after-hours/actions/workflows/check.yml/badge.svg)](https://github.com/usv240/after-hours/actions/workflows/check.yml)
+
 **Defibrillators keep office hours. Cardiac arrest doesn't.**
 
 After Hours maps New York City's 4,032 public defibrillator (AED) locations by the hour, showing which ones sit behind an unlocked door. It replays 25,448 cardiac-arrest 911 calls from 2025 against those timetables, and ranks where a 24/7 street-wall cabinet would reach the most of them.
@@ -21,14 +23,28 @@ Built for the AWS Builder Center *Weekend Challenge: Map it* (October–November
 | NYC AED locations that are school buildings | 1,925 of 4,032 (48%); 69% outside Manhattan |
 | 2025 cardiac-arrest calls while school buildings were shut | 16,285 of 25,448 (64%) |
 | Confirmed-open AED locations, school-year Tuesday 2 PM → Sunday 3 AM | 2,636 → 52 |
-| Coverage a time-blind map shows that was locked at the hour calls came | 70% |
-| …even if every venue with unknown hours were open 24/7 | 45% |
+| Coverage a time-blind map shows that was locked at the hour calls came | 69% |
+| …even if every venue with unknown hours were open 24/7 | 39% |
 | Paris (France makes owners declare hours): confirmed open, Tue 2 PM → Sun 3 AM | 838 → 219 |
 | 2025 calls with an open AED within a two-minute walk, today → with 24/7 cabinets at the top 100 schools | about 363 → at least 448 (+23%) |
 
 Try the last row on the map: **Make 24/7** → *Put a 24/7 cabinet outside the top 10 / 25 / 50 / 100* relights those schools at every hour ([top 100 at Sunday 3 AM](https://dqcf6x4e7zbds.cloudfront.net/map.html?t=6-3&fix=100#relocation)).
 
 Every number is computed by the pipeline in this repo and written to `web/public/data/*/summary.json`; the web pages fill them in at build time and never hardcode one.
+
+## Check every number
+
+```sh
+npm install
+npm test             # 16 tests: the engine, and the API against the published data (offline)
+npm run verify       # 25 claims in this README and the article, recomputed from the downloadable CSVs
+npm run verify:live  # …plus 6 questions asked of the live API, as the article quotes them
+npm run eval         # "Ask the map" on 72 fixed questions (calls Amazon Bedrock and Amazon Location)
+```
+
+`verify` recounts the open locations from `sites.csv` with the same engine the pipeline uses, re-adds the ranking from `relocation.csv`, and exits 1 if any stated number has drifted from the data. Writing it caught one: the coverage lost had been computed with a weighting that differed from the one the method describes, so the headline moved from 70% to 69%, and "even if every unknown venue were open" from 45% to 39%.
+
+`eval` measures the question box on 48 questions used while building it and 24 written afterwards and run once: places it must find, emergencies it must flag, look-alikes it must not, places outside the city it must decline, and injected instructions that must put nothing on the map. Results, with every question and answer, are in [`evals.json`](web/public/data/nyc/evals.json) and on the [How it works](https://dqcf6x4e7zbds.cloudfront.net/method.html#ai) page.
 
 ## How it works
 
@@ -74,7 +90,7 @@ Hours use [OpenStreetMap `opening_hours`](https://wiki.openstreetmap.org/wiki/Ke
 
 ```sh
 npm install
-npm test                         # engine tests
+npm test                         # engine + API tests
 npm run fetch -w pipeline        # NYC Open Data
 npm run paris -w pipeline        # Géo'DAE
 npm run hours -w pipeline

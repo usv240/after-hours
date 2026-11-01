@@ -25,7 +25,7 @@
       "licence": "NYC Open Data terms of use"
     }
   ],
-  "generatedAt": "2026-11-01T00:49:58.982Z",
+  "generatedAt": "2026-11-01T16:59:20.994Z",
   "catchment": {
     "kind": "isoline",
     "seconds": 120,
@@ -4363,16 +4363,16 @@
       56
     ],
     "coverageLost": {
-      "lostConservative": 0.6972638689042802,
-      "lostIfUnknownWereOpen": 0.44810819273695124
+      "lostConservative": 0.6917907434662929,
+      "lostIfUnknownWereOpen": 0.39476880687428095
     },
     "coverageLostWithAi": {
-      "lostConservative": 0.5891024446250308,
-      "lostIfUnknownWereOpen": 0.5692002594478532
+      "lostConservative": 0.5619188646431217,
+      "lostIfUnknownWereOpen": 0.5435442188052486
     },
     "coverageLostSchools9pm": {
-      "lostConservative": 0.6454085930918281,
-      "lostIfUnknownWereOpen": 0.3986871043979393
+      "lostConservative": 0.6460084568145719,
+      "lostIfUnknownWereOpen": 0.3519784306009024
     }
   },
   "relocation": {

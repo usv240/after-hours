@@ -65,7 +65,7 @@ export class AfterHoursStack extends Stack {
     table.grant(apiFn, "dynamodb:UpdateItem");
     apiFn.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ["geo-routes:CalculateRouteMatrix", "geo-routes:CalculateRoutes", "geo-routes:CalculateIsolines", "geo-places:Geocode"],
+        actions: ["geo-routes:CalculateRouteMatrix", "geo-routes:CalculateRoutes", "geo-routes:CalculateIsolines", "geo-places:Geocode", "geo-places:SearchText"],
         resources: [`arn:aws:geo-routes:${this.region}::provider/default`, `arn:aws:geo-places:${this.region}::provider/default`],
       }),
     );

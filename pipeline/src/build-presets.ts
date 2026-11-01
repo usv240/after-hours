@@ -352,7 +352,7 @@ function build(preset: Preset) {
       unmatchedZip: preset.callsUnmatched,
       byVariant: Object.fromEntries(variants.map((v) => [v.key, callWeighted(preset, cellCount, cov[v.key])])),
     };
-    summary.findings = findings(preset, t, cov, headlineKey);
+    summary.findings = findings(preset, t, cov, headlineKey, cellCount);
     summary.relocation = relocation(preset, cells, cellCount, statesFor(t, { key: headlineKey, close: DEFAULT_CLOSE, ai: false }), t.base, dir);
     summary.gapRegions = preset.regions
       .map((r, i) => {
@@ -390,7 +390,7 @@ function build(preset: Preset) {
 }
 
 /** The numbers the landing page states, computed here so the page never hardcodes one. */
-function findings(preset: Preset, t: ReturnType<typeof patternTable>, cov: Record<string, ReturnType<typeof coverage>>, headline: string) {
+function findings(preset: Preset, t: ReturnType<typeof patternTable>, cov: Record<string, ReturnType<typeof coverage>>, headline: string, cellCount: number[]) {
   const school = t.patterns[t.schoolPattern[DEFAULT_CLOSE]];
   let calls = 0, schoolShut = 0, night = 0, weekend = 0, summer = 0;
   const byHour = new Array(24).fill(0);
@@ -411,20 +411,19 @@ function findings(preset: Preset, t: ReturnType<typeof patternTable>, cov: Recor
     b.locations++;
     if (s.hoursSource === "calendar") b.schools++;
   }
+  // Each ZIP's calls are spread over its 50 m squares, exactly as callWeighted() does for the
+  // published 4.6% and 1.4%, so the share lost here is 1 − (open share ÷ time-blind share).
   const wv = (key: string) => {
-    const R = preset.regions.length;
-    let blind = 0, open = 0, unknown = 0, n = 0;
-    for (let ri = 0; ri < R; ri++) {
-      const cells = cov[key].reachable[ri];
-      preset.calls![ri].forEach((c, st) => {
+    let blind = 0, open = 0, unknown = 0;
+    preset.calls!.forEach((byState, ri) => {
+      if (!cellCount[ri]) return;
+      byState.forEach((c, st) => {
         if (!c) return;
-        n += c;
-        blind += c * cov[key].reachable[ri];
-        open += c * cov[key].open[ri][st];
-        unknown += c * cov[key].unknown[ri][st];
+        blind += (c * cov[key].reachable[ri]) / cellCount[ri];
+        open += (c * cov[key].open[ri][st]) / cellCount[ri];
+        unknown += (c * cov[key].unknown[ri][st]) / cellCount[ri];
       });
-      void cells;
-    }
+    });
     return { lostConservative: 1 - open / blind, lostIfUnknownWereOpen: 1 - (open + unknown) / blind };
   };
   const hourOpen = new Array(24).fill(0);

@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/local.ts",
-    "test": "node --import tsx --test test/*.test.ts"
+    "test": "node --import tsx --test test/*.test.ts",
+    "eval": "tsx src/eval-ask.ts"
   },
   "dependencies": {
     "@after-hours/engine": "*",

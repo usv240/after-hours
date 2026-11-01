@@ -150,6 +150,16 @@
 .ref--nums td:first-child {
   width: 70%;
 }
+/* Two result columns side by side: headers wrap so the table fits a phone. */
+.ref--two td:first-child {
+  width: auto;
+  min-width: 0;
+}
+.ref--two th.num {
+  white-space: normal;
+  vertical-align: bottom;
+  max-width: 9em;
+}
 
 /* Pipeline */
 .pipe {

@@ -1,10 +1,16 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 
 const summaries: Record<string, unknown> = {};
+/** The pipeline's summary, plus the measured evaluations (`npm run eval -w api`) under "evals". */
 function summary(id: string) {
-  return (summaries[id] ??= JSON.parse(readFileSync(resolve(__dirname, "public/data", id, "summary.json"), "utf8")));
+  return (summaries[id] ??= (() => {
+    const dir = resolve(__dirname, "public/data", id);
+    const s = JSON.parse(readFileSync(resolve(dir, "summary.json"), "utf8"));
+    if (existsSync(resolve(dir, "evals.json"))) s.evals = JSON.parse(readFileSync(resolve(dir, "evals.json"), "utf8"));
+    return s;
+  })());
 }
 
 /** {{nyc:findings.calls|int}} → a number from the pipeline's summary, formatted. Pages never hardcode a figure. */

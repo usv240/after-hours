@@ -638,7 +638,7 @@ async function askMap(question: string) {
     out.replaceChildren(...[sos, el("p", { class: "error" }, a.message ?? "Couldn't find that place.")].filter(Boolean) as Node[]);
     return;
   }
-  a.place.label = a.place.label.replace(/(, NY)?(, United States)?$/, "");
+  a.place.label = a.place.label.replace(/, United States$/, "").replace(/, NY( \d{5}(-\d{4})?)?$/, "");
   if (a.reading.day != null) state.day = a.reading.day;
   if (a.reading.hour != null) state.hour = a.reading.hour;
   state.season = a.reading.summer ? "summer" : "school";
@@ -917,6 +917,7 @@ function readUrl() {
     pin: pin.length === 2 && pin.every(Number.isFinite) ? (pin as [number, number]) : null,
     school: q.get("school"),
     story: q.has("story"),
+    ask: (q.get("ask") ?? "").trim().slice(0, 300),
   };
 }
 
@@ -1247,6 +1248,11 @@ document.addEventListener("keydown", (e) => e.key === "Escape" && story.card && 
 map.on("load", () => {
   loadPreset(initial.preset).then(() => {
     if (initial.story) return storyOpen();
+    // A shared question (?ask=Sunday 3 AM near Penn Station) is asked as soon as the map is ready.
+    if (initial.ask && state.preset === "nyc") {
+      $<HTMLInputElement>("ask-input").value = initial.ask;
+      return askMap(initial.ask);
+    }
     if (["pin", "relocation"].includes(initial.tab)) setTab(initial.tab);
     if (initial.tab === "pin" && initial.pin) dropPin(initial.pin);
     const school = initial.tab === "relocation" && relocation.find((r) => r.id === initial.school);

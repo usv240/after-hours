@@ -12,11 +12,13 @@
     "infra"
   ],
   "scripts": {
-    "test": "npm run test -w packages/engine",
+    "test": "npm run test -w packages/engine && npm run test -w api",
     "pipeline": "npm run all -w pipeline",
     "dev": "npm run dev -w web",
     "build": "npm run build -w web",
-    "verify": "npm run verify -w pipeline"
+    "verify": "npm run verify -w pipeline",
+    "verify:live": "npm run verify -w pipeline -- --live",
+    "eval": "npm run eval -w api"
   },
   "devDependencies": {
     "tsx": "^4.23.15",
