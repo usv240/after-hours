@@ -73,7 +73,8 @@ function buildDial(s: Summary) {
     const from = shown;
     const t0 = performance.now();
     const step = (t: number) => {
-      const k = Math.min(1, (t - t0) / 380);
+      // A frame's timestamp can precede t0 slightly; never let k go negative, or the cubic runs away.
+      const k = Math.min(1, Math.max(0, (t - t0) / 380));
       const e = 1 - Math.pow(1 - k, 3);
       shown = Math.round(from + (target - from) * e);
       openEl.textContent = fmt.format(shown);
