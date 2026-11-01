@@ -251,7 +251,7 @@ async function loadPreset(id: string) {
     id === "nyc" ? "ZIP codes, shaded by cardiac-arrest calls at this hour" : "Arrondissements";
   $("city-intro").textContent =
     id === "nyc"
-      ? "Each dot is a building with a public defibrillator. Its glow is the area within a two-minute walk, routed on real streets. Move the clock and watch which ones lock."
+      ? "Each dot is a building with a public defibrillator. The shape around it is the area within a two-minute walk, routed on real streets. Move the clock and watch which ones lock."
       : `Paris uses France's national registry, where owners must declare when each AED can be reached. ${fmt.format(s.hoursSources.unknown ?? 0)} of ${fmt.format(s.sites)} never did, so they show as unknown. Walking areas here are ${s.catchment.label}.`;
   buildWeekstrip();
   renderRelocation();
@@ -1020,7 +1020,7 @@ function beats(): Beat[] {
         if (state.tab !== "explore") setTab("explore");
         setClock(1, 14);
         cityView();
-        return { big: fmt.format(f.openTue2pm), text: "defibrillator locations are open on a school Tuesday at 2 PM. Each green glow is the ground within a two-minute walk of one, routed on real streets." };
+        return { big: fmt.format(f.openTue2pm), text: "defibrillator locations are open on a school Tuesday at 2 PM. Each green area is the ground within a two-minute walk of one, routed on real streets." };
       },
     },
     {
