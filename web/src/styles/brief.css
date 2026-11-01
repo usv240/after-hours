@@ -141,6 +141,10 @@
   background: var(--school);
   color: var(--school-ink);
 }
+/* On a light page the white sheet needs its own edge: a soft shadow, like a page on a desk. */
+:root:not([data-theme="dark"]) .sheet {
+  box-shadow: 0 1px 2px rgba(18, 18, 18, 0.06), 0 14px 44px rgba(18, 18, 18, 0.12);
+}
 .sheet h1 {
   font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
   line-height: 0.98;
@@ -410,6 +414,7 @@
     padding: 0.42in 0.5in;
     font-size: 10pt;
     zoom: 0.88;
+    box-shadow: none !important;
   }
   .sheet h1 {
     font-size: 21pt;

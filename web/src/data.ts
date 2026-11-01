@@ -4,6 +4,7 @@ import "./styles/app.css";
 import { circle, detectColumns, parseCsv, parseCsvSites, parseGeoJsonSites, weekStates, type ColumnMap, type ParseResult, type Site } from "@after-hours/engine";
 import { DAY_LONG, api, cityNow, el, fmt, hourLabel } from "./common.ts";
 import { ATTRIBUTION, basemapStyle } from "./basemap.ts";
+import { mapPalette } from "./theme.ts";
 
 const HOURS = 168;
 const RADIUS_M = 130;
@@ -39,40 +40,52 @@ map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-ri
 const popup = new maplibregl.Popup({ className: "ah-popup", maxWidth: "320px" });
 let mapReady = new Promise<void>((r) => map.on("load", () => r()));
 
-async function drawMap() {
-  await mapReady;
-  const pts = { type: "FeatureCollection" as const, features: rows.map((s, i) => ({ type: "Feature" as const, id: i, properties: {}, geometry: { type: "Point" as const, coordinates: [s.lon, s.lat] } })) };
-  const areas = {
-    type: "FeatureCollection" as const,
-    features: rows.map((s, i) => ({ type: "Feature" as const, id: i, properties: {}, geometry: { type: "Polygon" as const, coordinates: circle([s.lon, s.lat], RADIUS_M) } })),
-  };
-  routed = false;
-  for (const [id, data] of [["areas", areas], ["pts", pts]] as const) {
+/** What the layers are drawn from, kept so a theme change can rebuild them on the new basemap. */
+const drawn = { pts: null as GeoJSON.FeatureCollection | null, areas: null as GeoJSON.FeatureCollection | null };
+let handlers = false;
+
+function addLayers() {
+  if (!drawn.pts || !drawn.areas) return;
+  const pal = mapPalette();
+  for (const [id, data] of [["areas", drawn.areas], ["pts", drawn.pts]] as const) {
     const src = map.getSource(id) as maplibregl.GeoJSONSource | undefined;
     if (src) src.setData(data);
     else map.addSource(id, { type: "geojson", data });
   }
-  if (!map.getLayer("areas")) {
-    map.addLayer({
-      id: "areas",
-      type: "fill",
-      source: "areas",
-      paint: {
-        "fill-color": ["match", ["coalesce", ["feature-state", "s"], 2], 1, "#3ee08f", 0, "#e2453b", "#9a9a9a"],
-        "fill-opacity": ["match", ["coalesce", ["feature-state", "s"], 2], 1, 0.45, 0.15],
-      },
-    });
-    map.addLayer({
-      id: "pts",
-      type: "circle",
-      source: "pts",
-      paint: {
-        "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3, 15, 7],
-        "circle-color": ["match", ["coalesce", ["feature-state", "s"], 2], 1, "#3ee08f", 0, "#e2453b", "#8c8c8c"],
-        "circle-stroke-color": "#121212",
-        "circle-stroke-width": 1.5,
-      },
-    });
+  if (map.getLayer("areas")) return;
+  map.addLayer({
+    id: "areas",
+    type: "fill",
+    source: "areas",
+    paint: {
+      "fill-color": ["match", ["coalesce", ["feature-state", "s"], 2], 1, pal.open, 0, pal.closed, pal.unknown],
+      "fill-opacity": ["match", ["coalesce", ["feature-state", "s"], 2], 1, pal.openFill - 0.1, 0.15],
+    },
+  });
+  map.addLayer({
+    id: "pts",
+    type: "circle",
+    source: "pts",
+    paint: {
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 3, 15, 7],
+      "circle-color": ["match", ["coalesce", ["feature-state", "s"], 2], 1, pal.open, 0, pal.closed, pal.unknownDot],
+      "circle-stroke-color": pal.dotStroke,
+      "circle-stroke-width": 1.5,
+    },
+  });
+}
+
+async function drawMap() {
+  await mapReady;
+  drawn.pts = { type: "FeatureCollection", features: rows.map((s, i) => ({ type: "Feature", id: i, properties: {}, geometry: { type: "Point", coordinates: [s.lon, s.lat] } })) };
+  drawn.areas = {
+    type: "FeatureCollection",
+    features: rows.map((s, i) => ({ type: "Feature", id: i, properties: {}, geometry: { type: "Polygon", coordinates: circle([s.lon, s.lat], RADIUS_M) } })),
+  };
+  routed = false;
+  addLayers();
+  if (!handlers) {
+    handlers = true;
     map.on("click", "pts", (e) => {
       const i = e.features?.[0]?.id as number;
       const s = rows[i];
@@ -304,7 +317,7 @@ async function routeAreas() {
     const pts = rows.slice(0, 25).map((s) => [s.lon, s.lat]);
     const { isolines } = await api<{ isolines: ({ type: string; coordinates: unknown } | null)[] }>("/site/isolines", { method: "POST", body: JSON.stringify({ points: pts, seconds: 120 }) });
     const src = map.getSource("areas") as maplibregl.GeoJSONSource;
-    const data = {
+    const data: GeoJSON.FeatureCollection = {
       type: "FeatureCollection" as const,
       features: rows.map((s, i) => ({
         type: "Feature" as const,
@@ -314,6 +327,7 @@ async function routeAreas() {
       })),
     };
     src.setData(data);
+    drawn.areas = data;
     routed = true;
     $("route-note").textContent = `Routed ${isolines.filter(Boolean).length} two-minute walks with Amazon Location Service${rows.length > 25 ? "; the rest stay as 130 m circles" : ""}.`;
     update();
@@ -324,6 +338,15 @@ async function routeAreas() {
     btn.textContent = routed ? "Walking areas routed" : "Route walking areas";
   }
 }
+
+// A theme change swaps the basemap and rebuilds the layers on it, keeping the view and the clock.
+addEventListener("themechange", () => {
+  map.setStyle(basemapStyle(), { diff: false });
+  map.once("style.load", () => {
+    addLayers();
+    update();
+  });
+});
 
 // ---------- wiring ----------
 

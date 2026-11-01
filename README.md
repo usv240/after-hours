@@ -61,7 +61,7 @@ EventBridge Scheduler ─► Lambda ─► S3 ─► Apache Iceberg table (Athen
 
 | AWS service | What it does here |
 |---|---|
-| Amazon Location Service: Maps | Dark Monochrome basemap (browser API key limited to the site's referrer and `GetTile`); `GetStaticMap` draws the print-ready street map on each of the 100 school briefs (routed walking area as a GeoJSON overlay), the sample previews and the API page's `/nearest` figure |
+| Amazon Location Service: Maps | Monochrome basemap, light or dark to match the page's theme (browser API key limited to the site's referrer and `GetTile`); `GetStaticMap` draws the print-ready street map on each of the 100 school briefs (routed walking area as a GeoJSON overlay), the sample previews and the API page's `/nearest` figure |
 | Amazon Location Service: Places | Opening hours for 742 named AED venues (`SearchText` + `AdditionalFeatures: Contact`, name-matched within 200 m); geocoding for uploaded addresses |
 | Amazon Location Service: Routes | `CalculateIsolines` two-minute pedestrian walking area for all 4,032 locations; `CalculateRouteMatrix` and `CalculateRoutes` for "collapse here" |
 | Registry of Open Data on AWS + Amazon Athena | Overture Maps places (Parquet in `s3://overturemaps-us-west-2`) queried in place: 2,002 candidate buildings, filtered to 691 credibly staffed around the clock (fire and EMS stations, NYPD precincts, hospitals; clinics, doctors' offices and mislocated places dropped, see `pipeline/src/hosts.ts`) |

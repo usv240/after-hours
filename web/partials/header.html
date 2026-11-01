@@ -1,7 +1,7 @@
 <header class="site-header">
   <a class="wordmark" href="/" aria-label="After Hours, home">
-    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 2a14 14 0 0 1 0 28z" fill="currentColor"/><path d="M17.5 8 12 17h4l-1.5 7L20 15h-4z" fill="#121212"/></svg>
-    After Hours
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 2a14 14 0 0 1 0 28z" fill="currentColor"/><path class="wordmark__bolt" d="M17.5 8 12 17h4l-1.5 7L20 15h-4z"/></svg>
+    <span class="wordmark__name">After Hours</span>
   </a>
   <nav class="site-nav" aria-label="Main">
     <a href="/map.html" data-nav="map">Map</a>
@@ -9,6 +9,10 @@
     <a href="/data.html" data-nav="data">Your data</a>
     <a href="/api.html" data-nav="api">API</a>
     <a href="/method.html" data-nav="method">How it works</a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Dark theme" aria-pressed="false">
+      <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13.6A8.6 8.6 0 1 1 10.4 3.5a6.7 6.7 0 0 0 10.1 10.1z" fill="currentColor"/></svg>
+      <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.4" fill="currentColor"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.8 1.8M17.4 17.4l1.8 1.8M4.8 19.2l1.8-1.8M17.4 6.6l1.8-1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
     <a class="button" href="/map.html">Open the map</a>
   </nav>
 </header>

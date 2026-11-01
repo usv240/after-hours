@@ -94,7 +94,7 @@
   outline: none;
 }
 .dial:focus-visible #dial-hand {
-  stroke: var(--school);
+  stroke: var(--hi);
 }
 .dial svg {
   width: 100%;
@@ -106,12 +106,21 @@
 }
 .dial__seg--aed {
   fill: var(--open);
+  fill-opacity: calc(0.1 + 0.9 * var(--v, 0));
 }
+/* Calls are ink: bright at night, a lighter grey scale on paper so the ring doesn't outweigh the copy. */
 .dial__seg--call {
-  fill: #ffffff;
+  fill: var(--ink);
+  fill-opacity: calc(0.06 + 0.5 * var(--v, 0));
+}
+[data-theme="dark"] .dial__seg--aed {
+  fill-opacity: calc(0.08 + 0.92 * var(--v, 0));
+}
+[data-theme="dark"] .dial__seg--call {
+  fill-opacity: calc(0.12 + 0.88 * var(--v, 0));
 }
 .dial__seg.is-now {
-  stroke: var(--school);
+  stroke: var(--hi);
   stroke-width: 0.6;
 }
 #dial-hand {
@@ -228,6 +237,7 @@
 }
 
 .chapter--school {
+  --hi: var(--school-ink);
   background: var(--school);
   color: var(--school-ink);
 }

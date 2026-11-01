@@ -4,6 +4,7 @@ import "./styles/app.css";
 import { DAY_LONG, api, cityNow, el, fmt, getJson, hourLabel } from "./common.ts";
 import { HOURS, decodeB64, localIso, stateIndex, type Season } from "./time.ts";
 import { ATTRIBUTION, basemapStyle } from "./basemap.ts";
+import { mapPalette } from "./theme.ts";
 
 // ---------- data shapes ----------
 
@@ -129,6 +130,72 @@ function patternFor(row: SitesFile["rows"][number]): Uint8Array {
   return patterns[p];
 }
 
+/** What the map layers are drawn from, kept so a theme change can rebuild them on the new basemap. */
+let layerData: { regions: string; points: GeoJSON.FeatureCollection; catch: GeoJSON.FeatureCollection } | null = null;
+
+/** Adds this page's sources and layers, under the basemap's labels, in the current theme's colours. */
+function addLayers() {
+  if (!layerData) return;
+  const pal = mapPalette();
+  for (const layer of ["catch-fill", "catch-line", "regions-fill", "regions-line", "points", "points-halo"]) if (map.getLayer(layer)) map.removeLayer(layer);
+  for (const src of ["catch", "regions", "points"]) if (map.getSource(src)) map.removeSource(src);
+  map.addSource("regions", { type: "geojson", data: layerData.regions });
+  map.addSource("catch", { type: "geojson", data: layerData.catch });
+  map.addSource("points", { type: "geojson", data: layerData.points });
+  const firstLabel = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
+  map.addLayer(
+    {
+      id: "regions-fill",
+      type: "fill",
+      source: "regions",
+      // ZIP shading is a city-scale signal: it fades as you zoom to street level, so the streets stay readable.
+      paint: {
+        "fill-color": "#c81e1e",
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 12, ["coalesce", ["feature-state", "calls"], 0], 15, ["*", 0.3, ["coalesce", ["feature-state", "calls"], 0]]],
+      },
+    },
+    firstLabel,
+  );
+  map.addLayer({ id: "regions-line", type: "line", source: "regions", paint: { "line-color": pal.regionLine, "line-opacity": pal.regionLineOpacity, "line-width": 0.6 } }, firstLabel);
+  map.addLayer(
+    {
+      id: "catch-fill",
+      type: "fill",
+      source: "catch",
+      paint: {
+        "fill-color": pal.unknown,
+        "fill-opacity": pal.unknownFill,
+      },
+    },
+    firstLabel,
+  );
+  map.addLayer({
+    id: "points-halo",
+    type: "circle",
+    source: "points",
+    paint: {
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 0, 13, 9, 16, 16],
+      "circle-color": pal.open,
+      "circle-opacity": 0,
+      "circle-blur": 0.6,
+    },
+  });
+  map.addLayer({
+    id: "points",
+    type: "circle",
+    source: "points",
+    paint: {
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 1.6, 12, 3, 15, 6.5],
+      "circle-color": pal.unknownDot,
+      "circle-stroke-color": pal.dotStroke,
+      "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 0, 14, 1.5],
+      "circle-opacity": ["case", ["boolean", ["feature-state", "dim"], false], 0.35, 1],
+    },
+  });
+  lastPaintKey = "";
+  regionState.clear();
+}
+
 async function loadPreset(id: string) {
   const token = ++loadToken;
   $("map-status").textContent = "Loading locations…";
@@ -160,64 +227,15 @@ async function loadPreset(id: string) {
   lastPaintKey = "";
   regionState.clear();
 
-  for (const layer of ["catch-fill", "catch-line", "regions-fill", "regions-line", "points", "points-halo"]) if (map.getLayer(layer)) map.removeLayer(layer);
-  for (const src of ["catch", "regions", "points"]) if (map.getSource(src)) map.removeSource(src);
-
-  map.addSource("regions", { type: "geojson", data: `${base}/regions.geojson` });
-  map.addSource("catch", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-  map.addSource("points", {
-    type: "geojson",
-    data: {
+  layerData = {
+    regions: `${base}/regions.geojson`,
+    points: {
       type: "FeatureCollection",
       features: st.rows.map((r, i) => ({ type: "Feature", properties: { i, g: groupOf[i], r: rankOf[i] }, geometry: { type: "Point", coordinates: [r[3], r[4]] } })),
     },
-  });
-  const firstLabel = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
-  map.addLayer(
-    {
-      id: "regions-fill",
-      type: "fill",
-      source: "regions",
-      paint: { "fill-color": "#c81e1e", "fill-opacity": ["coalesce", ["feature-state", "calls"], 0] },
-    },
-    firstLabel,
-  );
-  map.addLayer({ id: "regions-line", type: "line", source: "regions", paint: { "line-color": "#ffffff", "line-opacity": 0.12, "line-width": 0.6 } }, firstLabel);
-  map.addLayer(
-    {
-      id: "catch-fill",
-      type: "fill",
-      source: "catch",
-      paint: {
-        "fill-color": "#9a9a9a",
-        "fill-opacity": 0.18,
-      },
-    },
-    firstLabel,
-  );
-  map.addLayer({
-    id: "points-halo",
-    type: "circle",
-    source: "points",
-    paint: {
-      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 0, 13, 9, 16, 16],
-      "circle-color": "#3ee08f",
-      "circle-opacity": 0,
-      "circle-blur": 0.6,
-    },
-  });
-  map.addLayer({
-    id: "points",
-    type: "circle",
-    source: "points",
-    paint: {
-      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 1.6, 12, 3, 15, 6.5],
-      "circle-color": "#8c8c8c",
-      "circle-stroke-color": "#121212",
-      "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 11, 0, 14, 1.5],
-      "circle-opacity": ["case", ["boolean", ["feature-state", "dim"], false], 0.35, 1],
-    },
-  });
+    catch: { type: "FeatureCollection", features: [] },
+  };
+  addLayers();
   applyLayerToggles();
   map.jumpTo({ center: s.center, zoom: s.zoom });
 
@@ -244,6 +262,7 @@ async function loadPreset(id: string) {
     .then((c) => {
       if (token !== loadToken) return;
       for (const f of c.features) f.properties = { g: groupOf[f.id], r: rankOf[f.id] };
+      if (layerData) layerData.catch = c as unknown as GeoJSON.FeatureCollection;
       (map.getSource("catch") as maplibregl.GeoJSONSource).setData(c as unknown as GeoJSON.FeatureCollection);
       map.once("idle", () => token === loadToken && ($("map-status").hidden = true));
     })
@@ -297,13 +316,14 @@ function update() {
       };
       const fixedRule = ["all", [">", ["get", "r"], 0], ["<=", ["get", "r"], state.fixed]];
       const ifFixed = (f: unknown, other: unknown) => (state.fixed ? ["case", fixedRule, f, other] : other);
-      map.setPaintProperty("catch-fill", "fill-color", by("#3ee08f", "#e2453b", "#9a9a9a"));
-      map.setPaintProperty("catch-fill", "fill-opacity", by(0.55, 0.14, 0.18));
-      map.setPaintProperty("points", "circle-color", by("#3ee08f", "#e2453b", "#8c8c8c"));
-      map.setPaintProperty("points", "circle-stroke-color", ifFixed("#ffffff", "#121212") as maplibregl.ExpressionSpecification);
+      const pal = mapPalette();
+      map.setPaintProperty("catch-fill", "fill-color", by(pal.open, pal.closed, pal.unknown));
+      map.setPaintProperty("catch-fill", "fill-opacity", by(pal.openFill, pal.closedFill, pal.unknownFill));
+      map.setPaintProperty("points", "circle-color", by(pal.open, pal.closed, pal.unknownDot));
+      map.setPaintProperty("points", "circle-stroke-color", ifFixed(pal.fixedStroke, pal.dotStroke) as maplibregl.ExpressionSpecification);
       map.setPaintProperty("points", "circle-stroke-width", ["interpolate", ["linear"], ["zoom"], 11, ifFixed(1.5, 0), 14, ifFixed(2, 1.5)] as maplibregl.ExpressionSpecification);
       map.setPaintProperty("points", "circle-radius", ["interpolate", ["linear"], ["zoom"], 9, ifFixed(4, 1.6), 12, ifFixed(6, 3), 15, ifFixed(9, 6.5)] as maplibregl.ExpressionSpecification);
-      map.setPaintProperty("points-halo", "circle-opacity", by(0.22, 0, 0));
+      map.setPaintProperty("points-halo", "circle-opacity", by(pal.halo, 0, 0));
       map.setPaintProperty("points-halo", "circle-radius", ["interpolate", ["linear"], ["zoom"], 9, ifFixed(12, 0), 13, ifFixed(18, 9), 16, ifFixed(24, 16)] as maplibregl.ExpressionSpecification);
     }
     const vk = variantKey();
@@ -588,28 +608,49 @@ function renderPin(r: { timeBlindNearest: Cand | null; nearestOpen: Cand | null;
   map.fitBounds(bounds, { padding: { top: 80, bottom: 80, left: 80, right: 80 }, maxZoom: 16.5, duration: 700 });
 }
 
+/** The pin's walk and the AEDs it found, kept so a theme change can redraw them. */
+let drawn: { line: [number, number][] | null; cands: { near: Cand; open: Cand | null } | null } = { line: null, cands: null };
+
 function clearRoute() {
   for (const id of ["route", "cands"]) {
     if (map.getLayer(id)) map.removeLayer(id);
     if (map.getSource(id)) map.removeSource(id);
   }
+  drawn = { line: null, cands: null };
 }
 
 function drawRoute(line: [number, number][]) {
+  drawn.line = line;
   map.addSource("route", { type: "geojson", data: { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: line } } });
-  map.addLayer({ id: "route", type: "line", source: "route", paint: { "line-color": "#ffd100", "line-width": 4, "line-dasharray": [1.2, 1.2] }, layout: { "line-cap": "round" } });
+  map.addLayer({ id: "route", type: "line", source: "route", paint: { "line-color": mapPalette().route, "line-width": 4, "line-dasharray": [1.2, 1.2] }, layout: { "line-cap": "round" } });
 }
 
 function drawCandidates(near: Cand, open: Cand | null) {
+  drawn.cands = { near, open };
+  const pal = mapPalette();
   const feats = [near, open].filter(Boolean).map((c) => ({ type: "Feature" as const, properties: { s: c!.state }, geometry: { type: "Point" as const, coordinates: c!.at } }));
   map.addSource("cands", { type: "geojson", data: { type: "FeatureCollection", features: feats } });
   map.addLayer({
     id: "cands",
     type: "circle",
     source: "cands",
-    paint: { "circle-radius": 11, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 3, "circle-stroke-color": ["match", ["get", "s"], "open", "#3ee08f", "closed", "#e2453b", "#9a9a9a"] },
+    paint: { "circle-radius": 11, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 3, "circle-stroke-color": ["match", ["get", "s"], "open", pal.open, "closed", pal.closed, pal.unknown] },
   });
 }
+
+// A theme change swaps the basemap (light or dark monochrome) and rebuilds this page's layers on it,
+// keeping the view, the clock, the pin and its route.
+addEventListener("themechange", () => {
+  const keep = drawn;
+  map.setStyle(basemapStyle(), { diff: false });
+  map.once("style.load", () => {
+    addLayers();
+    applyLayerToggles();
+    if (keep.line) drawRoute(keep.line);
+    if (keep.cands) drawCandidates(keep.cands.near, keep.cands.open);
+    update();
+  });
+});
 
 // ---------- ask the map ----------
 

@@ -1,21 +1,30 @@
-/* After Hours — one typeface, a charcoal night, and flat fields taken from the subject:
-   AED-sign green for action and "open", school-bus yellow, night blue, locked red. */
+/* After Hours — one typeface, two grounds (paper by default, a charcoal night by choice) and flat
+   fields taken from the subject: AED-sign green for action and "open", school-bus yellow, night
+   blue, locked red. The fields read the same in both themes; only the ground and its inks change. */
 
 :root {
-  --bg: #121212;
-  --surface: #1c1c1c;
-  --surface-2: #262626;
-  --surface-3: #313131;
-  --ink: #ffffff;
-  --muted: #b3b3b3;
-  --faint: #8c8c8c;
+  --bg: #fbfbf9;
+  --surface: #f0f0ec;
+  --surface-2: #e5e5df;
+  --surface-3: #d3d3cc;
+  --ink: #121212;
+  --muted: #4d4d4d;
+  --faint: #6b6b6b;
 
   --aed: #0b7a4b;
   --aed-press: #096640;
   --aed-ink: #ffffff;
-  --open: #3ee08f;
-  --closed: #e2453b;
-  --unknown: #9a9a9a;
+  --open: #0b7a4b;
+  --closed: #c62828;
+  --closed-text: #b3261e;
+  --closed-soft: #f2c9c5;
+  --unknown: #8a8a8a;
+
+  /* Yellow as ink: the hour, focus rings, markers. School-bus yellow can't be read on paper. */
+  --hi: #8f5f00;
+  --overlay: rgba(251, 251, 249, 0.92);
+  --shadow: rgba(18, 18, 18, 0.16);
+  --map-ground: #ecece8;
 
   --school: #ffd100;
   --school-ink: #111111;
@@ -37,7 +46,42 @@
   --radius: 0px;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  color-scheme: light;
+}
+
+/* The night palette: the whole page when the visitor picks dark, and always inside the colour
+   fields, which were composed on it and stay the same in both themes. */
+[data-theme="dark"],
+.chapter--school,
+.chapter--night,
+.chapter--locked,
+.site-footer {
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --surface-2: #262626;
+  --surface-3: #313131;
+  --ink: #ffffff;
+  --muted: #b3b3b3;
+  --faint: #8c8c8c;
+  --open: #3ee08f;
+  --closed: #e2453b;
+  --closed-text: #ff8a80;
+  --closed-soft: #4a2523;
+  --unknown: #9a9a9a;
+  --hi: #ffd100;
+  --overlay: rgba(18, 18, 18, 0.88);
+  --shadow: rgba(0, 0, 0, 0.55);
+  --map-ground: #161616;
+}
+[data-theme="dark"] {
   color-scheme: dark;
+}
+
+/* A theme switch repaints at once instead of easing every colour separately. */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
 }
 
 *,
@@ -99,7 +143,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--school);
+  outline: 3px solid var(--hi);
   outline-offset: 3px;
 }
 
@@ -203,6 +247,44 @@ kbd {
   width: 28px;
   height: 28px;
 }
+.wordmark__bolt {
+  fill: var(--bg);
+}
+
+/* Theme toggle: shows the moon on paper, the sun at night. */
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    background: var(--surface-2);
+  }
+}
+.theme-toggle svg {
+  grid-area: 1 / 1;
+  width: 22px;
+  height: 22px;
+}
+.theme-toggle__sun,
+[data-theme="dark"] .theme-toggle__moon {
+  display: none;
+}
+[data-theme="dark"] .theme-toggle__sun {
+  display: block;
+}
 .site-nav {
   display: flex;
   align-items: center;
@@ -237,9 +319,41 @@ kbd {
 .site-nav .button {
   min-height: 44px;
 }
+.wordmark,
+.site-nav .button {
+  white-space: nowrap;
+}
 @media (max-width: 760px) {
   .site-nav a:not(.button):not(.keep) {
     display: none;
+  }
+  /* Phone header: logo, theme toggle and the map button on one line. */
+  .site-header {
+    gap: 12px;
+  }
+  .site-nav {
+    gap: 6px;
+  }
+  .wordmark {
+    gap: 8px;
+    font-size: 1.25rem;
+  }
+  .wordmark svg {
+    width: 24px;
+    height: 24px;
+  }
+  .site-nav .button {
+    padding-inline: 0.9em;
+    font-size: 0.9375rem;
+  }
+}
+@media (max-width: 340px) {
+  .wordmark__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
 }
 

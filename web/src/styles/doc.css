@@ -99,7 +99,7 @@
   max-width: 70ch;
 }
 .doc-list li::marker {
-  color: var(--school);
+  color: var(--hi);
 }
 .doc-page pre {
   margin: 0;
@@ -349,7 +349,7 @@
   color: var(--open);
 }
 .console__status.is-bad {
-  color: #ff8a80;
+  color: var(--closed-text);
 }
 .console__res pre {
   margin-top: 14px;

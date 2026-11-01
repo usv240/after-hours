@@ -37,12 +37,12 @@ function buildDial(s: Summary) {
     const a = document.createElementNS(SVG, "path");
     a.setAttribute("d", arc(70, 98, h / 24 + gap, (h + 1) / 24 - gap));
     a.setAttribute("class", "dial__seg dial__seg--aed");
-    a.setAttribute("fill-opacity", String(0.08 + 0.92 * (n / maxOpen)));
+    a.style.setProperty("--v", (n / maxOpen).toFixed(3));
     outer.append(a);
     const c = document.createElementNS(SVG, "path");
     c.setAttribute("d", arc(50, 66, h / 24 + gap, (h + 1) / 24 - gap));
     c.setAttribute("class", "dial__seg dial__seg--call");
-    c.setAttribute("fill-opacity", String(0.12 + 0.88 * (calls[h] / maxCalls)));
+    c.style.setProperty("--v", (calls[h] / maxCalls).toFixed(3));
     inner.append(c);
     return a;
   });

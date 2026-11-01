@@ -60,7 +60,7 @@
   margin-bottom: 14px;
 }
 #when-hour {
-  color: var(--school);
+  color: var(--hi);
 }
 
 /* Segmented controls */
@@ -99,7 +99,7 @@
 }
 .hour input[type="range"] {
   width: 100%;
-  accent-color: var(--school);
+  accent-color: var(--hi);
   height: 28px;
   margin: 0;
 }
@@ -242,7 +242,7 @@
   background: var(--surface-3);
 }
 .weekstrip button.is-now::before {
-  background: var(--school);
+  background: var(--hi);
   opacity: 1;
   height: 100%;
 }
@@ -273,7 +273,7 @@
 }
 .tabs button[aria-selected="true"] {
   color: var(--ink);
-  border-bottom-color: var(--school);
+  border-bottom-color: var(--hi);
 }
 .tabs button[hidden] {
   display: none;
@@ -332,7 +332,7 @@
   transform: translateX(18px);
 }
 .switch input:focus-visible + .switch__track {
-  outline: 3px solid var(--school);
+  outline: 3px solid var(--hi);
   outline-offset: 2px;
 }
 .switch small {
@@ -366,11 +366,11 @@
   margin-top: 10px;
 }
 .loading {
-  color: var(--school);
+  color: var(--hi);
   margin-top: 14px;
 }
 .error {
-  color: #ff8a80;
+  color: var(--closed-text);
   margin-top: 14px;
 }
 .dl {
@@ -400,7 +400,7 @@
 .search input:focus,
 .input:focus {
   outline: none;
-  border-color: var(--school);
+  border-color: var(--hi);
 }
 .search .button {
   min-height: 46px;
@@ -477,7 +477,7 @@
   line-height: 1.2;
 }
 .verdict--bad {
-  color: #ff8a80;
+  color: var(--closed-text);
 }
 .verdict--ok {
   color: var(--open);
@@ -635,7 +635,7 @@
   color: var(--open);
 }
 .turn--skeptic b {
-  color: #ff8a80;
+  color: var(--closed-text);
 }
 .cite {
   display: inline-block;
@@ -663,7 +663,7 @@
   gap: 6px;
 }
 .evidence li:target {
-  color: var(--school);
+  color: var(--hi);
 }
 
 /* ---------- map ---------- */
@@ -675,7 +675,7 @@
 #map {
   position: absolute;
   inset: 0;
-  background: #161616;
+  background: var(--map-ground);
 }
 .map-legend {
   position: absolute;
@@ -684,7 +684,7 @@
   display: flex;
   gap: 14px;
   padding: 8px 12px;
-  background: rgba(18, 18, 18, 0.88);
+  background: var(--overlay);
   font-size: 0.8125rem;
   color: var(--muted);
 }
@@ -698,7 +698,7 @@
 }
 .dot--fixed {
   background: var(--open);
-  box-shadow: 0 0 0 2px #ffffff;
+  box-shadow: 0 0 0 2px var(--ink);
 }
 .map-status {
   position: absolute;
@@ -726,7 +726,7 @@
   width: min(560px, calc(100% - 24px));
   padding: 18px 20px 14px;
   background: var(--bg);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 12px 40px var(--shadow);
   transition: transform 320ms var(--ease-out), opacity 320ms var(--ease-out);
 }
 @starting-style {
@@ -790,7 +790,7 @@
   color: var(--closed);
 }
 .story__big[data-tone="school"] {
-  color: var(--school);
+  color: var(--hi);
 }
 .story__big[data-tone="ink"] {
   color: var(--ink);
@@ -882,7 +882,7 @@
 
 .is-pin .map-legend::after {
   content: "Click the map to drop a pin";
-  color: var(--school);
+  color: var(--hi);
   margin-left: 6px;
 }
 .pin {
@@ -890,7 +890,7 @@
   height: 22px;
   border-radius: 50%;
   background: var(--school);
-  border: 4px solid var(--bg);
+  border: 4px solid #121212;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -899,11 +899,11 @@
   background: var(--surface-2) !important;
   border-radius: 0 !important;
 }
-.maplibregl-ctrl-group button {
+[data-theme="dark"] .maplibregl-ctrl-group button {
   filter: invert(1);
 }
 .maplibregl-ctrl-attrib {
-  background: rgba(18, 18, 18, 0.8) !important;
+  background: var(--overlay) !important;
   color: var(--faint);
 }
 .maplibregl-ctrl-attrib a {
@@ -914,7 +914,7 @@
   color: var(--ink);
   border-radius: 0;
   padding: 16px 18px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 28px var(--shadow);
 }
 .ah-popup .maplibregl-popup-tip {
   border-top-color: var(--surface) !important;
@@ -955,7 +955,7 @@
   color: var(--open);
 }
 .card__state--s0 {
-  color: #ff8a80;
+  color: var(--closed-text);
 }
 .card__state--s2 {
   color: var(--muted);
@@ -994,13 +994,13 @@
   background: var(--open);
 }
 .mini-week__cells .s0 {
-  background: #4a2523;
+  background: var(--closed-soft);
 }
 .mini-week__cells .s2 {
   background: var(--surface-3);
 }
 .mini-week__cells .now {
-  outline: 2px solid var(--school);
+  outline: 2px solid var(--hi);
   outline-offset: -1px;
 }
 
@@ -1051,7 +1051,7 @@
 }
 .drop.is-over,
 .drop:focus-within {
-  border-color: var(--school);
+  border-color: var(--hi);
 }
 /* Empty state over the map: three real samples, each its own Amazon Location map. */
 .starter {
@@ -1122,7 +1122,7 @@
   }
 }
 .starter__card:focus-visible {
-  outline: 3px solid var(--school);
+  outline: 3px solid var(--hi);
   outline-offset: 2px;
 }
 @media (max-width: 860px) {
