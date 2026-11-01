@@ -105,6 +105,17 @@
           <section class="pane" id="pane-relocation" role="tabpanel" aria-labelledby="tab-relocation" hidden>
             <h2 class="block__title">Schools to make 24/7 first</h2>
             <p class="hint">Ranked by the 2025 cardiac-arrest calls expected inside each school's two-minute walk at hours when every AED in reach was locked. A weatherproof cabinet on the street wall would have put one in reach.</p>
+            <div class="field">
+              <p class="field__label" id="fix-label">Put a 24/7 cabinet outside the top</p>
+              <div class="seg seg--sm" role="radiogroup" aria-labelledby="fix-label" id="fix">
+                <button role="radio" aria-checked="true" data-fix="0">None</button>
+                <button role="radio" aria-checked="false" data-fix="10">10</button>
+                <button role="radio" aria-checked="false" data-fix="25">25</button>
+                <button role="radio" aria-checked="false" data-fix="50">50</button>
+                <button role="radio" aria-checked="false" data-fix="100">100</button>
+              </div>
+            </div>
+            <div class="fix-result" id="fix-result" aria-live="polite"></div>
             <a class="dl" href="/data/nyc/relocation.csv" download>Download all 100 as CSV</a>
             <ol class="rank" id="rank"></ol>
             <div id="debate" aria-live="polite"></div>
@@ -118,6 +129,7 @@
           <span><i class="dot dot--open"></i>open</span>
           <span><i class="dot dot--closed"></i>locked</span>
           <span><i class="dot dot--unknown"></i>unknown</span>
+          <span id="legend-fixed" hidden><i class="dot dot--fixed"></i>24/7 cabinet</span>
         </div>
         <div class="map-status" id="map-status" role="status">Loading 4,000 locations…</div>
       </div>

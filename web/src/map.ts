@@ -22,6 +22,7 @@ interface Summary {
   hoursSources: Record<string, number>;
   catchment: { kind: string; label: string };
   aiGrade?: { falseOpenShare: number };
+  calls?: { byVariant: Record<string, { calls: number; actualCoverage: number }> };
 }
 interface SitesFile {
   columns: string[];
@@ -70,6 +71,8 @@ const state = {
   playing: 0 as number,
   pin: null as [number, number] | null,
   school: null as string | null,
+  /** How many of the ranked schools have their AED moved to a 24/7 street cabinet. */
+  fixed: 0,
 };
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -90,6 +93,8 @@ let loadToken = 0;
 const SCHOOL_GROUP = 1_000_000;
 const AI_GROUP = 2_000_000;
 let groupOf = new Int32Array(0);
+/** Relocation rank of each site (1–100), 0 when it is not on the list. */
+let rankOf = new Int32Array(0);
 let groupIds: number[] = [];
 let lastPaintKey = "";
 const regionState = new Map<number, number>();
@@ -148,6 +153,10 @@ async function loadPreset(id: string) {
   state.preset = id;
   groupOf = Int32Array.from(st.rows, (r) => (r[8] === -1 ? SCHOOL_GROUP : r[9] != null ? AI_GROUP + r[9] : r[8]));
   groupIds = [...new Set(groupOf)];
+  const indexOf = new Map(st.rows.map((r, i) => [r[0], i]));
+  rankOf = new Int32Array(st.rows.length);
+  for (const r of rel) if (indexOf.has(r.id)) rankOf[indexOf.get(r.id)!] = r.rank;
+  if (id !== "nyc") state.fixed = 0;
   lastPaintKey = "";
   regionState.clear();
 
@@ -160,7 +169,7 @@ async function loadPreset(id: string) {
     type: "geojson",
     data: {
       type: "FeatureCollection",
-      features: st.rows.map((r, i) => ({ type: "Feature", properties: { i, g: groupOf[i] }, geometry: { type: "Point", coordinates: [r[3], r[4]] } })),
+      features: st.rows.map((r, i) => ({ type: "Feature", properties: { i, g: groupOf[i], r: rankOf[i] }, geometry: { type: "Point", coordinates: [r[3], r[4]] } })),
     },
   });
   const firstLabel = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -227,12 +236,13 @@ async function loadPreset(id: string) {
       : `Paris uses France's national registry, where owners must declare when each AED can be reached. ${fmt.format(s.hoursSources.unknown ?? 0)} of ${fmt.format(s.sites)} never did, so they show as unknown. Walking areas here are ${s.catchment.label}.`;
   buildWeekstrip();
   renderRelocation();
+  renderFix();
   update();
   $("map-status").textContent = "Drawing two-minute walking areas…";
   catchments
     .then((c) => {
       if (token !== loadToken) return;
-      for (const f of c.features) f.properties = { g: groupOf[f.id] };
+      for (const f of c.features) f.properties = { g: groupOf[f.id], r: rankOf[f.id] };
       (map.getSource("catch") as maplibregl.GeoJSONSource).setData(c as unknown as GeoJSON.FeatureCollection);
       map.once("idle", () => token === loadToken && ($("map-status").hidden = true));
     })
@@ -258,7 +268,7 @@ function update() {
   const st = stateIndex(state.season, state.day, state.hour);
   const counts = [0, 0, 0];
   sites.rows.forEach((row, i) => {
-    const v = patternFor(row)[st];
+    const v = isFixed(i) ? 1 : patternFor(row)[st];
     siteState[i] = v;
     counts[v]++;
   });
@@ -272,7 +282,7 @@ function update() {
       if (v === 1) open.push(g);
       else if (v === 0) closed.push(g);
     }
-    const key = `${open.join(",")}|${closed.join(",")}`;
+    const key = `${open.join(",")}|${closed.join(",")}|${state.fixed}`;
     if (key !== lastPaintKey) {
       lastPaintKey = key;
       const by = <T,>(o: T, c: T, u: T) => {
@@ -280,12 +290,20 @@ function update() {
         if (open.length) e.push(open, o);
         if (closed.length) e.push(closed, c);
         e.push(u);
-        return (e.length > 3 ? e : u) as maplibregl.ExpressionSpecification;
+        const plain = e.length > 3 ? e : u;
+        // Schools given a street cabinet are open at every hour, whatever their timetable says.
+        return (state.fixed ? ["case", fixedRule, o, plain] : plain) as maplibregl.ExpressionSpecification;
       };
+      const fixedRule = ["all", [">", ["get", "r"], 0], ["<=", ["get", "r"], state.fixed]];
+      const ifFixed = (f: unknown, other: unknown) => (state.fixed ? ["case", fixedRule, f, other] : other);
       map.setPaintProperty("catch-fill", "fill-color", by("#3ee08f", "#e2453b", "#9a9a9a"));
       map.setPaintProperty("catch-fill", "fill-opacity", by(0.55, 0.14, 0.18));
       map.setPaintProperty("points", "circle-color", by("#3ee08f", "#e2453b", "#8c8c8c"));
+      map.setPaintProperty("points", "circle-stroke-color", ifFixed("#ffffff", "#121212") as maplibregl.ExpressionSpecification);
+      map.setPaintProperty("points", "circle-stroke-width", ["interpolate", ["linear"], ["zoom"], 11, ifFixed(1.5, 0), 14, ifFixed(2, 1.5)] as maplibregl.ExpressionSpecification);
+      map.setPaintProperty("points", "circle-radius", ["interpolate", ["linear"], ["zoom"], 9, ifFixed(4, 1.6), 12, ifFixed(6, 3), 15, ifFixed(9, 6.5)] as maplibregl.ExpressionSpecification);
       map.setPaintProperty("points-halo", "circle-opacity", by(0.22, 0, 0));
+      map.setPaintProperty("points-halo", "circle-radius", ["interpolate", ["linear"], ["zoom"], 9, ifFixed(12, 0), 13, ifFixed(18, 9), 16, ifFixed(24, 16)] as maplibregl.ExpressionSpecification);
     }
     const vk = variantKey();
     let maxCalls = 0;
@@ -322,7 +340,8 @@ function update() {
     state.preset === "nyc"
       ? ` In 2025, ${fmt.format(calls)} cardiac-arrest call${calls === 1 ? "" : "s"} came in at this hour of the week${state.season === "summer" ? " in July and August" : ""}.`
       : "";
-  $("cover-line").textContent = `${pct(open / cells)} of the city is within a two-minute walk of an open defibrillator, against ${pct(reach / cells)} if every one were open.${callLine}`;
+  const fixNote = state.fixed ? ` (This share leaves out the ${state.fixed} schools you gave a 24/7 cabinet.)` : "";
+  $("cover-line").textContent = `${pct(open / cells)} of the city is within a two-minute walk of an open defibrillator, against ${pct(reach / cells)} if every one were open.${fixNote}${callLine}`;
 
   $("when-day").textContent = `${DAY_LONG[state.day]}${state.season === "summer" ? " in summer" : ""}`;
   $("when-hour").textContent = `${hourLabel(state.hour)}`;
@@ -397,6 +416,7 @@ function siteCard(i: number) {
     { class: "card" },
     el("p", { class: `card__state card__state--s${siteState[i]}` }, `${STATE_WORD[siteState[i]]} at ${hourLabel(state.hour)}`),
     el("h3", {}, r[1]),
+    isFixed(i) ? el("p", { class: "card__where" }, `Given a 24/7 street cabinet in this scenario (#${rankOf[i]} on the list). The week below is its current timetable.`) : null,
     el("p", { class: "card__meta" }, [r[2], r[5] ? `${summary.regionLabel} ${r[5]}` : "", r[6] > 1 ? `${r[6]} AEDs` : ""].filter(Boolean).join(" · ")),
     r[10] ? el("p", { class: "card__where" }, `Where inside: ${r[10]}`) : null,
     strip,
@@ -628,6 +648,41 @@ function renderRelocation() {
   );
 }
 
+function isFixed(i: number) {
+  return state.fixed > 0 && rankOf[i] > 0 && rankOf[i] <= state.fixed;
+}
+
+/**
+ * The ranking credits each street cell's calls to one school only, so the gains of the top N add up
+ * without double counting. The sum is a floor: a cabinet can also reach cells credited to a school
+ * further down the list.
+ */
+function renderFix() {
+  const host = $("fix-result");
+  document.querySelectorAll<HTMLButtonElement>("#fix button").forEach((b) => b.setAttribute("aria-checked", String(Number(b.dataset.fix) === state.fixed)));
+  $("legend-fixed").hidden = !state.fixed;
+  const v = summary.calls?.byVariant[summary.headlineVariant];
+  if (!v) return host.replaceChildren();
+  const before = v.calls * v.actualCoverage;
+  if (!state.fixed) {
+    host.replaceChildren(
+      el("p", {}, `Of ${fmt.format(v.calls)} cardiac-arrest calls in 2025, about ${fmt.format(Math.round(before))} came within a two-minute walk of an open AED.`),
+      el("p", { class: "fine" }, "Pick a number to move those schools' AEDs outside and see the map at night."),
+    );
+    return;
+  }
+  const gain = relocation.slice(0, state.fixed).reduce((a, r) => a + r.expectedCallsPerYear, 0);
+  host.replaceChildren(
+    el("p", { class: "fix-result__big num" }, `+${Math.round(gain)}`, el("small", {}, " calls a year")),
+    el(
+      "p",
+      {},
+      `Of ${fmt.format(v.calls)} cardiac-arrest calls in 2025, about ${fmt.format(Math.round(before))} came within a two-minute walk of an open AED. With these ${state.fixed} schools' AEDs in street cabinets, at least ${fmt.format(Math.round(before + gain))}: ${Math.round((100 * gain) / before)}% more. Their walking areas now stay green at every hour.`,
+    ),
+    el("p", { class: "fine" }, "Each call is credited to one school only, so the total never counts a call twice. Assumes school buildings lock at 6 PM."),
+  );
+}
+
 interface Debate {
   evidence: { id: string; text: string }[];
   turns: { speaker: string; text: string }[];
@@ -768,6 +823,7 @@ function syncUrl() {
     if (state.ai) q.set("ai", "1");
     if (state.tab === "pin" && state.pin) q.set("pin", state.pin.map((v) => v.toFixed(5)).join(","));
     if (state.tab === "relocation" && state.school) q.set("school", state.school);
+    if (state.fixed) q.set("fix", String(state.fixed));
     history.replaceState(null, "", `${location.pathname}?${q}${state.tab === "explore" ? "" : `#${state.tab}`}`);
   }, 200);
 }
@@ -779,6 +835,7 @@ function readUrl() {
   if (q.get("s") === "summer") state.season = "summer";
   if (["15", "18", "21"].includes(q.get("c") ?? "")) state.close = Number(q.get("c"));
   state.ai = q.get("ai") === "1";
+  if (["10", "25", "50", "100"].includes(q.get("fix") ?? "")) state.fixed = Number(q.get("fix"));
   const pin = (q.get("pin") ?? "").split(",").map(Number);
   return {
     preset: q.get("p") === "paris" ? "paris" : "nyc",
@@ -898,13 +955,23 @@ function beats(): Beat[] {
       hold: 10000,
       run: async () => {
         const top = relocation[0];
-        setTab("relocation");
-        const d = await focusSchool(top);
-        popup.remove();
+        const n = relocation.length;
+        const gain = relocation.reduce((a, r) => a + r.expectedCallsPerYear, 0);
+        const v = s.calls?.byVariant[s.headlineVariant];
+        const d = await fetch(`/data/nyc/debates/${top.id}.json`).then((r) => (r.ok ? (r.json() as Promise<Debate>) : null)).catch(() => null);
         const verdict = d ? (VERDICT[d.verdict.verdict] ?? d.verdict.verdict).toLowerCase() : null;
+        popup.remove();
+        pinMarker?.remove();
+        pinMarker = null;
+        clearRoute();
+        setTab("relocation");
+        state.fixed = n;
+        renderFix();
+        setClock(6, 21);
+        cityView();
         return {
-          big: "A box on the wall",
-          text: `${top.name} tops the list: ${top.expectedCallsPerYear.toFixed(2)} cardiac-arrest calls a year in reach while every AED nearby was locked. A 24/7 cabinet outside would change that.${verdict ? ` Two AI agents argued it; the verdict: ${verdict}.` : ""}`,
+          big: `+${Math.round(gain)} a year`,
+          text: `Move the AEDs of the ${n} schools where it matters most into 24/7 cabinets on the street wall, and at least ${Math.round(gain)} more of a year's cardiac arrests have one in reach${v ? `, ${Math.round((100 * gain) / (v.calls * v.actualCoverage))}% more than today` : ""}. First on the list: ${top.name}.${verdict ? ` Two AI agents argued its case; the verdict: ${verdict}.` : ""}`,
           extra: el("a", { class: "story__link", href: `/brief.html?id=${top.id}` }, "Open its one-page brief"),
         };
       },
@@ -931,6 +998,10 @@ let storyBeats: Beat[] = [];
 function storyOpen() {
   if (!summary || state.preset !== "nyc") return;
   if (state.playing) $("play").click();
+  if (state.fixed) {
+    state.fixed = 0;
+    renderFix();
+  }
   storyBeats = beats();
   popup.remove();
   story.card?.remove();
@@ -1036,6 +1107,13 @@ function wire() {
     b.addEventListener("click", () => {
       state.close = Number(b.dataset.close);
       document.querySelectorAll("#school-close button").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
+      update();
+    }),
+  );
+  document.querySelectorAll<HTMLButtonElement>("#fix button").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.fixed = Number(b.dataset.fix);
+      renderFix();
       update();
     }),
   );

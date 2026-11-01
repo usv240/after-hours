@@ -527,6 +527,23 @@
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
+.fix-result {
+  margin-top: 12px;
+}
+.fix-result__big {
+  color: var(--open);
+  font-weight: 800;
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.fix-result__big small {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
 .verdict-box {
   margin-top: 14px;
   background: var(--aed);
@@ -618,6 +635,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+.map-legend span[hidden] {
+  display: none;
+}
+.dot--fixed {
+  background: var(--open);
+  box-shadow: 0 0 0 2px #ffffff;
 }
 .map-status {
   position: absolute;

@@ -24,6 +24,9 @@ Built for the AWS Builder Center *Weekend Challenge: Map it* (October–November
 | Coverage a time-blind map shows that was locked at the hour calls came | 70% |
 | …even if every venue with unknown hours were open 24/7 | 45% |
 | Paris (France makes owners declare hours): confirmed open, Tue 2 PM → Sun 3 AM | 838 → 219 |
+| 2025 calls with an open AED within a two-minute walk, today → with 24/7 cabinets at the top 100 schools | about 363 → at least 448 (+23%) |
+
+Try the last row on the map: **Make 24/7** → *Put a 24/7 cabinet outside the top 10 / 25 / 50 / 100* relights those schools at every hour ([top 100 at Sunday 3 AM](https://dqcf6x4e7zbds.cloudfront.net/map.html?t=6-3&fix=100#relocation)).
 
 Every number is computed by the pipeline in this repo and written to `web/public/data/*/summary.json`; the web pages fill them in at build time and never hardcode one.
 
