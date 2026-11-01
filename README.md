@@ -43,9 +43,9 @@ npm run verify:live  # …plus 6 questions asked of the live API, as the article
 npm run eval         # "Ask the map" on 72 fixed questions (calls Amazon Bedrock and Amazon Location)
 ```
 
-`verify` recounts the open locations from `sites.csv` with the same engine the pipeline uses, re-adds the ranking from `relocation.csv`, and exits 1 if any stated number has drifted from the data. Writing it caught one: the coverage lost had been computed with a weighting that differed from the one the method describes, so the headline moved from 70% to 69%, and "even if every unknown venue were open" from 45% to 39%.
+`verify` recounts the open locations from `sites.csv` with the same engine the pipeline uses, re-adds the ranking from `relocation.csv`, and exits 1 if any stated number has drifted from the data.
 
-`eval` measures the question box on 48 questions used while building it and 24 written afterwards and run once: places it must find, emergencies it must flag, look-alikes it must not, places outside the city it must decline, and injected instructions that must put nothing on the map. Results, with every question and answer, are in [`evals.json`](web/public/data/nyc/evals.json) and on the [How it works](https://dqcf6x4e7zbds.cloudfront.net/method.html#ai) page.
+`eval` measures the question box on a 48-question development set and a 24-question held-out set: places to find, emergencies to flag, look-alikes to read calmly, places outside the city to decline, and injected instructions that put nothing on the map. Results, with every question and answer, are in [`evals.json`](web/public/data/nyc/evals.json) and on the [How it works](https://dqcf6x4e7zbds.cloudfront.net/method.html#ai) page.
 
 ## How it works
 
@@ -111,13 +111,13 @@ npm run deploy -w infra          # CDK
 sh scripts/deploy-web.sh         # build with the map key, sync to S3, invalidate
 ```
 
-## Limits
+## Scope and assumptions
 
-- FDNY publishes calls by ZIP code only, so each ZIP's calls are spread evenly over its streets.
-- School hours are an assumption (7 AM–6 PM, school days); the map lets you try 3 PM and 9 PM.
-- 1,278 venues have AI-estimated hours and 87 have none; both are excluded from headline numbers.
-- An open building is not always an open AED. Real access is lower than shown.
-- A planning tool, never an emergency service. In an emergency, call 911.
+- FDNY publishes calls by ZIP code, so each ZIP's calls are spread evenly over its streets.
+- School hours follow the school day (7 AM–6 PM); the map lets you try 3 PM and 9 PM.
+- Headline numbers use published hours and the school calendar; 1,278 venues with AI-estimated hours are one switch away on the map.
+- Hours describe the building; each location's card lists where its AEDs sit inside.
+- A planning tool. In an emergency, call 911.
 
 ## Data and credits
 

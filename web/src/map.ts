@@ -819,7 +819,7 @@ function schoolIntro(r: Relocation) {
     el("h3", { class: "debate__title" }, r.name),
     el("p", {}, `${r.expectedCallsPerYear.toFixed(2)} cardiac-arrest calls a year inside its two-minute walk while every AED in reach was locked.`),
     r.altHost
-      ? el("p", { class: "hint" }, `Another option: ${r.altHost.name}, a ${r.altHost.category} normally staffed around the clock (public access unverified), is ${r.altHost.meters} m away (Overture Maps, via Amazon Athena).`)
+      ? el("p", { class: "hint" }, `Another option: ${r.altHost.name}, a ${r.altHost.category} normally staffed around the clock (public access to confirm on site), is ${r.altHost.meters} m away (Overture Maps, via Amazon Athena).`)
       : "",
     el("a", { class: "dl", href: `/brief.html?id=${r.id}` }, "Open the one-page brief for this school"),
   ];

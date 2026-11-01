@@ -80,7 +80,7 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
           "li",
           {},
           el("b", {}, `A host that never closes. `),
-          `${b.altHost.name}, a ${b.altHost.category}, is ${b.altHost.meters} m away and is normally staffed around the clock (whether the public could reach an AED there is unverified). An AED there, reachable from the street, would cover nights, weekends and summer.`,
+          `${b.altHost.name}, a ${b.altHost.category}, is ${b.altHost.meters} m away and is normally staffed around the clock (public access to confirm on site). An AED there, reachable from the street, would cover nights, weekends and summer.`,
         )
       : el("li", {}, el("b", {}, "No always-staffed building within 400 m. "), "Overture Maps lists no fire station, police station or hospital this close, so the street-wall cabinet is the practical option."),
   );
@@ -153,7 +153,7 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
       el(
         "ol",
         { class: "bnext" },
-        el("li", {}, el("b", {}, "See it after dark. "), "Walk past after 6 PM. The map assumes the doors are locked; an evening programme with someone at the door would change that."),
+        el("li", {}, el("b", {}, "See it after dark. "), "Walk past after 6 PM. The map follows the school day; an evening programme with someone at the door adds hours."),
         el("li", {}, el("b", {}, "Ask the school. "), "Before any move: where the AED is now, whether the street wall can take a heated, alarmed cabinet, who inspects it monthly, and approval from the school and the DOE."),
         b.council
           ? el(
@@ -169,8 +169,8 @@ function sheet(b: Brief, all: Brief[], schoolWeek: Uint8Array) {
     el(
       "section",
       { class: "sheet__unknown" },
-      el("h2", { id: "uk" }, "What this data cannot tell you"),
-      el("p", {}, "The cost of a cabinet, the risk of vandalism, whether the school already lets people in after hours, and where in the ZIP code each call came from. FDNY publishes calls by ZIP code only, so the calls are spread evenly over its streets."),
+      el("h2", { id: "uk" }, "To confirm on site"),
+      el("p", {}, "Cabinet cost and security, any after-hours access the school already offers, and the street of each call (FDNY publishes calls by ZIP code, so they are spread evenly over its streets)."),
     ),
     el(
       "footer",
