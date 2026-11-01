@@ -631,6 +631,174 @@
 .map-status[hidden] {
   display: none;
 }
+/* The 60-second story */
+.story-start {
+  margin-top: 18px;
+  width: 100%;
+  justify-content: center;
+}
+.story {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 3;
+  width: min(560px, calc(100% - 24px));
+  padding: 18px 20px 14px;
+  background: var(--bg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  transition: transform 320ms var(--ease-out), opacity 320ms var(--ease-out);
+}
+@starting-style {
+  .story {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+.is-story .map-legend {
+  display: none;
+}
+.story__segs {
+  display: flex;
+  gap: 4px;
+}
+.story__segs span {
+  flex: 1;
+  height: 4px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.story__segs i {
+  display: block;
+  height: 100%;
+  background: var(--open);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.story__segs .is-done i {
+  transform: scaleX(1);
+}
+.story__segs .is-on i {
+  animation: story-fill var(--hold, 8000ms) linear forwards;
+}
+.story.is-busy .story__segs .is-on i,
+.story.is-paused .story__segs .is-on i {
+  animation-play-state: paused;
+}
+@keyframes story-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+.story__body {
+  margin-top: 14px;
+  min-height: 7.5em;
+  transition: opacity 220ms ease, filter 220ms ease;
+}
+.story.is-busy .story__body {
+  opacity: 0.35;
+  filter: blur(2px);
+}
+.story__big {
+  font-size: clamp(2.25rem, 1.6rem + 2vw, 3.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--open);
+}
+.story__big[data-tone="closed"] {
+  color: var(--closed);
+}
+.story__big[data-tone="school"] {
+  color: var(--school);
+}
+.story__big[data-tone="ink"] {
+  color: var(--ink);
+}
+.story__text {
+  margin-top: 8px;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  max-width: 52ch;
+}
+.story__extra:not(:empty) {
+  margin-top: 12px;
+}
+.story__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.story__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  background: var(--aed);
+  color: var(--aed-ink);
+  font: 500 0.9375rem/1 var(--font);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+.story__link:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .story__link:hover {
+    background: var(--aed-press);
+  }
+}
+.story__ctrl {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+}
+.story__btn {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 500 0.875rem/1 var(--font);
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+.story__btn:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .story__btn:hover {
+    background: var(--surface-3);
+  }
+}
+.story__btn--x {
+  margin-left: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .story,
+  .story__body {
+    transition: opacity 200ms ease;
+  }
+  .story.is-busy .story__body {
+    filter: none;
+  }
+}
+@media (max-width: 860px) {
+  .story {
+    left: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+    padding: 14px 14px 10px;
+  }
+  .story__body {
+    min-height: 0;
+  }
+  .story__text {
+    font-size: 0.9375rem;
+  }
+}
+
 .is-pin .map-legend::after {
   content: "Click the map to drop a pin";
   color: var(--school);
@@ -804,6 +972,85 @@
 .drop:focus-within {
   border-color: var(--school);
 }
+/* Empty state over the map: three real samples, each its own Amazon Location map. */
+.starter {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: auto;
+  padding: clamp(24px, 4vw, 56px);
+  background: var(--bg);
+}
+.starter[hidden] {
+  display: none;
+}
+.starter h2 {
+  font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.starter > p {
+  margin-top: 14px;
+  max-width: 60ch;
+  color: var(--muted);
+}
+.starter__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+.starter__card {
+  display: grid;
+  gap: 4px;
+  padding: 0 0 16px;
+  border: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color 160ms ease;
+}
+.starter__card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+.starter__card b,
+.starter__card span {
+  padding-inline: 16px;
+}
+.starter__card b {
+  font-size: 1.1875rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+.starter__card span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.starter__card:active {
+  transform: scale(0.98);
+}
+@media (hover: hover) and (pointer: fine) {
+  .starter__card:hover {
+    background: var(--surface-2);
+  }
+}
+.starter__card:focus-visible {
+  outline: 3px solid var(--school);
+  outline-offset: 2px;
+}
+@media (max-width: 860px) {
+  .starter__cards {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+    overflow-x: auto;
+  }
+}
+
 .samples__label {
   margin-top: 16px;
 }

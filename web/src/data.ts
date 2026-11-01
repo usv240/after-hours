@@ -99,6 +99,7 @@ async function drawMap() {
     map.fitBounds(b, { padding: 60, maxZoom: 15, duration: 600 });
   }
   $("map-status").hidden = true;
+  $("starter").hidden = true;
   update();
 }
 
@@ -368,9 +369,19 @@ function wire() {
       else state.tz = "America/New_York";
       tz.value = state.tz;
       const text = await (await fetch(url)).text();
-      load(text, b.textContent ?? "sample");
+      load(text, b.dataset.label ?? b.textContent ?? "sample");
     }),
   );
+  // Each sample card says how many of its places are open at 9 PM on a Sunday (from build-sample-maps).
+  fetch("/samples/maps.json")
+    .then((r) => r.json())
+    .then((m: Record<string, { open: number; total: number }>) =>
+      document.querySelectorAll<HTMLElement>(".starter__card").forEach((c) => {
+        const v = m[c.dataset.key!];
+        if (v) c.querySelector("span")!.textContent += ` · ${v.open} of ${v.total} open Sunday 9 PM`;
+      }),
+    )
+    .catch(() => {});
   $("download").addEventListener("click", downloadCsv);
   $("route-areas").addEventListener("click", routeAreas);
 }

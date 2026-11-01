@@ -43,6 +43,10 @@
             <p>When someone's heart stops, a bystander with an automated external defibrillator (AED) can restart it before the ambulance arrives. Cities publish where their AEDs are. They do not publish when you can actually get to one: most sit inside buildings that lock at night, at weekends and over the summer.</p>
             <p>After Hours gives each of New York's {{nyc:findings.locations|int}} registered AED locations a weekly timetable, draws the area within a two-minute walk of it on real streets, and replays {{nyc:findings.calls|int}} cardiac-arrest 911 calls from 2025 against those timetables. The result: {{nyc:findings.coverageLost.lostConservative|pct}} of the coverage a normal AED map shows was behind a locked door at the hour the calls came in.</p>
             <p>It then names the AEDs to move first: school defibrillators that, in a weatherproof cabinet on the street wall, would have been within reach of the most of those calls.</p>
+            <figure class="doc-fig doc-fig--half rise">
+              <img src="/photos/aed-wall.jpg" alt="A wall-mounted public defibrillator in a green case inside a building." loading="lazy" />
+              <figcaption>A public AED is only public while its building is open. Photo: Silar, CC BY-SA 4.0.</figcaption>
+            </figure>
           </div>
         </div>
       </section>
@@ -58,7 +62,7 @@
                 <tr><td><a href="https://data.cityofnewyork.us/d/76xm-jjuj" rel="noopener">FDNY EMS Incident Dispatch Data</a><br /><small>NYC Open Data</small></td><td>{{nyc:findings.calls|int}} dispatches in 2025 whose final call type was cardiac arrest (<code>ARREST</code>), counted by ZIP code, weekday, hour and month. The city publishes only the ZIP code, so we never see an exact location.</td></tr>
                 <tr><td><a href="https://data.cityofnewyork.us/d/pri4-ifjk" rel="noopener">ZIP code areas (MODZCTA)</a><br /><small>NYC Open Data</small></td><td>The 177 ZIP areas the calls are counted in, with population estimates.</td></tr>
                 <tr><td><a href="https://www.data.gouv.fr/datasets/geodae-base-nationale-des-defibrillateurs" rel="noopener">Géo'DAE</a><br /><small>France, Licence Ouverte 2.0</small></td><td>{{paris:registry.registry|int}} rows in the national registry, of which {{paris:sites|int}} are working AEDs in Paris. French law makes every owner declare when their AED can be reached, so Paris is our check on how much hours matter.</td></tr>
-                <tr><td><a href="https://registry.opendata.aws/overture/" rel="noopener">Overture Maps places</a><br /><small>Registry of Open Data on AWS</small></td><td>Fire stations, police stations and hospitals near the schools at the top of the list: buildings that are staffed all night and could host a cabinet instead.</td></tr>
+                <tr><td><a href="https://registry.opendata.aws/overture/" rel="noopener">Overture Maps places</a><br /><small>Registry of Open Data on AWS</small></td><td>Fire stations, police stations and hospitals near the schools at the top of the list: buildings that are staffed all night and could host a cabinet instead. Amazon Athena reads {{nyc:relocation.overtureRelease}} in place; of 2,002 candidates we keep {{nyc:relocation.staffedBuildings|int}}, dropping clinics, surgeries, doctors' offices, places outside the city and any whose name names another borough.</td></tr>
               </tbody>
             </table>
           </div>
@@ -70,6 +74,10 @@
           <h2 id="hours-title" class="rise">Opening hours</h2>
           <div class="doc-body">
             <p>Because New York's registry has no hours, we built a timetable for every location and kept a label saying where it came from. The map shows the label on every dot.</p>
+            <figure class="doc-fig doc-fig--half rise">
+              <img src="/photos/ps91-bronx.jpg" alt="The brick front of P.S. 91 on Ogden Avenue in Highbridge, the Bronx." loading="lazy" />
+              <figcaption>{{nyc:findings.schoolLocations|int}} of the locations are schools, like P.S. 91 in Highbridge, the Bronx. Their hours follow the school calendar. Photo: Jim.henderson, public domain.</figcaption>
+            </figure>
             <table class="ref">
               <thead><tr><th scope="col">Source</th><th scope="col">Locations</th><th scope="col">How</th></tr></thead>
               <tbody>
@@ -92,6 +100,16 @@
               <img src="/photos/map-east-new-york.jpg" width="1238" height="606" alt="The After Hours map at 9 PM on a Sunday in East New York, Brooklyn: red locked defibrillators with their small walking areas, and a yellow dashed walking route from a dropped pin to the one open defibrillator, far to the east." loading="lazy" />
               <figcaption>Sunday, 9 PM, Atlantic and Pennsylvania Avenues, East New York. Every AED nearby is locked or of unknown hours; Amazon Location Service routes the walk to the nearest open one, an hour away. Basemap © AWS, © HERE.</figcaption>
             </figure>
+            <div class="doc-pair rise">
+              <figure class="doc-fig">
+                <img src="/briefs/73af9eab1f.webp" width="960" height="540" alt="Street map of P.S. 053 in the Bronx with its two-minute walking area drawn along the streets in green." loading="lazy" />
+                <figcaption>P.S. 053, the Bronx: the walk follows the streets, not a circle.</figcaption>
+              </figure>
+              <figure class="doc-fig">
+                <img src="/briefs/a06430a169.webp" width="960" height="540" alt="Street map of M.S. 224 in East Harlem with its two-minute walking area in green." loading="lazy" />
+                <figcaption>M.S. 224, East Harlem. Both maps are Amazon Location static maps with the routed area overlaid, as printed on each <a href="/brief.html">school brief</a>.</figcaption>
+              </figure>
+            </div>
             <p>Two minutes there and two minutes back means the first shock comes about four minutes after the collapse, plus the time the AED takes to check the rhythm. Each minute without CPR and defibrillation costs roughly 7 to 10% of the chance of survival.</p>
           </div>
         </div>
@@ -173,6 +191,10 @@
               <li><b>An open building is not always an open AED.</b> Some sit behind a desk or in a locked office. Real access is lower than shown.</li>
               <li><b>The registry is incomplete.</b> {{nyc:registry.registryRows|int}} rows describe {{nyc:findings.locations|int}} locations; many workplaces never register their AEDs.</li>
             </ul>
+            <figure class="doc-fig doc-fig--half rise">
+              <img src="/photos/cabinet-dingle.jpg" alt="A yellow outdoor defibrillator cabinet on a stone wall in Dingle, Ireland." loading="lazy" />
+              <figcaption>What the ranking points to: an outdoor cabinet anyone can open at any hour, here in Dingle, Ireland. Photo: Mucklagh, CC BY-SA 4.0.</figcaption>
+            </figure>
           </div>
         </div>
       </section>

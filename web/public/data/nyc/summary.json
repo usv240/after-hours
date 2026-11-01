@@ -25,7 +25,7 @@
       "licence": "NYC Open Data terms of use"
     }
   ],
-  "generatedAt": "2026-10-31T15:05:21.608Z",
+  "generatedAt": "2026-11-01T00:49:58.982Z",
   "catchment": {
     "kind": "isoline",
     "seconds": 120,
@@ -4378,8 +4378,8 @@
   "relocation": {
     "method": "Expected 2025 cardiac-arrest calls inside the school's two-minute walk while every AED in reach was shut.",
     "overtureRelease": "2026-10-21.0",
-    "staffedBuildings": 2002,
-    "withStaffedBuildingNearby": 89,
+    "staffedBuildings": 691,
+    "withStaffedBuildingNearby": 69,
     "top": [
       {
         "rank": 1,
@@ -4425,11 +4425,11 @@
         "lat": 40.71590738,
         "expectedCallsPerYear": 1.45,
         "altHost": {
-          "name": "Co-Op Village Auxiliary Police",
-          "category": "police station",
-          "meters": 237,
-          "lon": -73.98223114013672,
-          "lat": 40.714717864990234
+          "name": "FDNY Engine 15",
+          "category": "fire station",
+          "meters": 317,
+          "lon": -73.98355865478516,
+          "lat": 40.7165412902832
         }
       },
       {
@@ -4537,13 +4537,7 @@
         "lon": -73.94742736,
         "lat": 40.79273391,
         "expectedCallsPerYear": 1.18,
-        "altHost": {
-          "name": "ArchCare at Mother Cabrini Hospital",
-          "category": "hospital",
-          "meters": 292,
-          "lon": -73.95072174072266,
-          "lat": 40.7935676574707
-        }
+        "altHost": null
       }
     ]
   },

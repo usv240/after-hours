@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>School AED briefs: one page per school, ready to print</title>
+    <meta name="description" content="A printable one-page brief for each of the 100 New York school defibrillators that would reach the most cardiac-arrest calls if they could be reached around the clock: map, hours, nearby AEDs, a 24/7 alternative host and the evidence." />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap" rel="stylesheet" />
+    <script>document.documentElement.classList.add("js")</script>
+  </head>
+  <body class="doc-page brief-page">
+    <!--partial:header-->
+
+    <main id="brief-root">
+      <section class="doc-hero brief-hero" id="brief-index">
+        <div class="wrap doc-hero__grid">
+          <div>
+            <h1>One page per school.</h1>
+            <p class="doc-lead rise">For the 100 school defibrillators that would reach the most cardiac-arrest calls if they could be reached at any hour. Print one and take it to a principal, a council office or a facilities manager.</p>
+          </div>
+          <figure class="brief-hero__fig rise">
+            <img src="/briefs/73af9eab1f.webp" width="960" height="540" alt="Street map of P.S. 053 in the Bronx: the school's AED in red, its two-minute walking area in green, and a fire station 268 metres away in blue." />
+            <figcaption>The brief for the top school, P.S. 053 in the Bronx. Each map is drawn by Amazon Location Service.</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section class="doc-sec doc-sec--alt" aria-labelledby="list-title" id="brief-list-sec">
+        <div class="wrap">
+          <h2 id="list-title" class="rise">All 100 schools, ranked</h2>
+          <p class="brief-list__lead rise">Ranked by the 2025 cardiac-arrest calls expected inside each school's two-minute walk at hours when every AED in reach was locked. <a href="/data/nyc/relocation.csv" download>Download the list as CSV</a>.</p>
+          <table class="ref brief-table">
+            <thead><tr><th scope="col">Rank</th><th scope="col">School</th><th scope="col">Borough</th><th scope="col" class="num">Calls a year</th><th scope="col">Staffed 24/7 within 400 m</th></tr></thead>
+            <tbody id="brief-rows"><tr><td colspan="5">Loading the list…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!--partial:stack-->
+    <!--partial:footer-->
+    <script type="module" src="/src/brief.ts"></script>
+  </body>
+</html>

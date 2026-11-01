@@ -1,0 +1,17 @@
+{
+  "nyc-sample": {
+    "open": 4,
+    "total": 40,
+    "map": "/samples/nyc-sample.webp"
+  },
+  "nyc-addresses": {
+    "open": 2,
+    "total": 12,
+    "map": "/samples/nyc-addresses.webp"
+  },
+  "paris-sample": {
+    "open": 14,
+    "total": 60,
+    "map": "/samples/paris-sample.webp"
+  }
+}

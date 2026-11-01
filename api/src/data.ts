@@ -28,7 +28,9 @@ export interface PresetData {
 }
 
 const s3 = new S3Client({});
-const cache = new Map<string, Promise<PresetData>>();
+// Presets are re-read every ten minutes, so a data publish reaches warm Lambdas without a redeploy.
+const cache = new Map<string, { at: number; p: Promise<PresetData> }>();
+const TTL_MS = 10 * 60 * 1000;
 export const PRESETS = ["nyc", "paris"];
 
 async function load(key: string): Promise<string> {
@@ -40,7 +42,8 @@ async function load(key: string): Promise<string> {
 
 export function preset(id: string): Promise<PresetData> {
   if (!PRESETS.includes(id)) throw Object.assign(new Error(`Unknown preset "${id}". Use one of: ${PRESETS.join(", ")}.`), { status: 400 });
-  let p = cache.get(id);
+  const hit = cache.get(id);
+  let p = hit && Date.now() - hit.at < TTL_MS ? hit.p : undefined;
   if (!p) {
     p = (async () => {
       const [sitesRaw, summaryRaw, relocationRaw] = await Promise.all([
@@ -71,7 +74,7 @@ export function preset(id: string): Promise<PresetData> {
         })),
       };
     })();
-    cache.set(id, p);
+    cache.set(id, { at: Date.now(), p });
     p.catch(() => cache.delete(id));
   }
   return p;

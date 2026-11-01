@@ -1,7 +1,7 @@
 /* Read pages: How it works, API. One measure, generous rhythm, the same tokens. */
 
 .doc-page .site-header {
-  border-bottom: 1px solid var(--surface-2);
+  background: var(--bg);
 }
 
 .doc-hero {
@@ -115,14 +115,14 @@
 .doc-page :not(pre) > code {
   background: var(--surface-2);
   padding: 1px 6px;
-  font-size: 0.85em;
+  font-size: max(0.85em, 13px);
 }
 
 /* Tables: real tables keep their lines. */
 .ref {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9375rem;
+  font-size: 1rem;
 }
 .ref th,
 .ref td {
@@ -139,7 +139,8 @@
   min-width: 150px;
 }
 .ref small {
-  color: var(--faint);
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 .ref .num {
   text-align: right;
@@ -386,6 +387,26 @@
 .doc-fig img {
   width: 100%;
   height: auto;
+}
+.doc-fig--half {
+  max-width: 560px;
+}
+.doc-fig--half img {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.doc-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.doc-pair .doc-fig {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .doc-pair {
+    grid-template-columns: 1fr;
+  }
 }
 .doc-fig figcaption {
   margin-top: 10px;

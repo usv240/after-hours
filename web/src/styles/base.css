@@ -284,7 +284,7 @@ kbd {
   display: block;
   margin-top: 6px;
   color: var(--muted);
-  font-size: var(--step-small);
+  font-size: 1rem;
   line-height: 1.45;
 }
 @media (max-width: 900px) {
@@ -376,6 +376,7 @@ kbd {
     scroll-behavior: auto;
   }
   .js .rise:not(.is-in) {
+    opacity: 1;
     transform: none;
   }
   .rise {

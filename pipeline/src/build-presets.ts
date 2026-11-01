@@ -24,6 +24,7 @@ import {
 } from "@after-hours/engine";
 import { CACHE, OUT, RAW, readJson, readJsonOr, writeJson } from "./paths.ts";
 import type { PipelineSite } from "./sites.ts";
+import { credibleHosts } from "./hosts.ts";
 
 const STATES = HOURS_IN_WEEK * 2;
 const CELL_M = 50;
@@ -470,7 +471,9 @@ function tally(values: string[]) {
 function relocation(preset: Preset, cells: Cell[], cellCount: number[], states: Uint8Array[], base: number[], dir: string) {
   // Always-staffed buildings from Overture Maps (Registry of Open Data on AWS, via Amazon Athena): see overture.ts.
   const overture = readJsonOr<{ release: string; hosts: { name: string; category: string; lon: number; lat: number }[] }>(resolve(CACHE, "nyc_overture_hosts.json"), { release: "", hosts: [] });
-  const hosts = overture.hosts;
+  const boroughOfZip = new Map(preset.sites.filter((s) => s.zip && s.area).map((s) => [s.zip, s.area]));
+  const hosts = credibleHosts(overture.hosts, preset.regions, boroughOfZip);
+  console.log(`${preset.id}: ${hosts.length} of ${overture.hosts.length} Overture places kept as always-staffed hosts`);
   const gain = new Map<number, number>();
   for (const c of cells) {
     const calls = preset.calls![c.region];

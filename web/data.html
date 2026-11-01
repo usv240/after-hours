@@ -87,7 +87,25 @@
           <span><i class="dot dot--closed"></i>closed</span>
           <span><i class="dot dot--unknown"></i>unknown</span>
         </div>
-        <div class="map-status" id="map-status" role="status">Add a file or pick a sample to begin.</div>
+        <div class="map-status" id="map-status" role="status" hidden>Add a file or pick a sample to begin.</div>
+        <section class="starter" id="starter" aria-labelledby="starter-title">
+          <h2 id="starter-title">Start with a real sample</h2>
+          <p>Each opens on this map with its week, hour by hour. Pins are green if open at 9 PM on a Sunday, red if shut. Maps drawn by Amazon Location Service.</p>
+          <div class="starter__cards">
+            <button type="button" class="starter__card" data-sample="/samples/nyc-sample.csv" data-label="40 NYC venues" data-key="nyc-sample">
+              <img src="/samples/nyc-sample.webp" width="640" height="400" alt="Map of New York with 40 sample venues that host defibrillators, most shown red." />
+              <b>40 New York venues</b><span>Coordinates and opening hours</span>
+            </button>
+            <button type="button" class="starter__card" data-sample="/samples/nyc-addresses.csv" data-label="12 NYC addresses" data-key="nyc-addresses">
+              <img src="/samples/nyc-addresses.webp" width="640" height="400" alt="Map of New York with 12 places found from street addresses." />
+              <b>12 street addresses</b><span>No coordinates: geocoded for you</span>
+            </button>
+            <button type="button" class="starter__card" data-sample="/samples/paris-sample.geojson" data-label="60 Paris AEDs" data-key="paris-sample">
+              <img src="/samples/paris-sample.webp" width="640" height="400" alt="Map of central Paris with 60 public defibrillators from France's national registry." />
+              <b>60 Paris defibrillators</b><span>GeoJSON from France's registry</span>
+            </button>
+          </div>
+        </section>
       </div>
     </main>
 

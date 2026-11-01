@@ -46,7 +46,7 @@ export default defineConfig({
   plugins: [partials()],
   server: {
     port: 5173,
-    proxy: { "/api": { target: "http://localhost:8787", rewrite: (p) => p.replace(/^\/api/, "") } },
+    proxy: { "^/api/": { target: "http://localhost:8787", rewrite: (p) => p.replace(/^\/api/, "") } },
   },
   build: {
     target: "es2022",
@@ -57,6 +57,7 @@ export default defineConfig({
         data: resolve(__dirname, "data.html"),
         api: resolve(__dirname, "api.html"),
         method: resolve(__dirname, "method.html"),
+        brief: resolve(__dirname, "brief.html"),
       },
     },
   },

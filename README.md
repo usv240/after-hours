@@ -5,7 +5,9 @@
 After Hours maps New York City's 4,032 public defibrillator (AED) locations by the hour, showing which ones sit behind an unlocked door. It replays 25,448 cardiac-arrest 911 calls from 2025 against those timetables, and ranks where a 24/7 street-wall cabinet would reach the most of them.
 
 - **Live site:** https://dqcf6x4e7zbds.cloudfront.net
-- **Map:** https://dqcf6x4e7zbds.cloudfront.net/map.html
+- **60-second guided story:** https://dqcf6x4e7zbds.cloudfront.net/map.html?story
+- **Map:** https://dqcf6x4e7zbds.cloudfront.net/map.html (every view has a shareable link)
+- **School briefs, one printable page each:** https://dqcf6x4e7zbds.cloudfront.net/brief.html
 - **Bring your own data:** https://dqcf6x4e7zbds.cloudfront.net/data.html
 - **API and live console:** https://dqcf6x4e7zbds.cloudfront.net/api.html
 - **MCP server for AI assistants:** `claude mcp add --transport http after-hours https://dqcf6x4e7zbds.cloudfront.net/api/mcp`
@@ -34,15 +36,16 @@ NYC Open Data ──► hours ──────────────► walk
  ZIP polygons     Amazon Bedrock (graded)  (Pedestrian, 2 min)
 Géo'DAE (France)
 Overture Maps ◄── Amazon Athena (Registry of Open Data on AWS): fire/police/hospital hosts near top schools
+GetStaticMap ───► one printable brief per ranked school (/brief.html)
 EventBridge Scheduler ─► Lambda ─► S3 ─► Apache Iceberg table (Athena INSERT) ─► nightly "what changed" diff
 ```
 
 | AWS service | What it does here |
 |---|---|
-| Amazon Location Service: Maps | Dark Monochrome basemap (browser API key limited to the site's referrer and `GetTile`) |
+| Amazon Location Service: Maps | Dark Monochrome basemap (browser API key limited to the site's referrer and `GetTile`); `GetStaticMap` draws the print-ready street map on each of the 100 school briefs (routed walking area as a GeoJSON overlay), the sample previews and the API page's `/nearest` figure |
 | Amazon Location Service: Places | Opening hours for 742 named AED venues (`SearchText` + `AdditionalFeatures: Contact`, name-matched within 200 m); geocoding for uploaded addresses |
 | Amazon Location Service: Routes | `CalculateIsolines` two-minute pedestrian walking area for all 4,032 locations; `CalculateRouteMatrix` and `CalculateRoutes` for "collapse here" |
-| Registry of Open Data on AWS + Amazon Athena | Overture Maps places (Parquet in `s3://overturemaps-us-west-2`) queried in place: 2,002 always-staffed buildings |
+| Registry of Open Data on AWS + Amazon Athena | Overture Maps places (Parquet in `s3://overturemaps-us-west-2`) queried in place: 2,002 candidate buildings, filtered to 691 credibly staffed around the clock (fire and EMS stations, NYPD precincts, hospitals; clinics, doctors' offices and mislocated places dropped, see `pipeline/src/hosts.ts`) |
 | Apache Iceberg on Amazon S3 + AWS Glue | Nightly snapshot of the AED registry; every version kept for diffs |
 | Amazon Bedrock (Claude Haiku 4.5) | Hours estimates for unpublished venues, graded blind on 742 known venues (85% hour agreement, 8.3% false-open, so excluded from headline numbers); grounded two-sided debate |
 | Amazon API Gateway | Public API `/api/v1/*` with self-serve keys on a usage plan (5 req/s, 1,000/day) |
@@ -78,6 +81,11 @@ npm run infer -w pipeline        # Amazon Bedrock estimates + blind grade
 npx tsx pipeline/src/overture.ts # Athena over Overture (needs the deployed workgroup)
 npm run build -w pipeline        # presets, CSVs
 npx tsx pipeline/src/build-samples.ts
+(cd api && LOCAL_DATA_DIR=../web/public/data npx tsx src/precompute-debates.ts 10)  # saved debates
+npm run briefs -w pipeline       # school briefs + Amazon Location static maps
+npm run sample-maps -w pipeline  # sample previews (static maps)
+npm run api-figure -w pipeline -- https://YOUR-SITE  # one /nearest answer, drawn
+python scripts/briefs-webp.py    # PNG → WebP
 npm run deploy -w infra          # CDK
 sh scripts/deploy-web.sh         # build with the map key, sync to S3, invalidate
 ```

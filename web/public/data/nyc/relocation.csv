@@ -1,99 +1,99 @@
 rank,site_id,name,zip,borough,latitude,longitude,expected_after_hours_arrest_calls_in_reach_per_year,nearest_24h_staffed_building,its_type,meters_away
 1,73af9eab1f,"P.S. 053 Basheer Quisim",10456,Bronx,40.83285917,-73.91141764,1.65,"Engine 92 Ladder 44",fire station,268
 2,a06430a169,"M.S. 224 Manhattan East School for Arts & Academics",10029,Manhattan,40.78566384,-73.94254713,1.48,"FDNY EMS Station 10",fire station,136
-3,a41aab9ae0,"P.S. 110 Florence Nightingale",10002,Manhattan,40.71590738,-73.97989278,1.45,"Co-Op Village Auxiliary Police",police station,237
+3,a41aab9ae0,"P.S. 110 Florence Nightingale",10002,Manhattan,40.71590738,-73.97989278,1.45,"FDNY Engine 15",fire station,317
 4,5aabf60cf1,"P.S. 197 John B. Russwurm",10037,Manhattan,40.81317721,-73.93732111,1.28,"FDNY EMS Station 16",fire station,103
 5,507809c4df,"P.S. 184M Shuang Wen",10002,Manhattan,40.71154143,-73.98654196,1.21,"FDNY EMS Station 4",fire station,163
 6,f9be149a31,"P.S. 075 Emily Dickinson",10025,Manhattan,40.79514998,-73.97329197,1.2,"",,
 7,9c85e59ea4,"The Cathedral School (Cathedral of St. John the Divine)",10025,Manhattan,40.80402641,-73.96307333,1.19,"FDNY Engine 47",fire station,106
 8,1ee1f68310,"DREAM Charter Elementary and Middle School",10029,Manhattan,40.78821453,-73.94421332,1.18,"The Mount Sinai Hospital",hospital,184
 9,baddb9be0b,"P.S. 146 Ann M. Short",10029,Manhattan,40.78928796,-73.9392613,1.18,"The Mount Sinai Hospital",hospital,337
-10,e064c46067,"Edward A. Reynolds West Side High School",10029,Manhattan,40.79273391,-73.94742736,1.18,"ArchCare at Mother Cabrini Hospital",hospital,292
-11,c173dab7f3,"P.S. 108 Assemblyman Angelo Del Toro Educational Complex",10029,Manhattan,40.79513874,-73.94836809,1.18,"ArchCare at Mother Cabrini Hospital",hospital,264
-12,7897a9046c,"P.S. 134 Henrietta Szold",10002,Manhattan,40.71456305,-73.98372409,1.15,"Co-Op Village Auxiliary Police",police station,127
+10,e064c46067,"Edward A. Reynolds West Side High School",10029,Manhattan,40.79273391,-73.94742736,1.18,"",,
+11,c173dab7f3,"P.S. 108 Assemblyman Angelo Del Toro Educational Complex",10029,Manhattan,40.79513874,-73.94836809,1.18,"",,
+12,7897a9046c,"P.S. 134 Henrietta Szold",10002,Manhattan,40.71456305,-73.98372409,1.15,"NYPD 7 Precinct",police station,190
 13,0c798aa3a5,"Bard High School Early College",10002,Manhattan,40.71902192,-73.97589113,1.12,"",,
-14,e2184a1afa,"P.S. 133 Fred R Moore",10037,Manhattan,40.8096653,-73.93987119,1.09,"Mount Nittany Health - Mifflin County - Primary Care",hospital,392
-15,603587db39,"Learning Through Play Pre-K at 443 E 162nd",10456,Bronx,40.8247949,-73.91112491,1.01,"NY Plastic Surg",hospital,70
+14,e2184a1afa,"P.S. 133 Fred R Moore",10037,Manhattan,40.8096653,-73.93987119,1.09,"",,
+15,603587db39,"Learning Through Play Pre-K at 443 E 162nd",10456,Bronx,40.8247949,-73.91112491,1.01,"NYPD 42 Precinct",police station,265
 16,e680309a85,"P.S. 189 Manhattan",10040,Manhattan,40.85262438,-73.92760345,0.97,"",,
-17,03260a9217,"Orchard Collegiate Academy",10002,Manhattan,40.71367683,-73.98633592,0.97,"Gouverneur Skilled Nrsng Faculty",hospital,129
-18,e5b58d107f,"P.S. 124 Yung Wing",10002,Manhattan,40.71417436,-73.99545128,0.97,"New York Hospital Queens",hospital,201
+17,03260a9217,"Orchard Collegiate Academy",10002,Manhattan,40.71367683,-73.98633592,0.97,"NYPD 7 Precinct",police station,360
+18,e5b58d107f,"P.S. 124 Yung Wing",10002,Manhattan,40.71417436,-73.99545128,0.97,"NYPD 5 Precinct",police station,275
 19,c94f93283f,"Great Oaks Charter School",10002,Manhattan,40.71966095,-73.99185781,0.97,"FDNY Engine 55",fire station,328
-20,b7b022968b,"P.S. 595 Bronx",10457,Bronx,40.84670416,-73.88981366,0.96,"City of New York",police station,281
-21,10f8cfa2ef,"P.S. 3 Raul Julia Micro Society",10457,Bronx,40.8498904,-73.892288,0.96,"SBH Health System",hospital,321
+20,b7b022968b,"P.S. 595 Bronx",10457,Bronx,40.84670416,-73.88981366,0.96,"Childrens Hospital At Montifiore",hospital,307
+21,10f8cfa2ef,"P.S. 3 Raul Julia Micro Society",10457,Bronx,40.8498904,-73.892288,0.96,"St Barnabas Hospital",hospital,322
 22,b98101b8f1,"Global Community Charter School",10037,Manhattan,40.8167412,-73.93474904,0.96,"",,
-23,37d58b4417,"Grant Avenue Elementary School",10456,Bronx,40.82868907,-73.91766728,0.94,"Pambo Medical Rehabilitation",hospital,329
+23,37d58b4417,"Grant Avenue Elementary School",10456,Bronx,40.82868907,-73.91766728,0.94,"Bronx Police Department",police station,353
 24,05ebcac515,"P.S. 063 Author's Academy",10456,Bronx,40.83095828,-73.90273673,0.94,"Bronx Lebanon Hospital Center",hospital,39
 25,789ff58531,"J.H.S. 022 Jordan L. Mott",10456,Bronx,40.83312465,-73.91402638,0.94,"Engine 92 Ladder 44",fire station,176
-26,66389b620d,"Bronx Center for Science and Mathematics",10456,Bronx,40.8336589,-73.90249788,0.94,"City of New York Health Dept-M",hospital,120
+26,66389b620d,"Bronx Center for Science and Mathematics",10456,Bronx,40.8336589,-73.90249788,0.94,"Bronxcare Hospital Center",hospital,261
 27,4199c763fa,"Cardinal McCloskey  Community Charter School",10457,Bronx,40.85096475,-73.8877679,0.94,"FDNY Engine 88",fire station,105
 28,2d8f5d8b78,"P.S. 158 Bayard Taylor",10075,Manhattan,40.77041247,-73.95113477,0.93,"Gracie Square Hospital",hospital,163
 29,a26e018dfa,"Academy For Personal Leadership and Excellence",10468,Bronx,40.85974561,-73.90016025,0.92,"Bronx-Lebanon Hospital Center",hospital,234
-30,bb40c7619c,"Harlem Prep Charter - Elementary School",10026,Manhattan,40.80222097,-73.9501433,0.91,"Transit District 3",police station,361
-31,b8f3d5771a,"Capital Preparatory (CP) Harlem Charter School",10035,Manhattan,40.80870634,-73.93790332,0.9,"Mount Nittany Health - Mifflin County - Primary Care",hospital,277
+30,bb40c7619c,"Harlem Prep Charter - Elementary School",10026,Manhattan,40.80222097,-73.9501433,0.91,"",,
+31,b8f3d5771a,"Capital Preparatory (CP) Harlem Charter School",10035,Manhattan,40.80870634,-73.93790332,0.9,"",,
 32,a4b2e7ce9e,"The Churchill School",10016,Manhattan,40.74157883,-73.97801208,0.9,"FDNY Engine 16/Ladder 7",fire station,70
 33,8e96a45d0f,"P.S. 123 Mahalia Jackson",10030,Manhattan,40.81976002,-73.94443245,0.89,"Fdny Engine 69/ladder 28/battalion 16",fire station,251
-34,9a267e4527,"Marymount School",10029,Manhattan,40.78686455,-73.95120209,0.89,"Cure Urgent Care",emergency department,180
+34,9a267e4527,"Marymount School",10029,Manhattan,40.78686455,-73.95120209,0.89,"Mount Sinai Hospital Bone Marrow",hospital,235
 35,5361913d07,"East Harlem Scholars Academy Charter School",10029,Manhattan,40.79025588,-73.9426876,0.89,"The Mount Sinai Hospital",hospital,324
 36,173fa5c460,"The Heritage School",10029,Manhattan,40.7918744,-73.94655768,0.89,"NYPD 23rd Precinct",police station,313
-37,084716e221,"P.S. 171 Patrick Henry",10029,Manhattan,40.79211558,-73.95196025,0.89,"Mt Sinai Center for Advanced Medicine",hospital,67
+37,084716e221,"P.S. 171 Patrick Henry",10029,Manhattan,40.79211558,-73.95196025,0.89,"Cancer Care at Mount Sinai Hospital",hospital,157
 38,86898916f8,"P.S. 102 Jacques Cartier",10029,Manhattan,40.79486226,-73.93871084,0.89,"FDNY Engine 91",fire station,198
-39,3bd4c0248d,"I.S. 364 Gateway",11239,Brooklyn,40.64578486,-73.88162803,0.86,"Starrett City Auxiliary Police",police station,294
-40,d1cd5dccaf,"Zeta Charter School - Inwood 1",10033,Manhattan,40.85368959,-73.93253652,0.84,"34th Precinct Auxiliary Police Unit",police station,338
+39,3bd4c0248d,"I.S. 364 Gateway",11239,Brooklyn,40.64578486,-73.88162803,0.86,"",,
+40,d1cd5dccaf,"Zeta Charter School - Inwood 1",10033,Manhattan,40.85368959,-73.93253652,0.84,"NYPD 34th Precinct",police station,340
 41,509415fd2a,"P.S. 008 Luis Belliard",10032,Manhattan,40.83894732,-73.93683776,0.84,"21 Audubon Ave. New York Preabyterian Hospital",hospital,203
 42,e9ee5abca0,"Bronx Latin",10456,Bronx,40.82773644,-73.90010367,0.84,"FDNY EMS Station 26",fire station,333
-43,b62d25275e,"P.S. 277 Bronx",10455,Bronx,40.81351025,-73.91340154,0.79,"Brightpoint Health",hospital,268
-44,32df3b3871,"Pathways to Graduation @ Bronx Youth Center",10455,Queens,40.81433688,-73.91776097,0.79,"Heart Vein NYC",hospital,171
-45,ce88e20119,"University Prep Charter High School",10455,Bronx,40.81551851,-73.91222478,0.79,"Brightpoint Health",hospital,259
+43,b62d25275e,"P.S. 277 Bronx",10455,Bronx,40.81351025,-73.91340154,0.79,"",,
+44,32df3b3871,"Pathways to Graduation @ Bronx Youth Center",10455,Queens,40.81433688,-73.91776097,0.79,"Bronx Lebanon Hospital Center",hospital,272
+45,ce88e20119,"University Prep Charter High School",10455,Bronx,40.81551851,-73.91222478,0.79,"",,
 46,98056bcbce,"P.S./I.S. 187 Hudson Cliffs",10040,Manhattan,40.85673332,-73.93705578,0.79,"",,
 47,4864836bf5,"Success Academy Charter School-Washington Heights",10040,Manhattan,40.85779444,-73.93509903,0.79,"",,
 48,2f16f17558,"Professor Juan Bosch Public School",10040,Manhattan,40.85923656,-73.92779144,0.79,"New york  Prebisterian Hospital",hospital,224
-49,7854dfe610,"Columbia University - Jerome L Greene Law School",10027,Manhattan,40.80622379,-73.9596188,0.78,"Mount Sinai Health System - Women's Heart NY",hospital,172
-50,1aeac638bb,"P.S. 036 Margaret Douglas",10025,Manhattan,40.81026329,-73.95748138,0.78,"Body Mechanics Acupuncture",hospital,120
-51,0f03e4c2bc,"School of Performing Arts (X116)",10459,Bronx,40.82243627,-73.8939007,0.77,"Bronx Borough Presidents Off",police station,367
+49,7854dfe610,"Columbia University - Jerome L Greene Law School",10027,Manhattan,40.80622379,-73.9596188,0.78,"St Luke's Hospital Center Emergency Department",hospital,222
+50,1aeac638bb,"P.S. 036 Margaret Douglas",10025,Manhattan,40.81026329,-73.95748138,0.78,"Fdny Engine 37/ladder 40",fire station,305
+51,0f03e4c2bc,"School of Performing Arts (X116)",10459,Bronx,40.82243627,-73.8939007,0.77,"",,
 52,1e3bec7e03,"I.S. 313 School of Leadership Development",10457,Bronx,40.8408383,-73.90477144,0.77,"FDNY Rescue 3",fire station,285
-53,64aa6aeec1,"P.S. 018 John Peter Zenger",10451,Bronx,40.81639926,-73.9232896,0.75,"Sulaiman Azeez",hospital,128
+53,64aa6aeec1,"P.S. 018 John Peter Zenger",10451,Bronx,40.81639926,-73.9232896,0.75,"NYC Health + Hospitals/Lincoln",hospital,129
 54,7c9009964d,"P.S. 115 Alexander Humboldt",10033,Manhattan,40.84653561,-73.93520403,0.75,"Columbia Presbyterian Hospital-Cpp",hospital,266
-55,9f3cbf7d68,"Park Childrens Day School",10023,Manhattan,40.77889855,-73.97432758,0.75,"Mount Sinai West OBGYN - Outpatient",hospital,218
-56,dcfde3fa1a,"New York French American Charter Middle School",10027,Manhattan,40.8094881,-73.94795955,0.74,"District Attorney",police station,35
+55,9f3cbf7d68,"Park Childrens Day School",10023,Manhattan,40.77889855,-73.97432758,0.75,"",,
+56,dcfde3fa1a,"New York French American Charter Middle School",10027,Manhattan,40.8094881,-73.94795955,0.74,"NYPD 28th Precinct",police station,395
 57,9da404c299,"Urban Assembly School for the Performing Arts",10027,Manhattan,40.81524967,-73.955325,0.74,"NYPD 26th Precinct",police station,102
-58,27a8d24726,"Mott Hall High School",10030,Manhattan,40.8173654,-73.94771131,0.74,"Goals Plastic Surgery",hospital,160
-59,c4de29b5bb,"P.S./I.S. 78Q Queens",11109,Queens,40.74474618,-73.95797086,0.74,"UMD Urgent Care - LIC",emergency department,317
+58,27a8d24726,"Mott Hall High School",10030,Manhattan,40.8173654,-73.94771131,0.74,"NYPD 32nd Precinct",police station,272
+59,c4de29b5bb,"P.S./I.S. 78Q Queens",11109,Queens,40.74474618,-73.95797086,0.74,"NYPD 108th Precinct",police station,337
 60,64789f4281,"P.S. 086 Kingsbridge Heights",10468,Bronx,40.86982851,-73.89873854,0.73,"",,
-61,a6529d5fbb,"University Neighborhood High School",10002,Manhattan,40.71239205,-73.98449655,0.72,"Gouverneur Skilled Nrsng Faculty",hospital,286
-62,a99bd47af2,"P.S. 002 Meyer London",10002,Manhattan,40.7132656,-73.99133916,0.72,"New York Hospital Queens",hospital,168
+61,a6529d5fbb,"University Neighborhood High School",10002,Manhattan,40.71239205,-73.98449655,0.72,"FDNY EMS Station 4",fire station,298
+62,a99bd47af2,"P.S. 002 Meyer London",10002,Manhattan,40.7132656,-73.99133916,0.72,"",,
 63,45339a5b89,"P.S. 204 Morris Heights",10453,Bronx,40.8502284,-73.91576813,0.72,"",,
-64,678e18e60b,"KIPP Freedom Charter Elementary School",10453,Bronx,40.85783597,-73.90420114,0.72,"Station 19",fire station,119
+64,678e18e60b,"KIPP Freedom Charter Elementary School",10453,Bronx,40.85783597,-73.90420114,0.72,"FDNY Engine 75 Ladder 33",fire station,198
 65,23c18073ae,"P.S. 333 Manhattan School for Children",10025,Manhattan,40.79170197,-73.97080146,0.72,"",,
-66,f1e6cda012,"P.S. 163 Alfred E. Smith",10025,Manhattan,40.79443531,-73.96913892,0.72,"Ryan Women and Children's Center",hospital,191
+66,f1e6cda012,"P.S. 163 Alfred E. Smith",10025,Manhattan,40.79443531,-73.96913892,0.72,"Nypd 24th Precinct",police station,265
 67,7e06548e3f,"Neighborhood Charter School: Harlem",10031,Manhattan,40.8234465,-73.9450436,0.71,"NYPD PSA 6",police station,395
 68,d5153a4646,"Jill Chaifetz Transfer High School",10456,Bronx,40.8189993,-73.90586863,0.71,"Lincon Hospital",hospital,256
 69,ffb02a5c2f,"Legacy College Prep High School",10456,Bronx,40.82024724,-73.90811776,0.71,"NYPD 42 Precinct",police station,362
-70,b747b97737,"New Visions Charter High School for Advanced Math and Science II",10456,Bronx,40.82166801,-73.90354524,0.71,"South Bronx Children's Health Center",hospital,198
+70,b747b97737,"New Visions Charter High School for Advanced Math and Science II",10456,Bronx,40.82166801,-73.90354524,0.71,"",,
 71,311de4a9ff,"P.S. 146 Edward Collins",10456,Bronx,40.82501875,-73.90614192,0.71,"",,
-72,e8ffac90a5,"Bronx International High School",10456,Bronx,40.82763585,-73.90447243,0.71,"Third Avenue Medical Care Pc",hospital,360
-73,68569dfe42,"M.S. 593 Bronx",10456,Bronx,40.8279346,-73.91437278,0.71,"NY Plastic Surg",hospital,373
-74,b862acf310,"South Bronx Community Charter High School",10456,Bronx,40.82857226,-73.90839891,0.71,"FDNY 343 Ride",fire station,143
+72,e8ffac90a5,"Bronx International High School",10456,Bronx,40.82763585,-73.90447243,0.71,"",,
+73,68569dfe42,"M.S. 593 Bronx",10456,Bronx,40.8279346,-73.91437278,0.71,"",,
+74,b862acf310,"South Bronx Community Charter High School",10456,Bronx,40.82857226,-73.90839891,0.71,"",,
 75,c450cbbffe,"Harriet Tubman Charter School Elementary Academy",10456,Bronx,40.8320035,-73.90539123,0.71,"Hospital Boson Rd",hospital,106
-76,39c9aa14bf,"Wildflower New York Charter School",10456,Bronx,40.83314041,-73.90281303,0.71,"City of New York Health Dept-M",hospital,60
+76,39c9aa14bf,"Wildflower New York Charter School",10456,Bronx,40.83314041,-73.90281303,0.71,"Bronxcare Hospital Center",hospital,198
 77,c1bd691489,"P.S. X088 - S. Silverstein Little Sparrow School",10456,Bronx,40.83726886,-73.91357288,0.71,"Mount Sinai Hospital",hospital,220
 78,df7bae9451,"P.S. 9 Ryer Avenue Elementary School",10457,Bronx,40.85706019,-73.89893519,0.7,"NYPD 46 Precinct",police station,356
-79,ed9844a9e4,"St. Ignatius Loyola School",10028,Manhattan,40.77932513,-73.95929577,0.7,"Dr Nicole Carreau, MD",hospital,170
-80,d8002daa5a,"P.S. 069 Jackson Heights",11372,Queens,40.74925906,-73.88881693,0.7,"Mount Sinai",hospital,375
-81,1a1cc6153e,"I.S. 364 Gateway - Annex",11239,Brooklyn,40.64659124,-73.87844104,0.69,"Starrett City Auxiliary Police",police station,264
-82,3d297049e6,"Frederick Douglass Academy VIII Middle School",11239,Brooklyn,40.64725279,-73.8811137,0.69,"Starrett City Auxiliary Police",police station,125
+79,ed9844a9e4,"St. Ignatius Loyola School",10028,Manhattan,40.77932513,-73.95929577,0.7,"FDNY Engine 22, Ladder 13, Battalion 10",fire station,347
+80,d8002daa5a,"P.S. 069 Jackson Heights",11372,Queens,40.74925906,-73.88881693,0.7,"",,
+81,1a1cc6153e,"I.S. 364 Gateway - Annex",11239,Brooklyn,40.64659124,-73.87844104,0.69,"",,
+82,3d297049e6,"Frederick Douglass Academy VIII Middle School",11239,Brooklyn,40.64725279,-73.8811137,0.69,"",,
 83,ff11242462,"P.S. 191 Paul Robeson",11233,Brooklyn,40.67199799,-73.92432872,0.68,"St. Mary's Hospital Of Brooklyn",hospital,296
 84,7b6de6a449,"P.S. 004 Duke Ellington",10032,Manhattan,40.83489285,-73.94108423,0.67,"FDNY Engine 84/Ladder 34",fire station,110
 85,abcfad8738,"Creston Academy",10453,Bronx,40.85486555,-73.90345715,0.67,"FDNY Engine 75 Ladder 33",fire station,157
 86,2edff1e4c3,"P.S. 092 Mary McLeod Bethune",10030,Manhattan,40.8150092,-73.94512285,0.67,"NYPD 32nd Precinct",police station,81
-87,2dac2b75ef,"Harlem Village Academy West Middle School",10030,Manhattan,40.82141871,-73.94067347,0.67,"Fire Department New York",police station,114
-88,e1ed10d702,"Icahn Charter School I (Grades 5-8)",10457,Bronx,40.83855491,-73.90504939,0.66,"RH Medical Urgent Care",hospital,395
+87,2dac2b75ef,"Harlem Village Academy West Middle School",10030,Manhattan,40.82141871,-73.94067347,0.67,"Fdny Engine 69/ladder 28/battalion 16",fire station,115
+88,e1ed10d702,"Icahn Charter School I (Grades 5-8)",10457,Bronx,40.83855491,-73.90504939,0.66,"",,
 89,237d9d9c7f,"Middle School for Art and Philosophy",11212,Brooklyn,40.6582877,-73.9201094,0.66,"FDNY Engine 283",fire station,337
-90,140c6f179d,"Brooklyn Ascend Charter Middle School",11212,Brooklyn,40.66405845,-73.92188309,0.66,"CenterLight Healthcare Rockaway Parkway(PACE Center)",hospital,235
+90,140c6f179d,"Brooklyn Ascend Charter Middle School",11212,Brooklyn,40.66405845,-73.92188309,0.66,"",,
 91,c68f347482,"School of Math, Science, and Healthy Living",11220,Brooklyn,40.63956425,-74.01975984,0.65,"NYPD 68th Precinct",police station,256
-92,d449b31f4a,"Columbia University - School of Nursing",10032,Manhattan,40.84079852,-73.93914542,0.64,"NewYork-Presbyterian Ambulatory Care Network - Associates in Internal Mediicne East",hospital,50
+92,d449b31f4a,"Columbia University - School of Nursing",10032,Manhattan,40.84079852,-73.93914542,0.64,"21 Audubon Ave. New York Preabyterian Hospital",hospital,144
 93,65352a2377,"High School of American Studies at Lehman College",10463,Bronx,40.87393161,-73.8953803,0.64,"",,
 94,37f4cd50fd,"Harvey Milk High School",10003,Manhattan,40.73003073,-73.99263228,0.63,"Fdny Engine 33/ladder 9",fire station,340
-95,58d410ccdb,"Manhattan Comprehensive Night and Day High School (MCNDHS)",10003,Manhattan,40.73270884,-73.984665,0.63,"Bernstein Pavilion",hospital,124
+95,58d410ccdb,"Manhattan Comprehensive Night and Day High School (MCNDHS)",10003,Manhattan,40.73270884,-73.984665,0.63,"FDNY Engine 5",fire station,169
 96,1ff34153eb,"P.S. 019 Asher Levy",10003,Manhattan,40.72962909,-73.98381781,0.63,"FDNY Engine 5",fire station,217
 97,5588b5d3da,"P.S. 034 Franklin D. Roosevelt",10009,Manhattan,40.72646558,-73.97518128,0.63,"City Of N Y 9TH Precinct",police station,199
 98,fb6dc3c7b6,"P.S. 036 Unionport",10472,Bronx,40.82933758,-73.85042647,0.62,"FDNY Engine 64",fire station,346

@@ -14,6 +14,8 @@ export VITE_LOCATION_REGION=us-east-1
 npm run build -w web
 # Hashed assets cache for a year; pages and data revalidate.
 aws s3 sync web/dist/assets "s3://$BUCKET/assets" --cache-control "public,max-age=31536000,immutable" --delete
-aws s3 sync web/dist "s3://$BUCKET" --exclude "assets/*" --exclude "data/nyc/changes.json" --cache-control "public,max-age=300" --delete
+aws s3 sync web/dist "s3://$BUCKET" --exclude "assets/*" --exclude "data/nyc/changes.json" --exclude "*.geojson" --cache-control "public,max-age=300" --delete
+# S3 has no type for .geojson, and CloudFront only compresses known text types: send it as JSON.
+aws s3 sync web/dist "s3://$BUCKET" --exclude "*" --include "*.geojson" --content-type application/json --cache-control "public,max-age=300"
 aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" --query Invalidation.Id --output text
 echo "Published to https://$(aws cloudfront get-distribution --id "$DIST" --query Distribution.DomainName --output text)"

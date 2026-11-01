@@ -13,12 +13,16 @@
     "infer": "tsx src/infer-hours.ts",
     "build": "tsx src/build-presets.ts",
     "all": "npm run fetch && npm run paris && npm run hours && npm run build",
-    "verify": "tsx src/verify.ts"
+    "verify": "tsx src/verify.ts",
+    "briefs": "tsx src/build-briefs.ts",
+    "sample-maps": "tsx src/build-sample-maps.ts",
+    "api-figure": "tsx src/build-api-figure.ts"
   },
   "dependencies": {
     "@after-hours/engine": "*",
     "@aws-sdk/client-athena": "^3.1161.0",
     "@aws-sdk/client-bedrock-runtime": "^3.1161.0",
+    "@aws-sdk/client-geo-maps": "^3.1161.0",
     "@aws-sdk/client-geo-places": "^3.1161.0",
     "@aws-sdk/client-geo-routes": "^3.1161.0"
   }

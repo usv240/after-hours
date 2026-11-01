@@ -1,0 +1,460 @@
+/* School briefs: a printed artefact. On screen it is a sheet of paper on the night page;
+   on paper it is the whole page, and nothing else prints. */
+
+.brief-hero__fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.brief-hero__fig figcaption,
+.brief-list__lead {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.brief-list__lead {
+  max-width: 70ch;
+  margin-bottom: 28px;
+  font-size: var(--step-body);
+}
+.brief-table {
+  font-size: var(--step-body);
+}
+.brief-table td,
+.brief-table th {
+  vertical-align: middle;
+  font-size: var(--step-body);
+}
+.brief-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+.brief-row img {
+  flex: none;
+  width: 192px;
+  height: 108px;
+  object-fit: cover;
+  transition: transform 200ms var(--ease-out);
+}
+.brief-row span {
+  display: grid;
+  gap: 2px;
+}
+.brief-row b {
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--surface-3);
+  transition: text-decoration-color 160ms ease;
+}
+.brief-row small {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .brief-row:hover b {
+    text-decoration-color: var(--open);
+  }
+  .brief-row:hover img {
+    transform: scale(1.03);
+  }
+}
+@media (max-width: 960px) {
+  .brief-table {
+    display: table;
+  }
+  .brief-table th:nth-child(3),
+  .brief-table td:nth-child(3),
+  .brief-table th:nth-child(5),
+  .brief-table td:nth-child(5) {
+    display: none;
+  }
+  .brief-row img {
+    width: 112px;
+    height: 63px;
+  }
+  .brief-row {
+    gap: 10px;
+  }
+}
+
+/* ---------- one brief ---------- */
+
+.brief-tools {
+  max-width: calc(880px + 2 * var(--margin));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-block: 28px 20px;
+}
+.brief-tools .chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: background-color 160ms ease, transform 160ms var(--ease-out);
+}
+.brief-tools .chip:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  .brief-tools .chip:hover {
+    background: var(--surface-3);
+  }
+}
+.brief-tools .button {
+  margin-left: auto;
+  min-height: 44px;
+  font-size: 1rem;
+}
+.brief-pick {
+  min-height: 40px;
+  max-width: min(360px, 100%);
+  font-size: 0.9375rem;
+}
+
+.sheet-wrap {
+  padding: 0 var(--margin) clamp(48px, 7vw, 120px);
+}
+.sheet {
+  --paper: #ffffff;
+  --paper-ink: #121212;
+  --paper-soft: #f1f1ee;
+  --paper-mute: #4a4a4a;
+  max-width: 880px;
+  margin-inline: auto;
+  padding: clamp(24px, 5vw, 56px);
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-size: 1rem;
+}
+.sheet ::selection {
+  background: var(--school);
+  color: var(--school-ink);
+}
+.sheet h1 {
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+.sheet__meta {
+  margin-top: 10px;
+  color: var(--paper-mute);
+  font-size: 0.9375rem;
+}
+.sheet__claim {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+  margin-top: 28px;
+  padding: 18px 20px;
+  background: var(--locked);
+  color: var(--locked-ink);
+}
+.sheet__claim b {
+  font-size: clamp(2.75rem, 2rem + 3vw, 4.25rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+.sheet__claim span {
+  font-size: 1.125rem;
+  line-height: 1.35;
+  max-width: 40ch;
+}
+.sheet__map,
+.brief-hero__fig {
+  margin: 20px 0 0;
+}
+.sheet__map img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sheet__map figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 10px;
+  font-size: 0.8125rem;
+  color: var(--paper-mute);
+}
+.k {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.k::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #8c8c8c;
+}
+.k--school::before {
+  background: #c81e1e;
+}
+.k--host::before {
+  background: #1e4bd7;
+}
+.k--area::before {
+  border-radius: 0;
+  background: #3ee08f;
+}
+
+.sheet h2 {
+  font-size: 1.125rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.sheet__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 28px;
+}
+.sheet__small {
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--paper-mute);
+}
+
+.bweek {
+  display: grid;
+  gap: 2px;
+  margin-top: 12px;
+}
+.bweek__row {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-items: center;
+}
+.bweek__day {
+  font-size: 0.6875rem;
+  color: var(--paper-mute);
+}
+.bweek__cells {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 1px;
+}
+.bweek__cells i {
+  height: 12px;
+  background: var(--paper-soft);
+}
+.bweek__cells i.o {
+  background: var(--aed);
+}
+.bweek__ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6875rem;
+  color: var(--paper-mute);
+  padding-top: 2px;
+}
+.bweek__ticks span:last-child {
+  margin-right: 18%;
+}
+
+.bfacts {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+}
+.bfacts dt {
+  font-size: 0.8125rem;
+  color: var(--paper-mute);
+}
+.bfacts dd {
+  margin: 2px 0 0;
+}
+.bfacts dd b {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-right: 8px;
+}
+.bfacts dd span {
+  font-size: 0.875rem;
+}
+
+.sheet__fix,
+.sheet__ai,
+.sheet__unknown {
+  margin-top: 26px;
+}
+.bopts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bopts li {
+  padding: 14px 16px;
+  background: var(--paper-soft);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+.sheet__ai p,
+.sheet__unknown p {
+  margin-top: 8px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  max-width: 75ch;
+}
+.sheet__ai .sheet__small {
+  font-size: 0.8125rem;
+}
+.sheet__foot {
+  margin-top: 28px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--paper-mute);
+}
+.sheet__foot p + p {
+  margin-top: 4px;
+}
+.sheet__911 {
+  font-weight: 500;
+  color: var(--paper-ink);
+}
+
+@media (max-width: 700px) {
+  .sheet__cols,
+  .bopts {
+    grid-template-columns: 1fr;
+  }
+  .sheet__claim {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .brief-tools .button {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---------- paper ---------- */
+
+@page {
+  size: letter;
+  margin: 0;
+}
+@media print {
+  :root {
+    color-scheme: light;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .is-sheet .site-header,
+  .is-sheet .stack,
+  .is-sheet .site-footer,
+  .is-sheet .brief-tools {
+    display: none !important;
+  }
+  .is-sheet,
+  .is-sheet main {
+    background: #fff !important;
+  }
+  .sheet-wrap {
+    padding: 0;
+  }
+  .sheet {
+    max-width: none;
+    padding: 0.5in;
+    font-size: 10pt;
+    zoom: 0.9;
+  }
+  .sheet h1 {
+    font-size: 21pt;
+  }
+  .sheet__meta {
+    margin-top: 4px;
+    font-size: 9pt;
+  }
+  .sheet h2 {
+    font-size: 11pt;
+  }
+  .sheet__small,
+  .bfacts dt,
+  .bfacts dd span,
+  .sheet__map figcaption {
+    font-size: 8pt;
+  }
+  .bfacts {
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .bfacts dd b {
+    font-size: 14pt;
+  }
+  .bweek {
+    margin-top: 6px;
+  }
+  .sheet__claim {
+    margin-top: 14px;
+    padding: 10px 14px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet__claim b {
+    font-size: 30pt;
+  }
+  .sheet__claim span {
+    font-size: 11pt;
+  }
+  .sheet__map {
+    margin-top: 10px;
+  }
+  .sheet__map img {
+    height: 2.3in;
+    object-fit: cover;
+  }
+  .sheet__map figcaption {
+    margin-top: 4px;
+  }
+  .sheet__cols,
+  .sheet__fix,
+  .sheet__ai,
+  .sheet__unknown {
+    margin-top: 12px;
+  }
+  .bweek__cells i,
+  .bopts li {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .bweek__cells i {
+    height: 7px;
+  }
+  .bopts li {
+    padding: 8px 10px;
+    font-size: 9pt;
+  }
+  .sheet__ai p,
+  .sheet__unknown p {
+    font-size: 9pt;
+    margin-top: 4px;
+  }
+  .sheet__foot {
+    margin-top: 12px;
+    padding-top: 8px;
+    font-size: 7.5pt;
+  }
+}

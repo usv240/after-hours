@@ -68,7 +68,10 @@ const state = {
   ai: false,
   tab: "explore",
   playing: 0 as number,
+  pin: null as [number, number] | null,
+  school: null as string | null,
 };
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let summary: Summary;
 let sites: SitesFile;
@@ -126,12 +129,13 @@ async function loadPreset(id: string) {
   $("map-status").textContent = "Loading locations…";
   $("map-status").hidden = false;
   const base = `/data/${id}`;
-  const [s, st, rs, rel, catchments] = await Promise.all([
+  // Walking areas are the heaviest file; the dots and the clock work without them, so they follow.
+  const catchments = getJson<{ type: string; features: { id: number; properties: Record<string, number> }[] }>(`${base}/catchments.geojson`);
+  const [s, st, rs, rel] = await Promise.all([
     getJson<Summary>(`${base}/summary.json`),
     getJson<SitesFile>(`${base}/sites.json`),
     getJson<RegionStats>(`${base}/region-stats.json`),
     id === "nyc" ? getJson<Relocation[]>(`${base}/relocation.json`) : Promise.resolve([]),
-    getJson<{ type: string; features: { id: number; properties: Record<string, number> }[] }>(`${base}/catchments.geojson`),
   ]);
   if (token !== loadToken) return;
   summary = s;
@@ -146,13 +150,12 @@ async function loadPreset(id: string) {
   groupIds = [...new Set(groupOf)];
   lastPaintKey = "";
   regionState.clear();
-  for (const f of catchments.features) f.properties = { g: groupOf[f.id] };
 
   for (const layer of ["catch-fill", "catch-line", "regions-fill", "regions-line", "points", "points-halo"]) if (map.getLayer(layer)) map.removeLayer(layer);
   for (const src of ["catch", "regions", "points"]) if (map.getSource(src)) map.removeSource(src);
 
   map.addSource("regions", { type: "geojson", data: `${base}/regions.geojson` });
-  map.addSource("catch", { type: "geojson", data: catchments as unknown as GeoJSON.FeatureCollection });
+  map.addSource("catch", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
   map.addSource("points", {
     type: "geojson",
     data: {
@@ -224,14 +227,16 @@ async function loadPreset(id: string) {
       : `Paris uses France's national registry, where owners must declare when each AED can be reached. ${fmt.format(s.hoursSources.unknown ?? 0)} of ${fmt.format(s.sites)} never did, so they show as unknown. Walking areas here are ${s.catchment.label}.`;
   buildWeekstrip();
   renderRelocation();
-  const wait = () => {
-    if (map.isSourceLoaded("catch") && map.isSourceLoaded("regions")) {
-      $("map-status").hidden = true;
-      update();
-    } else setTimeout(wait, 120);
-  };
   update();
-  wait();
+  $("map-status").textContent = "Drawing two-minute walking areas…";
+  catchments
+    .then((c) => {
+      if (token !== loadToken) return;
+      for (const f of c.features) f.properties = { g: groupOf[f.id] };
+      (map.getSource("catch") as maplibregl.GeoJSONSource).setData(c as unknown as GeoJSON.FeatureCollection);
+      map.once("idle", () => token === loadToken && ($("map-status").hidden = true));
+    })
+    .catch(() => ($("map-status").textContent = "Walking areas could not load; the dots still show each location's state."));
 }
 
 function applyLayerToggles() {
@@ -324,7 +329,10 @@ function update() {
   $<HTMLInputElement>("hour").value = String(state.hour);
   document.querySelectorAll<HTMLButtonElement>("#days button").forEach((b, i) => b.setAttribute("aria-checked", String(i === state.day)));
   document.querySelectorAll<HTMLButtonElement>("#season button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.season === state.season)));
+  document.querySelectorAll<HTMLButtonElement>("#school-close button").forEach((b) => b.setAttribute("aria-checked", String(Number(b.dataset.close) === state.close)));
+  $<HTMLInputElement>("include-ai").checked = state.ai;
   paintWeekstrip();
+  syncUrl();
 }
 
 const b64Cache = new Map<string, Uint8Array>();
@@ -452,7 +460,11 @@ function minutes(s: number) {
   return m <= 1 ? "1 minute" : `${m} minutes`;
 }
 
-async function dropPin(at: [number, number], label?: string) {
+type PinResult = Parameters<typeof renderPin>[0];
+
+async function dropPin(at: [number, number], label?: string): Promise<PinResult | null> {
+  state.pin = at;
+  syncUrl();
   pinMarker?.remove();
   const node = el("div", { class: "pin" });
   pinMarker = new maplibregl.Marker({ element: node }).setLngLat(at).addTo(map);
@@ -480,8 +492,10 @@ async function dropPin(at: [number, number], label?: string) {
       message?: string;
     }>(`/site/nearest?${q}`);
     renderPin(r, at);
+    return r;
   } catch (e) {
     out.replaceChildren(el("p", { class: "error" }, `Could not route from here: ${(e as Error).message}`));
+    return null;
   }
 }
 
@@ -607,7 +621,7 @@ function renderRelocation() {
           { type: "button", class: "rank__item", onclick: () => focusSchool(r) },
           el("span", { class: "rank__n num" }, String(r.rank)),
           el("span", { class: "rank__name" }, r.name, el("small", {}, `ZIP ${r.zip} · ${r.area}`)),
-          el("span", { class: "rank__v num" }, r.expectedCallsPerYear.toFixed(1), el("small", {}, "calls/yr")),
+          el("span", { class: "rank__v num" }, r.expectedCallsPerYear.toFixed(2), el("small", {}, "calls/yr")),
         ),
       ),
     ),
@@ -631,15 +645,19 @@ const VERDICT: Record<string, string> = {
 function schoolIntro(r: Relocation) {
   return [
     el("h3", { class: "debate__title" }, r.name),
-    el("p", {}, `${r.expectedCallsPerYear.toFixed(1)} cardiac-arrest calls a year inside its two-minute walk while every AED in reach was locked.`),
+    el("p", {}, `${r.expectedCallsPerYear.toFixed(2)} cardiac-arrest calls a year inside its two-minute walk while every AED in reach was locked.`),
     r.altHost
       ? el("p", { class: "hint" }, `Another option: ${r.altHost.name}, a ${r.altHost.category} staffed around the clock, is ${r.altHost.meters} m away (Overture Maps, via Amazon Athena).`)
       : "",
+    el("a", { class: "dl", href: `/brief.html?id=${r.id}` }, "Open the one-page brief for this school"),
   ];
 }
 
-async function focusSchool(r: Relocation) {
-  map.flyTo({ center: [r.lon, r.lat], zoom: 15.5, duration: 900 });
+async function focusSchool(r: Relocation): Promise<Debate | null> {
+  state.school = r.id;
+  syncUrl();
+  if (reduceMotion) map.jumpTo({ center: [r.lon, r.lat], zoom: 15.5 });
+  else map.flyTo({ center: [r.lon, r.lat], zoom: 15.5, duration: 900 });
   const i = sites.rows.findIndex((row) => row[0] === r.id);
   if (i >= 0) popup.setLngLat([r.lon, r.lat]).setDOMContent(siteCard(i)).addTo(map);
   const host = $("debate");
@@ -652,10 +670,15 @@ async function focusSchool(r: Relocation) {
   // The top schools have a saved debate, so the answer is there at once; a fresh one is a click away.
   try {
     const res = await fetch(`/data/nyc/debates/${r.id}.json`);
-    if (res.ok) renderDebate(r, (await res.json()) as Debate);
+    if (res.ok) {
+      const d = (await res.json()) as Debate;
+      renderDebate(r, d);
+      return d;
+    }
   } catch {
     /* no saved debate for this school */
   }
+  return null;
 }
 
 async function runDebate(r: Relocation) {
@@ -727,7 +750,268 @@ function setTab(tab: string) {
   }
   map.getCanvas().style.cursor = tab === "pin" ? "crosshair" : "";
   document.body.classList.toggle("is-pin", tab === "pin");
-  history.replaceState(null, "", tab === "explore" ? location.pathname : `#${tab}`);
+  syncUrl();
+}
+
+// ---------- shareable links ----------
+
+/** Every view has a link: ?p=nyc&t=6-21&s=summer&c=18&ai=1&pin=lon,lat&school=id#pin */
+let urlTimer = 0;
+function syncUrl() {
+  clearTimeout(urlTimer);
+  urlTimer = window.setTimeout(() => {
+    const q = new URLSearchParams();
+    if (state.preset !== "nyc") q.set("p", state.preset);
+    q.set("t", `${state.day}-${state.hour}`);
+    if (state.season !== "school") q.set("s", state.season);
+    if (state.close !== 18) q.set("c", String(state.close));
+    if (state.ai) q.set("ai", "1");
+    if (state.tab === "pin" && state.pin) q.set("pin", state.pin.map((v) => v.toFixed(5)).join(","));
+    if (state.tab === "relocation" && state.school) q.set("school", state.school);
+    history.replaceState(null, "", `${location.pathname}?${q}${state.tab === "explore" ? "" : `#${state.tab}`}`);
+  }, 200);
+}
+
+function readUrl() {
+  const q = new URLSearchParams(location.search);
+  const t = /^(\d)-(\d{1,2})$/.exec(q.get("t") ?? "");
+  if (t && +t[1] < 7 && +t[2] < 24) Object.assign(state, { day: +t[1], hour: +t[2] });
+  if (q.get("s") === "summer") state.season = "summer";
+  if (["15", "18", "21"].includes(q.get("c") ?? "")) state.close = Number(q.get("c"));
+  state.ai = q.get("ai") === "1";
+  const pin = (q.get("pin") ?? "").split(",").map(Number);
+  return {
+    preset: q.get("p") === "paris" ? "paris" : "nyc",
+    tab: location.hash.slice(1),
+    pin: pin.length === 2 && pin.every(Number.isFinite) ? (pin as [number, number]) : null,
+    school: q.get("school"),
+    story: q.has("story"),
+  };
+}
+
+async function copyLink(btn: HTMLElement) {
+  clearTimeout(urlTimer);
+  syncUrl();
+  await new Promise((r) => setTimeout(r, 220));
+  const label = btn.querySelector("span")!;
+  try {
+    await navigator.clipboard.writeText(location.href);
+    label.textContent = "Link copied";
+  } catch {
+    label.textContent = "Copy the address bar";
+  }
+  setTimeout(() => (label.textContent = "Copy link"), 1800);
+}
+
+// ---------- the 60-second story ----------
+
+/**
+ * A guided run through the finding, on the live map: the same arc as the write-up, with every
+ * number read from the pipeline's summary and the East New York walk routed live.
+ */
+type BeatOut = { big: string; text: string; tone?: "open" | "closed" | "school" | "ink"; extra?: HTMLElement };
+interface Beat {
+  run: () => Promise<BeatOut> | BeatOut;
+  hold: number;
+}
+const story = { i: -1, timer: 0, started: 0, left: 0, paused: false, token: 0, card: null as HTMLElement | null };
+const EAST_NEW_YORK: [number, number] = [-73.8945, 40.6705];
+
+function setClock(day: number, hour: number, season: Season = "school") {
+  Object.assign(state, { day, hour, season });
+  update();
+}
+
+function cityView(zoom?: number) {
+  const o = { center: summary.center as LngLatLike, zoom: zoom ?? summary.zoom };
+  if (reduceMotion) map.jumpTo(o);
+  else map.flyTo({ ...o, duration: 1400, essential: true });
+}
+
+async function tickHours(from: number, to: number) {
+  for (let h = from; h <= to; h++) {
+    state.hour = h;
+    update();
+    if (!reduceMotion && h < to) await new Promise((r) => setTimeout(r, 420));
+  }
+}
+
+function beats(): Beat[] {
+  const s = summary as Summary & Record<string, any>;
+  const f = s.figures, k = s.findings;
+  const pct = (x: number) => `${Math.round(x * 100)}%`;
+  return [
+    {
+      hold: 7500,
+      run: () => {
+        if (state.tab !== "explore") setTab("explore");
+        setClock(1, 14);
+        cityView();
+        return { big: fmt.format(f.openTue2pm), text: "defibrillator locations are open on a school Tuesday at 2 PM. Each green glow is the ground within a two-minute walk of one, routed on real streets." };
+      },
+    },
+    {
+      hold: 7000,
+      run: async () => {
+        await tickHours(14, 18);
+        return { tone: "school", big: fmt.format(f.openTue6pm), text: `are left at 6 PM. School buildings lock, and ${pct(k.schoolShare)} of New York's AED locations are in schools.` };
+      },
+    },
+    {
+      hold: 7500,
+      run: () => {
+        setClock(6, 3);
+        return { tone: "closed", big: fmt.format(f.openSun3am), text: "are confirmed open at 3 AM on a Sunday, in a city of eight million. The rest are locked, or nobody has published their hours." };
+      },
+    },
+    {
+      hold: 8000,
+      run: () => {
+        setClock(6, 21);
+        return { tone: "closed", big: pct(k.callsWhenSchoolsShutShare), text: `of 2025's ${fmt.format(k.calls)} cardiac-arrest calls came while school buildings were shut. The red ZIP codes are the calls at the hour shown.` };
+      },
+    },
+    {
+      hold: 8000,
+      run: () => ({
+        tone: "closed",
+        big: pct(k.coverageLost.lostConservative),
+        text: `of the coverage an ordinary AED map shows was locked at the hour the calls came. Even if every venue with unknown hours were open around the clock, ${pct(k.coverageLost.lostIfUnknownWereOpen)} would still be lost.`,
+      }),
+    },
+    {
+      hold: 9500,
+      run: async () => {
+        setClock(6, 21);
+        setTab("pin");
+        const r = await dropPin(EAST_NEW_YORK, "a corner in East New York");
+        const near = r?.timeBlindNearest, open = r?.nearestOpen;
+        if (!near) return { tone: "ink", big: "East New York", text: "Sunday, 9 PM. Drop your own pin to walk the streets to the nearest open defibrillator." };
+        return {
+          tone: "closed",
+          big: open ? minutes(open.walkSeconds) : "None open",
+          text: `Sunday, 9 PM, East New York. The nearest defibrillator is a ${Math.max(1, Math.round(near.walkSeconds / 60))}-minute walk, but it is ${near.state === "closed" ? "locked" : "of unknown hours"}. The nearest open one is ${open ? `${minutes(open.walkSeconds)} away on foot` : "out of reach"}. Routed by Amazon Location Service.`,
+        };
+      },
+    },
+    {
+      hold: 10000,
+      run: async () => {
+        const top = relocation[0];
+        setTab("relocation");
+        const d = await focusSchool(top);
+        popup.remove();
+        const verdict = d ? (VERDICT[d.verdict.verdict] ?? d.verdict.verdict).toLowerCase() : null;
+        return {
+          big: "A box on the wall",
+          text: `${top.name} tops the list: ${top.expectedCallsPerYear.toFixed(2)} cardiac-arrest calls a year in reach while every AED nearby was locked. A 24/7 cabinet outside would change that.${verdict ? ` Two AI agents argued it; the verdict: ${verdict}.` : ""}`,
+          extra: el("a", { class: "story__link", href: `/brief.html?id=${top.id}` }, "Open its one-page brief"),
+        };
+      },
+    },
+    {
+      hold: 0,
+      run: () => ({
+        tone: "ink",
+        big: "Your turn",
+        text: "Move the clock, drop a pin on your own block, or bring your own list of defibrillators, naloxone boxes or cooling centres.",
+        extra: el(
+          "span",
+          { class: "story__actions" },
+          el("button", { type: "button", class: "story__link", onclick: () => storyClose() }, "Explore the map"),
+          el("a", { class: "story__link", href: "/data.html" }, "Bring your own data"),
+        ),
+      }),
+    },
+  ];
+}
+
+let storyBeats: Beat[] = [];
+
+function storyOpen() {
+  if (!summary || state.preset !== "nyc") return;
+  if (state.playing) $("play").click();
+  storyBeats = beats();
+  popup.remove();
+  story.card?.remove();
+  const segs = el("div", { class: "story__segs" }, ...storyBeats.map(() => el("span", {}, el("i", {}))));
+  const card = el(
+    "section",
+    { class: "story", ariaLabel: "The 60-second story" },
+    segs,
+    el("div", { class: "story__body", ariaLive: "polite" }, el("p", { class: "story__big" }), el("p", { class: "story__text" }), el("div", { class: "story__extra" })),
+    el(
+      "div",
+      { class: "story__ctrl" },
+      el("button", { type: "button", class: "story__btn", id: "story-pause", onclick: () => storyPause() }, "Pause"),
+      el("button", { type: "button", class: "story__btn", id: "story-next", onclick: () => storyGo(story.i + 1) }, "Next"),
+      el("button", { type: "button", class: "story__btn story__btn--x", ariaLabel: "Close the story", onclick: () => storyClose() }, "Close"),
+    ),
+  );
+  document.querySelector(".mapwrap")!.append(card);
+  story.card = card;
+  story.paused = false;
+  document.body.classList.add("is-story");
+  storyGo(0);
+}
+
+async function storyGo(i: number) {
+  const card = story.card;
+  if (!card || i >= storyBeats.length) return;
+  const tok = ++story.token;
+  clearTimeout(story.timer);
+  story.i = i;
+  const beat = storyBeats[i];
+  card.querySelectorAll<HTMLElement>(".story__segs span").forEach((s, j) => {
+    s.className = j < i ? "is-done" : j === i ? "is-on" : "";
+    s.style.setProperty("--hold", `${beat.hold}ms`);
+  });
+  card.classList.add("is-busy");
+  ($("story-next") as HTMLButtonElement).hidden = i === storyBeats.length - 1;
+  ($("story-pause") as HTMLButtonElement).hidden = i === storyBeats.length - 1;
+  const out = await beat.run();
+  if (tok !== story.token || !story.card) return;
+  card.classList.remove("is-busy");
+  const big = card.querySelector<HTMLElement>(".story__big")!;
+  big.textContent = out.big;
+  big.dataset.tone = out.tone ?? "open";
+  card.querySelector(".story__text")!.textContent = out.text;
+  card.querySelector(".story__extra")!.replaceChildren(...(out.extra ? [out.extra] : []));
+  // Restart the progress fill for this beat.
+  const on = card.querySelector<HTMLElement>(".story__segs .is-on");
+  if (on) {
+    on.classList.remove("is-on");
+    void on.offsetWidth;
+    on.classList.add("is-on");
+  }
+  if (beat.hold) {
+    story.started = performance.now();
+    story.left = beat.hold;
+    if (!story.paused) story.timer = window.setTimeout(() => storyGo(i + 1), beat.hold);
+  }
+}
+
+function storyPause() {
+  const card = story.card;
+  if (!card) return;
+  story.paused = !story.paused;
+  card.classList.toggle("is-paused", story.paused);
+  $("story-pause").textContent = story.paused ? "Play" : "Pause";
+  if (story.paused) {
+    clearTimeout(story.timer);
+    story.left = Math.max(0, story.left - (performance.now() - story.started));
+  } else {
+    story.started = performance.now();
+    story.timer = window.setTimeout(() => storyGo(story.i + 1), story.left);
+  }
+}
+
+function storyClose() {
+  story.token++;
+  clearTimeout(story.timer);
+  story.card?.remove();
+  story.card = null;
+  document.body.classList.remove("is-story");
 }
 
 function wire() {
@@ -804,10 +1088,17 @@ function wire() {
 }
 
 wire();
-const initialTab = location.hash.slice(1);
+const initial = readUrl();
+$("story-btn").addEventListener("click", storyOpen);
+$("share").addEventListener("click", (e) => copyLink(e.currentTarget as HTMLElement));
+document.addEventListener("keydown", (e) => e.key === "Escape" && story.card && storyClose());
 map.on("load", () => {
-  loadPreset("nyc").then(() => {
-    if (["pin", "relocation"].includes(initialTab)) setTab(initialTab);
+  loadPreset(initial.preset).then(() => {
+    if (initial.story) return storyOpen();
+    if (["pin", "relocation"].includes(initial.tab)) setTab(initial.tab);
+    if (initial.tab === "pin" && initial.pin) dropPin(initial.pin);
+    const school = initial.tab === "relocation" && relocation.find((r) => r.id === initial.school);
+    if (school) focusSchool(school);
   });
 });
 map.on("error", (e) => console.warn("map", e.error?.message));
