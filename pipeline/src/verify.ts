@@ -59,7 +59,7 @@ const states = (h: string) => memo.get(h) ?? memo.set(h, weekStates(h || null)).
 const openAt = (hourOfWeek: number) =>
   sites.filter((r) => (r.hours_source === "calendar" || r.hours_source === "places") && states(r.opening_hours)[stateIndex("school", hourOfWeek)] === 1).length;
 const tue2pm = openAt(24 + 14), tue6pm = openAt(24 + 18), sun3am = openAt(6 * 24 + 3);
-check("2,636 confirmed open on a school Tuesday at 2 PM", tue2pm, tue2pm === 2636);
+check("2,636 open by published hours or the school day on a school Tuesday at 2 PM", tue2pm, tue2pm === 2636);
 check("250 at 6 PM, when school buildings lock", tue6pm, tue6pm === 250);
 check("52 at 3 AM on a Sunday", sun3am, sun3am === 52);
 
@@ -77,7 +77,7 @@ const lostKind = 1 - (v.actualCoverage + v.unknownCoverage) / v.timeBlindCoverag
 check("69% of that coverage was behind a locked door (1 − 1.4 ÷ 4.6, unrounded)", `${pct1(lost)}%`, pct(lost) === 69 && Math.abs(lost - f.coverageLost.lostConservative) < 1e-9);
 check("39% even if every venue of unknown hours were open around the clock", `${pct1(lostKind)}%`, pct(lostKind) === 39 && Math.abs(lostKind - f.coverageLost.lostIfUnknownWereOpen) < 1e-9);
 check("Bedrock's hours, graded blind on 742 venues: 85% of hours right", `${pct(s.aiGrade.hourAgreement)}%`, s.aiGrade.venuesWithKnownHours === 742 && pct(s.aiGrade.hourAgreement) === 85);
-check("…and it called a shut venue open 8.3% of the time", `${pct1(s.aiGrade.falseOpenShare)}%`, pct1(s.aiGrade.falseOpenShare) === 8.3);
+check("…and estimated open where published hours say shut on 8.3% of hours", `${pct1(s.aiGrade.falseOpenShare)}%`, pct1(s.aiGrade.falseOpenShare) === 8.3);
 
 // ---------- the ranking, recomputed from relocation.csv ----------
 
@@ -97,20 +97,20 @@ const re = json("nyc/ranking-eval.json");
 const m100 = re.methods.find((m: { cabinets: number }) => m.cabinets === 100);
 check("Counting overlaps once, the top 100 reach 85.8 calls a year (the map's 84 is the per-school floor)", `${m100.afterHours} vs ${m100.afterHoursCredited} credited`, m100.afterHours === 85.8 && m100.afterHoursCredited === Math.round(sum(100) * 10) / 10 && m100.afterHours >= m100.afterHoursCredited);
 check("It beats a time-blind pick (74.3), ZIPs with the fewest AEDs (27.1) and random schools (26.2)", `${m100.busiestWalk}, ${m100.fewestAeds}, ${m100.random}`, m100.afterHours > m100.busiestWalk && m100.busiestWalk === 74.3 && m100.fewestAeds === 27.1 && m100.random === 26.2);
-check("…and is within 3% of the greedy optimum (88.0)", `${m100.greedy} (${(100 * (1 - m100.afterHours / m100.greedy)).toFixed(1)}% short)`, m100.greedy === 88 && m100.afterHours / m100.greedy > 0.97);
+check("…and comes within 3% of the greedy optimum (88.0)", `${m100.greedy} (${(100 * (1 - m100.afterHours / m100.greedy)).toFixed(1)}% short)`, m100.greedy === 88 && m100.afterHours / m100.greedy > 0.97);
 check("P.S. 053 stays first under all five assumptions; at least 20 of the top 25 stay", re.sensitivity.map((x: { top25Kept: number }) => x.top25Kept).join(", "), re.sensitivity.length === 5 && re.sensitivity.every((x: { sameFirst: boolean; top25Kept: number }) => x.sameFirst && x.top25Kept >= 20));
 
 // ---------- Paris, where owners must declare hours ----------
 
 const p = json("paris/summary.json");
-check("Paris: 838 confirmed open on Tuesday at 2 PM, 219 on Sunday at 3 AM", `${p.figures.openTue2pm} → ${p.figures.openSun3am}`, p.figures.openTue2pm === 838 && p.figures.openSun3am === 219);
+check("Paris: 838 open by declared hours on Tuesday at 2 PM, 219 on Sunday at 3 AM", `${p.figures.openTue2pm} → ${p.figures.openSun3am}`, p.figures.openTue2pm === 838 && p.figures.openSun3am === 219);
 
 // ---------- Ask the map, from evals.json ----------
 
 const e = json("nyc/evals.json").ask;
-check("Ask the map: 19 of 20 questions read right, 12 of 12 written after", `${e.development.ordinary.correct}/${e.development.ordinary.of}, ${e.heldOut.ordinary.correct}/${e.heldOut.ordinary.of}`, e.development.ordinary.correct === 19 && e.heldOut.ordinary.correct === 12 && e.heldOut.ordinary.of === 12);
-check("…no miss put a wrong place or hour on the map", e.development.ordinary.missesWrong + e.heldOut.ordinary.missesWrong, e.development.ordinary.missesWrong + e.heldOut.ordinary.missesWrong === 0);
-check("…all 14 places outside the city declined, all 11 emergencies flagged, 0 false alarms in 39", `${e.development.outside.declined + e.heldOut.outside.declined}, ${e.development.emergency.flagged + e.heldOut.emergency.flagged}, ${e.development.falseAlarms.n + e.heldOut.falseAlarms.n} of ${e.development.falseAlarms.of + e.heldOut.falseAlarms.of}`, e.development.outside.declined + e.heldOut.outside.declined === 14 && e.development.emergency.flagged + e.heldOut.emergency.flagged === 11 && e.development.falseAlarms.n + e.heldOut.falseAlarms.n === 0);
+check("Ask the map: 19 of 20 questions read right, 12 of 12 on the held-out set", `${e.development.ordinary.correct}/${e.development.ordinary.of}, ${e.heldOut.ordinary.correct}/${e.heldOut.ordinary.of}`, e.development.ordinary.correct === 19 && e.heldOut.ordinary.correct === 12 && e.heldOut.ordinary.of === 12);
+check("…every place shown is the place asked for", e.development.ordinary.missesWrong + e.heldOut.ordinary.missesWrong, e.development.ordinary.missesWrong + e.heldOut.ordinary.missesWrong === 0);
+check("…all 14 places outside the city declined, all 11 emergencies flagged first, 0 of 39 everyday questions flagged", `${e.development.outside.declined + e.heldOut.outside.declined}, ${e.development.emergency.flagged + e.heldOut.emergency.flagged}, ${e.development.falseAlarms.n + e.heldOut.falseAlarms.n} of ${e.development.falseAlarms.of + e.heldOut.falseAlarms.of}`, e.development.outside.declined + e.heldOut.outside.declined === 14 && e.development.emergency.flagged + e.heldOut.emergency.flagged === 11 && e.development.falseAlarms.n + e.heldOut.falseAlarms.n === 0);
 
 // ---------- the live site (optional) ----------
 
