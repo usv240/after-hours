@@ -17,7 +17,7 @@ import {
 } from "@after-hours/engine";
 import { PRESETS, patternOf, preset } from "./data.ts";
 import { ZONES, describe, stateFor, wallTimeIn } from "./time.ts";
-import { geocode, isolines, walkingRoute, walkingSeconds } from "./location.ts";
+import { addressAt, geocode, isolines, walkingRoute, walkingSeconds } from "./location.ts";
 import { debate, type Evidence } from "./debate.ts";
 import { answerQuestion } from "./ask.ts";
 import { mintKey, spend } from "./keys.ts";
@@ -130,8 +130,11 @@ async function nearestOpen(q: Query) {
       };
     }
   }
-  let route = null;
-  if (open && routed && bool(q.route)) route = await walkingRoute(p, open.at).catch(() => null);
+  // The walking line and the street address are independent: ask Amazon Location for both at once.
+  const [route, address] = await Promise.all([
+    open && routed && bool(q.route) ? walkingRoute(p, open.at).catch(() => null) : null,
+    bool(q.address) ? addressAt(p).catch(() => null) : null,
+  ]);
   return {
     at: describe(t),
     assumptions: a,
@@ -141,6 +144,7 @@ async function nearestOpen(q: Query) {
     extraSecondsBecauseOfHours: open && timeBlind ? Math.max(0, open.walkSeconds! - timeBlind.walkSeconds!) : null,
     candidates: candidates.slice(0, 8),
     route,
+    address: address ?? undefined,
     note: "Planning tool, not an emergency service. In an emergency call 911 (112 in Europe) first.",
   };
 }

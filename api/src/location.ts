@@ -1,5 +1,5 @@
 import { GeoRoutesClient, CalculateRouteMatrixCommand, CalculateRoutesCommand, CalculateIsolinesCommand } from "@aws-sdk/client-geo-routes";
-import { GeoPlacesClient, GeocodeCommand, SearchTextCommand } from "@aws-sdk/client-geo-places";
+import { GeoPlacesClient, GeocodeCommand, ReverseGeocodeCommand, SearchTextCommand } from "@aws-sdk/client-geo-places";
 import type { LonLat } from "@after-hours/engine";
 
 const routes = new GeoRoutesClient({});
@@ -52,6 +52,16 @@ export async function searchPlace(q: string, box: [number, number, number, numbe
   return (res.ResultItems ?? [])
     .filter((it) => it.Position)
     .map((it) => ({ lon: it.Position![0], lat: it.Position![1], label: it.Title ?? q, type: it.PlaceType, state: it.Address?.Region?.Code, county: it.Address?.SubRegion?.Name }));
+}
+
+/** The street address at a point ("1060 Grand Concourse, Bronx"), the first thing a caller tells a dispatcher. */
+export async function addressAt(p: LonLat): Promise<string | null> {
+  const res = await places.send(new ReverseGeocodeCommand({ QueryPosition: p, MaxResults: 1, IntendedUse: "SingleUse" }));
+  const a = res.ResultItems?.[0]?.Address;
+  if (!a) return null;
+  const street = [a.AddressNumber, a.Street].filter(Boolean).join(" ");
+  const place = a.District ?? a.Locality ?? a.SubRegion?.Name;
+  return [street || res.ResultItems?.[0]?.Title, place].filter(Boolean).join(", ") || null;
 }
 
 export async function geocode(queries: string[], bias?: LonLat) {

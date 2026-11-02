@@ -24,6 +24,7 @@ interface Summary {
   catchment: { kind: string; label: string };
   aiGrade?: { falseOpenShare: number };
   calls?: { byVariant: Record<string, { calls: number; actualCoverage: number }> };
+  rankingEval?: { sensitivity: { key: string; gainTop100: number }[] };
 }
 interface SitesFile {
   columns: string[];
@@ -520,6 +521,7 @@ async function dropPin(at: [number, number], label?: string): Promise<PinResult 
     schoolClose: String(state.close),
     includeAi: state.ai ? "1" : "0",
     route: "1",
+    address: "1",
   });
   try {
     const r = await api<{
@@ -531,6 +533,7 @@ async function dropPin(at: [number, number], label?: string): Promise<PinResult 
       candidates: Cand[];
       route: { line: [number, number][]; seconds: number; meters: number } | null;
       message?: string;
+      address?: string;
     }>(`/site/nearest?${q}`);
     renderPin(r, at);
     return r;
@@ -552,9 +555,9 @@ interface Cand {
   hoursSource: string;
 }
 
-function renderPin(r: { timeBlindNearest: Cand | null; nearestOpen: Cand | null; extraSecondsBecauseOfHours: number | null; candidates: Cand[]; route: { line: [number, number][] } | null; routedBy: string; message?: string }, at: [number, number]) {
+function renderPin(r: { timeBlindNearest: Cand | null; nearestOpen: Cand | null; extraSecondsBecauseOfHours: number | null; candidates: Cand[]; route: { line: [number, number][] } | null; routedBy: string; message?: string; address?: string }, at: [number, number]) {
   const out = $("pin-result");
-  const when = `${DAY_LONG[state.day]}${state.season === "summer" ? " in summer" : ""} at ${hourLabel(state.hour)}`;
+  const when = `${r.address ? `Near ${r.address} · ` : ""}${DAY_LONG[state.day]}${state.season === "summer" ? " in summer" : ""} at ${hourLabel(state.hour)}`;
   if (!r.timeBlindNearest) {
     out.replaceChildren(el("p", {}, r.message ?? "No registered defibrillator nearby."));
     return;
@@ -789,6 +792,8 @@ function renderFix() {
     return;
   }
   const gain = relocation.slice(0, state.fixed).reduce((a, r) => a + r.expectedCallsPerYear, 0);
+  const alt = summary.rankingEval?.sensitivity.filter((x) => x.key !== "base").map((x) => x.gainTop100) ?? [];
+  const range = alt.length ? [Math.round(Math.min(...alt)), Math.round(Math.max(...alt))] : null;
   host.replaceChildren(
     el("p", { class: "fix-result__big num" }, `+${Math.round(gain)}`, el("small", {}, " calls a year")),
     el(
@@ -796,6 +801,9 @@ function renderFix() {
       {},
       `Of ${fmt.format(v.calls)} cardiac-arrest calls in 2025, about ${fmt.format(Math.round(before))} came within a two-minute walk of an open AED. With these ${state.fixed} schools' AEDs in street cabinets, at least ${fmt.format(Math.round(before + gain))}: ${Math.round((100 * gain) / before)}% more. Their walking areas now stay green at every hour.`,
     ),
+    ...(state.fixed === 100 && range
+      ? [el("p", { class: "fix-result__range" }, `Under four other sets of assumptions (schools locking at 3 or 9 PM, unknown hours open all night, AI-estimated hours counted), the top 100 adds ${range[0]} to ${range[1]} calls a year.`)]
+      : []),
     el("p", { class: "fine" }, "Each call is credited to one school only, so the total never counts a call twice. Assumes school buildings lock at 6 PM."),
   );
 }

@@ -70,7 +70,7 @@
               <thead><tr><th scope="col">Call</th><th scope="col">What it answers</th></tr></thead>
               <tbody>
                 <tr><td><code>GET /availability</code></td><td>How many AED locations are open, locked or unknown at a time. <code>preset</code>, <code>at</code>, <code>schoolClose</code> (15, 18, 21), <code>includeAi</code>, <code>list=1</code> for every site.</td></tr>
-                <tr><td><code>GET /nearest</code></td><td>From <code>lat</code>, <code>lon</code>: the nearest AED by walking time, the nearest one that is open, and how much longer it takes. Walking times from Amazon Location Service. <code>route=1</code> adds the walking line.</td></tr>
+                <tr><td><code>GET /nearest</code></td><td>From <code>lat</code>, <code>lon</code>: the nearest AED by walking time, the nearest one that is open, and how much longer it takes. Walking times from Amazon Location Service. <code>route=1</code> adds the walking line; <code>address=1</code> adds the street address of the point (Amazon Location reverse geocoding).</td></tr>
                 <tr><td><code>GET /relocation</code></td><td>NYC schools ranked by after-hours cardiac-arrest calls within a two-minute walk. <code>limit</code> up to 100.</td></tr>
                 <tr><td><code>GET /summary</code></td><td>Every headline number for a preset, with sources.</td></tr>
                 <tr><td><code>GET /presets</code></td><td>The cities available and how their hours were built.</td></tr>
