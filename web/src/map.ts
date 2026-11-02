@@ -1080,8 +1080,8 @@ function beats(): Beat[] {
         if (!near) return { tone: "ink", big: "P.S. 151", text: "Monday, 7 PM. Drop your own pin to walk the streets to the nearest open defibrillator." };
         return {
           tone: "closed",
-          big: open ? minutes(open.walkSeconds) : "None open",
-          text: `Same sidewalk, 7 PM. The school's AED is ${near.state === "closed" ? "locked" : "of unknown hours"}. The nearest open one is ${open ? `${open.group === "Gym" ? "a gym" : open.name}, ${minutes(open.walkSeconds)} away on foot` : "out of reach"}. Routed by Amazon Location Service.`,
+          big: open ? `${Math.max(1, Math.round(open.walkSeconds / 60))}-minute walk` : "None open",
+          text: `Same sidewalk, 7 PM. The school's AED is ${near.state === "closed" ? "locked" : "of unknown hours"}. The nearest open one is ${open ? `${open.group === "Gym" ? "a gym" : open.name}: an estimated ${minutes(open.walkSeconds)} on foot, each way, along the route Amazon Location Service drew` : "out of reach"}.`,
         };
       },
     },
