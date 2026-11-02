@@ -105,8 +105,15 @@ for (const r of relocation) {
   const features: object[] = [];
   if (area) features.push({ type: "Feature", properties: { color: "#3ee08f73", "outline-color": "#0b7a4b", "outline-width": 2 }, geometry: area });
   for (const x of near.slice(0, 25)) features.push({ type: "Feature", properties: { color: patternOf(x.o)[SUN_9PM] === 1 ? "#0b7a4b" : "#8c8c8c", size: "small" }, geometry: { type: "Point", coordinates: [x.o[3], x.o[4]] } });
-  if (r.altHost) features.push({ type: "Feature", properties: { color: "#1e4bd7", size: "large", label: "24/7 host" }, geometry: { type: "Point", coordinates: [r.altHost.lon, r.altHost.lat] } });
-  features.push({ type: "Feature", properties: { color: "#c81e1e", size: "large", label: "School AED" }, geometry: { type: "Point", coordinates: [r.lon, r.lat] } });
+  // Two labels are drawn into the image, so the Spanish brief gets its own map (same view, same overlay).
+  const label = (f: object[], host: string, school: string) => {
+    const out = [...f];
+    if (r.altHost) out.push({ type: "Feature", properties: { color: "#1e4bd7", size: "large", label: host }, geometry: { type: "Point", coordinates: [r.altHost.lon, r.altHost.lat] } });
+    out.push({ type: "Feature", properties: { color: "#c81e1e", size: "large", label: school }, geometry: { type: "Point", coordinates: [r.lon, r.lat] } });
+    return out;
+  };
+  const base = [...features];
+  features.splice(0, features.length, ...label(base, "24/7 host", "School AED"));
   const pts = [[r.lon, r.lat], ...(r.altHost ? [[r.altHost.lon, r.altHost.lat]] : []), ...(area ? area.coordinates.flat(2) : [])] as number[][];
   const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
   const pad = 0.0012;
@@ -115,6 +122,7 @@ for (const r of relocation) {
     [Math.max(...xs) + pad, Math.max(...ys) + pad],
   ];
   await staticMap(resolve(imgDir, `${r.id}.png`), { type: "FeatureCollection", features }, bounds);
+  await staticMap(resolve(imgDir, `${r.id}.es.png`), { type: "FeatureCollection", features: label(base, "Abierto 24 h", "DEA escolar") }, bounds);
 
   briefs.push({
     rank: r.rank,

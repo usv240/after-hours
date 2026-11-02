@@ -10,7 +10,7 @@ After Hours maps New York City's 4,032 public defibrillator (AED) locations by t
 - **Demo video (2:51, 4K):** https://youtu.be/reYIJGOmZXQ
 - **60-second guided story:** https://dqcf6x4e7zbds.cloudfront.net/map.html?story
 - **Map:** https://dqcf6x4e7zbds.cloudfront.net/map.html (every view has a shareable link; ask it in your own words, e.g. "Sunday 11 PM near Penn Station")
-- **School briefs, one printable page each:** https://dqcf6x4e7zbds.cloudfront.net/brief.html
+- **School briefs, one printable page each, in English or Spanish:** https://dqcf6x4e7zbds.cloudfront.net/brief.html (Spanish: [P.S. 053](https://dqcf6x4e7zbds.cloudfront.net/brief.html?id=73af9eab1f&lang=es))
 - **Bring your own data:** https://dqcf6x4e7zbds.cloudfront.net/data.html
 - **API and live console:** https://dqcf6x4e7zbds.cloudfront.net/api.html
 - **MCP server for AI assistants:** `claude mcp add --transport http after-hours https://dqcf6x4e7zbds.cloudfront.net/api/mcp`
@@ -39,8 +39,8 @@ Every number is computed by the pipeline in this repo and written to `web/public
 ```sh
 npm install
 npm test             # 16 tests: the engine, and the API against the published data (offline)
-npm run verify       # 29 claims in this README and the article, recomputed from the downloadable data
-npm run verify:live  # …plus 6 questions asked of the live API, as the article quotes them
+npm run verify       # 30 claims in this README and the article, recomputed from the downloadable data
+npm run verify:live  # …plus 6 questions asked of the live API (36 in all)
 npm run eval         # "Ask the map" on 72 fixed questions (calls Amazon Bedrock and Amazon Location)
 ```
 

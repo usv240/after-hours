@@ -16,6 +16,7 @@
     "all": "npm run fetch && npm run paris && npm run hours && npm run build",
     "verify": "tsx src/verify.ts",
     "briefs": "tsx src/build-briefs.ts",
+    "translate": "tsx src/translate-briefs.ts",
     "sample-maps": "tsx src/build-sample-maps.ts",
     "api-figure": "tsx src/build-api-figure.ts"
   },

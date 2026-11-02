@@ -416,6 +416,11 @@
     zoom: 0.88;
     box-shadow: none !important;
   }
+  /* Spanish runs about 15% longer: a touch smaller, so every brief still prints on one page. */
+  html[lang="es"] .sheet {
+    zoom: 0.84;
+  }
+
   .sheet h1 {
     font-size: 21pt;
   }
@@ -454,15 +459,24 @@
   .sheet__claim span {
     font-size: 11pt;
   }
+  /* On paper the whole map shows, uncropped, with its legend beside it. */
   .sheet__map {
     margin-top: 10px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: end;
   }
   .sheet__map img {
-    height: 1.95in;
-    object-fit: cover;
+    width: auto;
+    height: 2.05in;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .sheet__map figcaption {
-    margin-top: 4px;
+    display: grid;
+    gap: 6px;
+    margin-top: 0;
   }
   .sheet__cols,
   .sheet__fix,

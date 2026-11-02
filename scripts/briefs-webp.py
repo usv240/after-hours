@@ -8,7 +8,7 @@ for folder in ("briefs", "samples"):
     for f in glob.glob(os.path.join(web, folder, "*.png")):
         im = Image.open(f).convert("RGB")
         im.save(f[:-4] + ".webp", "WEBP", quality=82, method=6)
-        if folder == "briefs":
+        if folder == "briefs" and not f.endswith(".es.png"):
             im.thumbnail((360, 203))
             im.save(f[:-4] + ".thumb.webp", "WEBP", quality=78, method=6)
         os.remove(f)

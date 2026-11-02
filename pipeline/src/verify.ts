@@ -100,6 +100,15 @@ check("It beats a time-blind pick (74.3), ZIPs with the fewest AEDs (27.1) and r
 check("…and comes within 3% of the greedy optimum (88.0)", `${m100.greedy} (${(100 * (1 - m100.afterHours / m100.greedy)).toFixed(1)}% short)`, m100.greedy === 88 && m100.afterHours / m100.greedy > 0.97);
 check("P.S. 053 stays first under all five assumptions; at least 20 of the top 25 stay", re.sensitivity.map((x: { top25Kept: number }) => x.top25Kept).join(", "), re.sensitivity.length === 5 && re.sensitivity.every((x: { sameFirst: boolean; top25Kept: number }) => x.sameFirst && x.top25Kept >= 20));
 
+// ---------- the briefs in Spanish (briefs-es.json) ----------
+
+const briefsEn = json("nyc/briefs.json").briefs as { id: string; debate: { summary: string; nextStep: string } | null }[];
+const briefsEs = json("nyc/briefs-es.json").briefs as Record<string, { summary: string; nextStep: string }>;
+const nums = (t: string) => t.replace(/\s*\[E\d+\]/g, "").match(/\d+(?:[.,]\d+)*/g) ?? [];
+const withDebate = briefsEn.filter((b) => b.debate);
+const kept = withDebate.filter((b) => briefsEs[b.id] && [...nums(b.debate!.summary)].every((n) => briefsEs[b.id].summary.includes(n)) && [...nums(b.debate!.nextStep)].every((n) => briefsEs[b.id].nextStep.includes(n)));
+check("Every AI debate on a brief is also in Spanish, with every number unchanged", `${kept.length} of ${withDebate.length}`, kept.length === withDebate.length && withDebate.length > 0);
+
 // ---------- Paris, where owners must declare hours ----------
 
 const p = json("paris/summary.json");
